@@ -10,6 +10,8 @@ class App extends Component {
 
   constructor() {
     super();
+    this.toLoginPage = this.toLoginPage.bind(this);
+    this.toRegisterPage = this.toRegisterPage.bind(this);
     this.state = {
 
     }
@@ -20,6 +22,13 @@ class App extends Component {
   }
   componentWillUnmount() {
 
+  }
+
+  toLoginPage() {
+    this.props.history.push('LoginPage');
+  }
+  toRegisterPage () {
+    this.props.history.push('RegisterPage');
   }
 
   render() {
@@ -40,15 +49,18 @@ class App extends Component {
               </Nav>
               <Nav>
                 <Nav.Item>
-                  <Nav.Link><Button variant="secondary">Login Account</Button></Nav.Link>
+                  <Nav.Link><Button variant="secondary" onClick={this.toLoginPage}>Login Account</Button></Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link><Button variant="primary">Register Account</Button></Nav.Link>
+                  <Nav.Link><Button variant="primary" onClick={this.toRegisterPage}>Register Account</Button></Nav.Link>
                 </Nav.Item>
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
+        <div>
+          <h1>Landing Page</h1>
+        </div>
       </div>
     );
   }
