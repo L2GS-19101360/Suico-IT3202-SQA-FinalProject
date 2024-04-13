@@ -1,35 +1,58 @@
-import { useState } from 'react'
+import { Component, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap'
+import webName from '../src/assets/website name.jpg'
+import ClockComponent from '../src/components/ClockComponent'
 
-function App() {
-  const [count, setCount] = useState(0)
+class App extends Component {
 
-  return (
-    <>
+  constructor() {
+    super();
+    this.state = {
+
+    }
+  }
+
+  componentDidMount() {
+
+  }
+  componentWillUnmount() {
+
+  }
+
+  render() {
+    return (
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Navbar expand="lg" className="bg-body-tertiary">
+          <Container>
+            <Navbar.Brand>
+              <img src={webName} alt="" height={75} width={75} href="/"/> &nbsp; L2GS Library System
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
+              <Nav>
+                
+              </Nav>
+              <Nav>
+                <ClockComponent />
+              </Nav>
+              <Nav>
+                <Nav.Item>
+                  <Nav.Link><Button variant="secondary">Login Account</Button></Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link><Button variant="primary">Register Account</Button></Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    );
+  }
+
 }
 
 export default App
