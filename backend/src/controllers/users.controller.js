@@ -1,6 +1,8 @@
-'use strict'
+'use strict';
 
 const User = require('../models/users.model');
+const jwt = require('jsonwebtoken');
+const authenticateToken = require('../../auth/authenticateToken')
 
 exports.create = function (req, res) {
     const new_user = new User(req.body);
@@ -30,15 +32,25 @@ exports.login = function (req, res) {
         return res.status(400).json({ error: true, message: "Email and password are required" });
     }
 
-    User.login(email, password, function (err, user) {
+    User.login(email, password, function (err, tokens) {
         if (err) {
             return res.status(500).json({ error: true, message: "Internal server error" });
         }
 
-        if (!user) {
+        if (!tokens) {
             return res.status(404).json({ error: true, message: "User not found" });
         }
 
-        res.json({ error: false, message: "Login successful", data: user });
+        res.json({ error: false, message: "Login successful", tokens });
     });
 }
+
+exports.logout = function (req, res) {
+    
+}
+
+
+
+
+
+

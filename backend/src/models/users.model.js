@@ -2,6 +2,13 @@
 
 const dbConnection = require('../../config/db.config');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
 const User = function (user) {
     this.firstname = user.firstname;
@@ -33,9 +40,6 @@ User.login = function (email, password, result) {
             return result(err, null);
         }
 
-        console.log(email + password);
-        console.log("Rows:", rows);
-
         if (!rows.length) {
             return result(null, null);
         }
@@ -48,15 +52,21 @@ User.login = function (email, password, result) {
                 return result(err, null);
             }
 
-            console.log("Password comparison result:", res);
-
-            if (!res) {
-                return result(null, user);
-            } else {
+            if (res) {
                 return result(null, null);
+            } else {
+                // Generate JWT token
+                const accessToken = jwt.sign({ id: user.id, email: user.email }, accessTokenSecret, { expiresIn: '7d' });
+                const refreshToken = jwt.sign({ id: user.id, email: user.email }, refreshTokenSecret);
+                result(null, { user, accessToken, refreshToken });
             }
         });
     });
 }
+
+User.logout = function (result) {
+    
+}
+
 
 module.exports = User;
