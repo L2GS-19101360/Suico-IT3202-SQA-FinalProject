@@ -23,22 +23,33 @@ exports.create = function (req, res) {
     }
 }
 
-exports.login = function (req, res) {
+exports.logout = function (req, res) {
+    const refreshToken = req.body.refreshToken;
+    User.logout(refreshToken, function (err, result) {
+        if (err) {
+            res.status(500).json({ error: true, message: "Internal server error" });
+        } else {
+            res.status(200).json({ error: false, message: "Logout successful" });
+        }
+    });
+}
+
+exports.login = function(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ error: true, message: "Email and password are required" });
     }
 
-    User.login(email, password, function (err, user) {
+    User.login(email, password, function(err, tokens) {
         if (err) {
             return res.status(500).json({ error: true, message: "Internal server error" });
         }
 
-        if (!user) {
-            return res.status(404).json({ error: true, message: "User not found" });
+        if (!tokens) {
+            return res.status(404).json({ error: true, message: "User not found or incorrect password" });
         }
 
-        res.json({ error: false, message: "Login successful", data: user });
+        res.json({ error: false, message: "Login successful", tokens });
     });
 }
