@@ -2,7 +2,6 @@
 
 const dbConnection = require('../../config/db.config');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const User = function (user) {
     this.firstname = user.firstname;
@@ -27,16 +26,15 @@ User.create = function (newUser, result) {
     });
 }
 
-User.logout = function(token, result) {
-    result(null, true);
-}
-
 User.login = function (email, password, result) {
     dbConnection.query("SELECT * FROM users WHERE email = ?", email, function (err, rows) {
         if (err) {
             console.log(err);
             return result(err, null);
         }
+
+        console.log(email + password);
+        console.log("Rows:", rows);
 
         if (!rows.length) {
             return result(null, null);
@@ -50,12 +48,12 @@ User.login = function (email, password, result) {
                 return result(err, null);
             }
 
-            if (res) {
-                return result(null, null);
+            console.log("Password comparison result:", res);
+
+            if (!res) {
+                return result(null, user);
             } else {
-                const accessToken = jwt.sign({ email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' });
-                const refreshToken = jwt.sign({ email: user.email, role: user.role }, process.env.REFRESH_TOKEN_SECRET);
-                result(null, { accessToken, refreshToken });
+                return result(null, null);
             }
         });
     });
