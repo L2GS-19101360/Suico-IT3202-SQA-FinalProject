@@ -1,8 +1,9 @@
 'use strict'
 
 const dbConnection = require('../../config/db.config');
+const bcrypt = require('bcrypt');
 
-const User = function(user) {
+const User = function (user) {
     this.firstname = user.firstname;
     this.lastname = user.lastname;
     this.email = user.email;
@@ -13,8 +14,8 @@ const User = function(user) {
     this.updated = null;
 }
 
-User.create = function(newUser, result) {
-    dbConnection.query("INSERT INTO users set ?", newUser, function(err, res) {
+User.create = function (newUser, result) {
+    dbConnection.query("INSERT INTO users set ?", newUser, function (err, res) {
         if (err) {
             console.log(err);
             result(err, null);
@@ -22,6 +23,34 @@ User.create = function(newUser, result) {
             console.log(res.insertId);
             result(null, res.insertId);
         }
+    });
+}
+
+User.login = function (email, password, result) {
+    dbConnection.query("SELECT * FROM users WHERE email = ?", email, function (err, rows) {
+        if (err) {
+            console.log(err);
+            return result(err, null);
+        }
+
+        if (!rows.length) {
+            return result(null, null);
+        }
+
+        const user = rows[0];
+
+        bcrypt.compare(password, user.password, function (err, res) {
+            if (err) {
+                console.error(err);
+                return result(err, null);
+            }
+
+            if (res) {
+                return result(null, user);
+            } else {
+                return result(null, null);
+            }
+        });
     });
 }
 

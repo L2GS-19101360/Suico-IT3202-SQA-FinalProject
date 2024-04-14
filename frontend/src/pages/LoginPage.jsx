@@ -10,8 +10,12 @@ class LoginPage extends Component {
         super();
         this.toRegisterPage = this.toRegisterPage.bind(this);
         this.togglePasswordVisibility = this.togglePasswordVisibility.bind(this);
+        this.toLoginUser = this.toLoginUser.bind(this);
         this.state = {
             showPassword: false,
+
+            enterEmail: "",
+            enterPassword: ""
         }
     }
 
@@ -30,6 +34,12 @@ class LoginPage extends Component {
         this.setState(prevState => ({
             showPassword: !prevState.showPassword
         }));
+    }
+
+    toLoginUser = (e) => {
+        event.preventDefault();
+
+        console.log(this.state.enterEmail + this.state.enterPassword);
     }
 
     render() {
@@ -72,15 +82,21 @@ class LoginPage extends Component {
                     margin: "auto"
                 }}>
                     <Form>
-                        <Form.Control type="email" placeholder="Enter Email" /><br />
+                        <Form.Control
+                            type="email"
+                            placeholder="Enter Email"
+                            value={this.state.enterEmail}
+                            onChange={(e) => { this.setState({ enterEmail: e.target.value }) }} /><br />
                         <InputGroup className="mb-3">
                             <Form.Control
                                 placeholder="Enter Password"
                                 type={this.state.showPassword ? "text" : "password"}
+                                value={this.state.enterPassword}
+                                onChange={(e) => { this.setState({ enterPassword: e.target.value }) }}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup><br />
-                        <Button variant="secondary">Login Account</Button>
+                        <Button variant="secondary" onClick={this.toLoginUser} type='submit'>Login Account</Button>
                     </Form>
                 </div>
 
