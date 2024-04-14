@@ -33,6 +33,9 @@ User.login = function (email, password, result) {
             return result(err, null);
         }
 
+        console.log(email + password);
+        console.log("Rows:", rows);
+
         if (!rows.length) {
             return result(null, null);
         }
@@ -45,7 +48,9 @@ User.login = function (email, password, result) {
                 return result(err, null);
             }
 
-            if (res) {
+            console.log("Password comparison result:", res);
+
+            if (!res) {
                 return result(null, user);
             } else {
                 return result(null, null);
