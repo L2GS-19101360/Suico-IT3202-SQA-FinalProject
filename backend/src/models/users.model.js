@@ -64,9 +64,15 @@ User.login = function (email, password, result) {
     });
 }
 
-User.logout = function (result) {
-    
+User.logout = function (accessToken, refreshToken, result) {
+    const revokedTokens = [];
+
+    revokedTokens.push(accessToken);
+    revokedTokens.push(refreshToken);
+
+    result(null, { message: "Logout successful" });
 }
+
 
 
 module.exports = User;

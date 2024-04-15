@@ -46,11 +46,18 @@ exports.login = function (req, res) {
 }
 
 exports.logout = function (req, res) {
-    
+    const { accessToken, refreshToken } = req.body;
+
+    if (!accessToken || !refreshToken) {
+        return res.status(400).json({ error: true, message: "Access token and refresh token are required" });
+    }
+
+    User.logout(accessToken, refreshToken, function (err, result) {
+        if (err) {
+            return res.status(500).json({ error: true, message: "Internal server error" });
+        }
+
+        res.json({ error: false, message: result.message });
+    });
 }
-
-
-
-
-
 
