@@ -2,13 +2,14 @@ import { Component, useState } from 'react'
 import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
+import UserSidebar from '../../components/User/UserSidebar'
 
 class UserDashboard extends Component {
 
     constructor() {
         super();
         this.state = {
-
+            
         }
     }
 
@@ -37,7 +38,7 @@ class UserDashboard extends Component {
                             </Nav>
                             <Nav>
                                 <Nav.Item>
-                                    <Nav.Link><Button variant="danger">Logout Account</Button></Nav.Link>
+                                    <UserSidebar />
                                 </Nav.Item>
                             </Nav>
                         </Navbar.Collapse>

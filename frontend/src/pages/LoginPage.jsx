@@ -3,6 +3,7 @@ import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup } from 'r
 import webName from '../assets/website name.jpg'
 import ClockComponent from '../components/ClockComponent'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import axios from 'axios'
 
 class LoginPage extends Component {
 
@@ -40,6 +41,30 @@ class LoginPage extends Component {
         event.preventDefault();
 
         console.log(this.state.enterEmail + this.state.enterPassword);
+
+        const data = {
+            email: this.state.enterEmail,
+            password: this.state.enterPassword
+        }
+
+        axios.post(
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/login-user', data
+        ).then(
+            (response) => {
+                console.log(response.data.tokens.user);
+
+                localStorage.setItem('accessToken', response.data.tokens.accessToken);
+                localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+                localStorage.setItem('firstname', response.data.tokens.user.firstname);
+                localStorage.setItem('lastname', response.data.tokens.user.lastname);
+
+                this.props.history.push('/UserDashboard');
+            }
+        ).catch(
+            (error) => {
+                console.log(error);
+            }
+        )
     }
 
     render() {
