@@ -3,6 +3,7 @@ import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup } from 'r
 import webName from '../assets/website name.jpg'
 import ClockComponent from '../components/ClockComponent'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import axios from 'axios'
 
 class RegisterPage extends Component {
 
@@ -11,9 +12,16 @@ class RegisterPage extends Component {
         this.toLoginPage = this.toLoginPage.bind(this);
         this.togglePasswordVisibility = this.togglePasswordVisibility.bind(this);
         this.toggleRePasswordVisibility = this.toggleRePasswordVisibility.bind(this);
+        this.toRegisterUser = this.toRegisterUser.bind(this);
         this.state = {
             showPassword: false,
             reshowPassword: false,
+
+            newFirstName: "",
+            newLastName: "",
+            newEmail: "",
+            newPassword: "",
+            rePassword: ""
         }
     }
 
@@ -37,6 +45,43 @@ class RegisterPage extends Component {
         this.setState(prevState => ({
             reshowPassword: !prevState.reshowPassword
         }));
+    }
+
+    toRegisterUser = (e) => {
+        event.preventDefault();
+
+        const email = this.state.newEmail + "@gmail.com"
+
+        if (this.state.newPassword === this.state.rePassword) {
+            console.log(this.state.newFirstName + this.state.newLastName + email + this.state.newPassword)
+
+            const data = {
+                firstname: this.state.newFirstName,
+                lastname: this.state.newLastName,
+                email: email,
+                password: this.state.newPassword,
+                role: "user"
+            }
+
+            axios.post(
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/register-user`, data
+            ).then(
+                (response) => {
+                    console.log("Server Response", response.data);
+
+                    localStorage.setItem('accessToken', response.data.accessToken);
+                    localStorage.setItem('refreshToken', response.data.refreshToken);
+                    localStorage.setItem('firstname', this.state.newFirstName);
+                    localStorage.setItem('lastname', this.state.newLastName);
+
+                    this.props.history.push('/UserDashboard');
+                }
+            ).catch(
+                (error) => {
+                    console.log(error);
+                }
+            );
+        }
     }
 
     render() {
@@ -80,14 +125,24 @@ class RegisterPage extends Component {
                 }}>
                     <Form>
                         <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
-                            <Form.Control type="text" placeholder="Enter First Name" /> &nbsp;&nbsp;
-                            <Form.Control type="text" placeholder="Enter Last Name" />
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter First Name"
+                                value={this.state.newFirstName}
+                                onChange={(e) => { this.setState({ newFirstName: e.target.value }) }} /> &nbsp;&nbsp;
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter Last Name"
+                                value={this.state.newLastName}
+                                onChange={(e) => { this.setState({ newLastName: e.target.value }) }} />
                         </div>
 
                         <InputGroup className="mb-3">
                             <Form.Control
                                 placeholder="Enter Email"
                                 type='text'
+                                value={this.state.newEmail}
+                                onChange={(e) => { this.setState({ newEmail: e.target.value }) }}
                             />
                             <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
                         </InputGroup>
@@ -95,6 +150,8 @@ class RegisterPage extends Component {
                             <Form.Control
                                 placeholder="Enter Password"
                                 type={this.state.showPassword ? "text" : "password"}
+                                value={this.state.newPassword}
+                                onChange={(e) => { this.setState({ newPassword: e.target.value }) }}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup>
@@ -102,10 +159,12 @@ class RegisterPage extends Component {
                             <Form.Control
                                 placeholder="Enter Password"
                                 type={this.state.reshowPassword ? "text" : "password"}
+                                value={this.state.rePassword}
+                                onChange={(e) => { this.setState({ rePassword: e.target.value }) }}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup><br />
-                        <Button variant="primary">Register Account</Button>
+                        <Button variant="primary" onClick={this.toRegisterUser} type='submit'>Register Account</Button>
                     </Form>
                 </div>
 
