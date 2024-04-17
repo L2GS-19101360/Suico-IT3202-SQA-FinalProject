@@ -2,6 +2,7 @@ import { Component, useState } from 'react'
 import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
+import AdminSidebar from '../../components/Admin/AdminSidebar'
 
 class AdminDashboard extends Component {
 
@@ -37,7 +38,7 @@ class AdminDashboard extends Component {
                             </Nav>
                             <Nav>
                                 <Nav.Item>
-                                    <Nav.Link><Button variant="danger">Logout Account</Button></Nav.Link>
+                                    <AdminSidebar />
                                 </Nav.Item>
                             </Nav>
                         </Navbar.Collapse>

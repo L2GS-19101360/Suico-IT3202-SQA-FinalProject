@@ -57,8 +57,15 @@ class LoginPage extends Component {
                 localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
                 localStorage.setItem('firstname', response.data.tokens.user.firstname);
                 localStorage.setItem('lastname', response.data.tokens.user.lastname);
+                localStorage.setItem('role', response.data.tokens.user.role);
 
-                this.props.history.push('/UserDashboard');
+                if (response.data.tokens.user.role === "user") {
+                    this.props.history.push('/UserDashboard');
+                } else if (response.data.tokens.user.role === "librarian") {
+                    this.props.history.push('/LibrarianDashboard');
+                } else {
+                    this.props.history.push('/AdminDashboard');
+                }
             }
         ).catch(
             (error) => {

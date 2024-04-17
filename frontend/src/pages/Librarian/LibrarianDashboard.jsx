@@ -2,6 +2,7 @@ import { Component, useState } from 'react'
 import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
+import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar'
 
 class LibrarianDashboard extends Component {
 
@@ -37,7 +38,7 @@ class LibrarianDashboard extends Component {
                             </Nav>
                             <Nav>
                                 <Nav.Item>
-                                    <Nav.Link><Button variant="danger">Logout Account</Button></Nav.Link>
+                                    <LibrarianSidebar />
                                 </Nav.Item>
                             </Nav>
                         </Navbar.Collapse>
