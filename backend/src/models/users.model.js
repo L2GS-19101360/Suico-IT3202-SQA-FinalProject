@@ -22,13 +22,25 @@ const User = function (user) {
 }
 
 User.create = function (newUser, result) {
-    dbConnection.query("INSERT INTO users set ?", newUser, function (err, res) {
+    bcrypt.hash(newUser.password, 10, function (err, hash) {
         if (err) {
             console.log(err);
             result(err, null);
         } else {
-            console.log(res.insertId);
-            result(null, res.insertId);
+            newUser.password = hash;
+
+            dbConnection.query("INSERT INTO users SET ?", newUser, function (err, res) {
+                if (err) {
+                    console.log(err);
+                    result(err, null);
+                } else {
+                    const accessToken = jwt.sign({ id: res.insertId, email: newUser.email }, accessTokenSecret, { expiresIn: '7d' });
+                    const refreshToken = jwt.sign({ id: res.insertId, email: newUser.email }, refreshTokenSecret);
+
+                    console.log(res.insertId);
+                    result(null, { insertId: res.insertId, accessToken: accessToken, refreshToken: refreshToken });
+                }
+            });
         }
     });
 }

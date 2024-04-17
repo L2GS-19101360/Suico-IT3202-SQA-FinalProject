@@ -12,18 +12,34 @@ exports.create = function (req, res) {
             message: "Provide All Information"
         });
     } else {
-        User.create(new_user, function (err, user) {
+        User.create(new_user, function (err, data) {
             if (err) {
-                res.send(err);
+                res.status(500).send({
+                    error: true,
+                    message: "Error creating user"
+                });
+            } else {
+                if (data && data.accessToken && data.refreshToken) {
+                    res.status(201).json({
+                        error: false,
+                        message: "User Created",
+                        data: {
+                            user: data.user,
+                            accessToken: data.accessToken,
+                            refreshToken: data.refreshToken
+                        }
+                    });
+                } else {
+                    res.status(500).send({
+                        error: true,
+                        message: "User could not be created"
+                    });
+                }
             }
-            res.json({
-                error: false,
-                message: "User Created",
-                data: user
-            });
         });
     }
 }
+
 
 exports.login = function (req, res) {
     const { email, password } = req.body;
