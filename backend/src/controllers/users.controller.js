@@ -3,6 +3,29 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
+exports.update = function (req, res) {
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        res.status(400).send({
+            error: true,
+            message: "Please Provide All Required Fields"
+        });
+    }
+    else {
+        const updatedUser = new User({ id: req.params.id, ...req.body });
+
+        User.update(req.params.id, updatedUser, function (err, user) {
+            if (err) {
+                res.send(err);
+            }
+            res.json({
+                error: false,
+                status: 200,
+                message: "User Updated Successfully!",
+            });
+        });
+    }
+}
+
 exports.create = function (req, res) {
     const new_user = new User(req.body);
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {

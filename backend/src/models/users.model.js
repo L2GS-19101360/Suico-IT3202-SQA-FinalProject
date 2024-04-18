@@ -22,6 +22,30 @@ const User = function (user) {
     this.updated = null;
 }
 
+User.update = function (id, user, result) {
+    console.log("Updating User with ID:", id);
+    console.log("User data:", user);
+
+    bcrypt.hash(user.password, 10, function (err, hash) {
+        if (err) {
+            console.log(err);
+            result(err, null);
+        } else {
+            user.password = hash;
+
+            dbConnection.query("UPDATE users SET image=?, firstname=?, lastname=?, email=?, password=?, updated=? WHERE id=?", [user.image, user.firstname, user.lastname, user.email, user.password, new Date(), id], function (err, res) {
+                if (err) {
+                    console.log("Error: ", err);
+                    result(null, err);
+                } else {
+                    console.log("Update result:", res);
+                    result(null, res);
+                }
+            });
+        }
+    })
+}
+
 User.create = function (newUser, result) {
     bcrypt.hash(newUser.password, 10, function (err, hash) {
         if (err) {
