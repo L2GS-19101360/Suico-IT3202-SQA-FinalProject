@@ -57,6 +57,7 @@ class RegisterPage extends Component {
             console.log(this.state.newFirstName + this.state.newLastName + email + this.state.newPassword)
 
             const data = {
+                image: "#%&{}>",
                 firstname: this.state.newFirstName,
                 lastname: this.state.newLastName,
                 email: email,
@@ -64,8 +65,13 @@ class RegisterPage extends Component {
                 role: "user"
             }
 
+            const apiLink = [
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/register-user`,
+                `http://localhost:3306/api/users/register-user`
+            ]
+
             axios.post(
-                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/register-user`, data
+               apiLink[0] , data
             ).then(
                 (response) => {
                     console.log("Server Response", response.data);
@@ -74,6 +80,7 @@ class RegisterPage extends Component {
                     localStorage.setItem('refreshToken', response.data.refreshToken);
                     localStorage.setItem('firstname', this.state.newFirstName);
                     localStorage.setItem('lastname', this.state.newLastName);
+                    localStorage.setItem('role', data.role);
 
                     this.props.history.push('/UserDashboard');
                 }
