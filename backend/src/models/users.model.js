@@ -64,7 +64,7 @@ User.login = function (email, password, result) {
                 return result(err, null);
             }
 
-            if (res) {
+            if (res && !res) {
                 return result(null, null);
             } else {
                 // Generate JWT token
