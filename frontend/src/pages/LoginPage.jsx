@@ -48,17 +48,26 @@ class LoginPage extends Component {
             password: this.state.enterPassword
         }
 
+        const apiLink = [
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/login-user',
+            'http://localhost:3306/api/users/login-user'
+        ]
+
         axios.post(
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/login-user', data
+           apiLink[0] , data
         ).then(
             (response) => {
                 console.log(response.data.tokens.user);
 
                 localStorage.setItem('accessToken', response.data.tokens.accessToken);
                 localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+
+                localStorage.setItem('image', response.data.tokens.user.image);
                 localStorage.setItem('firstname', response.data.tokens.user.firstname);
                 localStorage.setItem('lastname', response.data.tokens.user.lastname);
-                localStorage.setItem('role', response.data.tokens.user.role);
+                localStorage.setItem('email', response.data.tokens.user.email);
+                localStorage.setItem('password', this.state.enterPassword);
+                localStorage.setItem('role', response.data.tokens.user.role)
 
                 if (response.data.tokens.user.role === "user") {
                     this.props.history.push('/UserDashboard');

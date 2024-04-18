@@ -42,8 +42,13 @@ class AdminSidebar extends Component {
             refreshToken: this.state.getRefreshToken
         }
 
+        const apiLink = [
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
+            'http://localhost:3306/api/users/logout-user'
+        ]
+
         axios.post(
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user', tokens
+            apiLink[0], tokens
         ).then(
             (response) => {
                 console.log(response.data);
@@ -52,6 +57,7 @@ class AdminSidebar extends Component {
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('firstname');
                 localStorage.removeItem('lastname');
+                localStorage.removeItem('role')
 
                 this.props.history.push('/');
             }

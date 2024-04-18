@@ -4,6 +4,7 @@ import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 class UserSidebar extends Component {
 
@@ -34,7 +35,7 @@ class UserSidebar extends Component {
         this.setState({ show: true });
     }
 
-    toLogoutUser () {
+    toLogoutUser() {
         console.log(this.state.getAccessToken + this.state.getRefreshToken);
 
         const tokens = {
@@ -42,8 +43,13 @@ class UserSidebar extends Component {
             refreshToken: this.state.getRefreshToken
         }
 
+        const apiLink = [
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
+            'http://localhost:3306/api/users/logout-user'
+        ]
+
         axios.post(
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user', tokens
+            apiLink[0], tokens
         ).then(
             (response) => {
                 console.log(response.data);
@@ -52,6 +58,7 @@ class UserSidebar extends Component {
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('firstname');
                 localStorage.removeItem('lastname');
+                localStorage.removeItem('role')
 
                 this.props.history.push('/');
             }
@@ -82,7 +89,11 @@ class UserSidebar extends Component {
                     <Offcanvas.Body>
                         <div>
                             <img src={profileImage[1]} alt="" onClick={this.handleShow} /><br />
-                            <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br />
+                            <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
+                            <ul style={{ listStyle: "none" }}>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/UserDashboard'>User Dashboard</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/UserProfile'>User Profile</Link></li>
+                            </ul><br /><br />
                             <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>
                         </div>
                     </Offcanvas.Body>

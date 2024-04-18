@@ -9,6 +9,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import LibrarianDashboard from './pages/Librarian/LibrarianDashboard.jsx'
 import UserDashboard from './pages/User/UserDashboard.jsx'
 import ProtectedRoute from './auth/ProtectedRoute.jsx'
+import UserProfile from './pages/User/UserProfile.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div>
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProtectedRoute path='/LibrarianDashboard' component={LibrarianDashboard} role='librarian'/>
 
       <ProtectedRoute path='/UserDashboard' component={UserDashboard} role='user'/>
+      <ProtectedRoute path='/UserProfile' component={UserProfile} role='user' />
       
     </Router>
   </div>
