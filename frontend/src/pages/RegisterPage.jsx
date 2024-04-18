@@ -4,6 +4,7 @@ import webName from '../assets/website name.jpg'
 import ClockComponent from '../components/ClockComponent'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import axios from 'axios'
+import GeneralNavbar from '../components/GeneralNavbar'
 
 class RegisterPage extends Component {
 
@@ -87,30 +88,7 @@ class RegisterPage extends Component {
     render() {
         return (
             <div>
-                <Navbar expand="lg" className="bg-body-tertiary">
-                    <Container>
-                        <Navbar.Brand href="/">
-                            <img src={webName} alt="" height={75} width={75} /> &nbsp; L2GS Library System
-                        </Navbar.Brand>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
-                            <Nav>
-
-                            </Nav>
-                            <Nav>
-                                <ClockComponent />
-                            </Nav>
-                            <Nav>
-                                <Nav.Item>
-                                    <Nav.Link><Button variant="secondary" onClick={this.toLoginPage}>Login Account</Button></Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link><Button variant="primary" disabled>Register Account</Button></Nav.Link>
-                                </Nav.Item>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
+                <GeneralNavbar />
                 <div>
                     <h1>Register Page</h1>
                 </div>

@@ -3,6 +3,7 @@ import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar'
+import LibrarianNavbar from '../../components/Librarian/LibrarianNavbar'
 
 class LibrarianDashboard extends Component {
 
@@ -23,27 +24,7 @@ class LibrarianDashboard extends Component {
     render() {
         return (
             <div>
-                <Navbar expand="lg" className="bg-body-tertiary">
-                    <Container>
-                        <Navbar.Brand>
-                            <img src={webName} alt="" height={75} width={75} /> &nbsp; L2GS Library System
-                        </Navbar.Brand>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
-                            <Nav>
-
-                            </Nav>
-                            <Nav>
-                                <ClockComponent />
-                            </Nav>
-                            <Nav>
-                                <Nav.Item>
-                                    <LibrarianSidebar />
-                                </Nav.Item>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
+                <LibrarianNavbar />
                 <div>
                     <h1>Librarian Dashboard</h1>
                 </div>
