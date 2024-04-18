@@ -3,7 +3,7 @@ import { Navbar, Container, Nav, Button, NavDropdown, Form, Offcanvas, Offcanvas
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import axios from 'axios'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 
 class AdminSidebar extends Component {
 
@@ -88,7 +88,11 @@ class AdminSidebar extends Component {
                     <Offcanvas.Body>
                         <div>
                             <img src={profileImage[1]} alt="" onClick={this.handleShow} /><br />
-                            <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br />
+                            <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
+                            <ul style={{ listStyle: "none" }}>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/AdminDashboard'>Admin Dashboard</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/AdminProfile'>Admin Profile</Link></li>
+                            </ul><br /><br />
                             <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>
                         </div>
                     </Offcanvas.Body>
