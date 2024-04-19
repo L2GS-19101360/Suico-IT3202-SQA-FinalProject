@@ -16,6 +16,8 @@ app.get('/', (req, res) => {
 const userRoutes = require('./src/routes/users.route');
 app.use('/api/users', userRoutes);
 
+const multer = require('multer');
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, '../frontend/src/assets/userimage'); // Set the destination folder for uploaded files
