@@ -69,26 +69,6 @@ class AdminProfile extends Component {
         }
     }
 
-    handleImageUpload = () => {
-        const formData = new FormData();
-        formData.append('profileImage', this.state.profileImageFile);
-
-        const imageApi = [
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/upload-user-image',
-            'http://localhost:3306/api/upload-user-image'
-        ]
-
-        axios.post( imageApi[0], formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then(response => {
-            console.log(response.data); // Handle success response
-        }).catch(error => {
-            console.error('Error uploading image:', error); // Handle error
-        });
-    }
-
     toUpdateUser = (e) => {
         event.preventDefault();
 
@@ -115,43 +95,44 @@ class AdminProfile extends Component {
                 `http://localhost:3306/api/users/update-user/${this.state.currId}`,
                 'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
                 'http://localhost:3306/api/users/logout-user',
+                'http://localhost:3306/api/upload-user-image'
             ]
 
-            axios.put(
-                apiLink[0], data
-            ).then(
-                (response) => {
-                    console.log(response);
+            // axios.put(
+            //     apiLink[0], data
+            // ).then(
+            //     (response) => {
+            //         console.log(response);
 
-                    axios.post(
-                        apiLink[2], tokens
-                    ).then(
-                        (response) => {
-                            console.log(response)
+            //         axios.post(
+            //             apiLink[2], tokens
+            //         ).then(
+            //             (response) => {
+            //                 console.log(response)
 
-                            localStorage.removeItem('accessToken');
-                            localStorage.removeItem('refreshToken');
-                            localStorage.removeItem('userId');
-                            localStorage.removeItem('userImage');
-                            localStorage.removeItem('firstname');
-                            localStorage.removeItem('lastname');
-                            localStorage.removeItem('role');
-                            localStorage.removeItem('email');
-                            localStorage.removeItem('password');
+            //                 localStorage.removeItem('accessToken');
+            //                 localStorage.removeItem('refreshToken');
+            //                 localStorage.removeItem('userId');
+            //                 localStorage.removeItem('userImage');
+            //                 localStorage.removeItem('firstname');
+            //                 localStorage.removeItem('lastname');
+            //                 localStorage.removeItem('role');
+            //                 localStorage.removeItem('email');
+            //                 localStorage.removeItem('password');
 
-                            this.props.history.push('/');
-                        }
-                    ).catch(
-                        (error) => {
-                            console.log(error)
-                        }
-                    )
-                }
-            ).catch(
-                (error) => {
-                    console.log(error);
-                }
-            );
+            //                 this.props.history.push('/');
+            //             }
+            //         ).catch(
+            //             (error) => {
+            //                 console.log(error)
+            //             }
+            //         )
+            //     }
+            // ).catch(
+            //     (error) => {
+            //         console.log(error);
+            //     }
+            // );
         }
     }
 

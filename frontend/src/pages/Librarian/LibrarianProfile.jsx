@@ -12,6 +12,8 @@ class LibrarianProfile extends Component {
         super();
         this.togglePasswordVisibility = this.togglePasswordVisibility.bind(this);
         this.toggleRePasswordVisibility = this.toggleRePasswordVisibility.bind(this);
+        this.handleImageChange = this.handleImageChange.bind(this);
+        this.toUpdateUser = this.toUpdateUser.bind(this);
         this.state = {
             LAfirstname: localStorage.getItem('firstname'),
             LAlastname: localStorage.getItem('lastname'),
@@ -19,11 +21,19 @@ class LibrarianProfile extends Component {
             showPassword: false,
             reshowPassword: false,
 
+            profileImageUrl: null,
+            profileImageFile: null,
+
+            currId: localStorage.getItem('userId'),
+            imageFileName: localStorage.getItem('image'),
             currFirstname: localStorage.getItem('firstname'),
             currLastname: localStorage.getItem('lastname'),
             currEmail: localStorage.getItem('email').replace(/@gmail\.com$/, ""),
             currPassword: localStorage.getItem('password'),
-            confirmPassword: localStorage.getItem('password')
+            confirmPassword: localStorage.getItem('password'),
+
+            getAccessToken: localStorage.getItem("accessToken"),
+            getRefreshToken: localStorage.getItem("refreshToken"),
         }
     }
 
@@ -45,11 +55,89 @@ class LibrarianProfile extends Component {
         }));
     }
 
+    handleImageChange(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const fileName = file.name;
+            this.setState({
+                profileImageUrl: URL.createObjectURL(file),
+                profileImageFile: file,
+                imageFileName: fileName
+            });
+        }
+    }
+
+    toUpdateUser = (e) => {
+        event.preventDefault();
+
+        if (this.state.currPassword === this.state.confirmPassword) {
+            console.log(this.state.currId + " " + this.state.imageFileName + " " + this.state.currFirstname + " " + this.state.currLastname + " " + this.state.currEmail + " " + this.state.currPassword);
+
+            const data = {
+                image: this.state.imageFileName,
+                firstname: this.state.currFirstname,
+                lastname: this.state.currLastname,
+                email: this.state.currEmail,
+                password: this.state.currPassword
+            }
+
+            const tokens = {
+                accessToken: this.state.getAccessToken,
+                refreshToken: this.state.getRefreshToken
+            }
+
+            const apiLink = [
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/update-user/${this.state.currId}`,
+                `http://localhost:3306/api/users/update-user/${this.state.currId}`,
+                'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
+                'http://localhost:3306/api/users/logout-user'
+            ]
+
+            axios.put(
+                apiLink[0], data
+            ).then(
+                (response) => {
+                    console.log(response);
+
+                    axios.post(
+                        apiLink[2], tokens
+                    ).then(
+                        (response) => {
+                            console.log(response)
+
+                            localStorage.removeItem('accessToken');
+                            localStorage.removeItem('refreshToken');
+                            localStorage.removeItem('userId');
+                            localStorage.removeItem('userImage');
+                            localStorage.removeItem('firstname');
+                            localStorage.removeItem('lastname');
+                            localStorage.removeItem('role');
+                            localStorage.removeItem('email');
+                            localStorage.removeItem('password');
+
+                            this.props.history.push('/');
+                        }
+                    ).catch(
+                        (error) => {
+                            console.log(error)
+                        }
+                    )
+                }
+            ).catch(
+                (error) => {
+                    console.log(error);
+                }
+            );
+        }
+    }
+
     render() {
         const profileImage = [
             `https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=75`,
             `https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`,
         ]
+
+        const { profileImageUrl } = this.state;
 
         return (
             <div>
@@ -64,7 +152,14 @@ class LibrarianProfile extends Component {
                         textAlign: "center",
                         margin: "auto"
                     }}>
-                        <img src={profileImage[1]} alt="" /><br /><br />
+                        {profileImageUrl ? (
+                            <img src={profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />
+                        ) : (
+                            <img src={profileImage[1]} alt="" />
+                        )}
+                        <br /><br />
+                        <Form.Control type="file" onChange={this.handleImageChange} />
+                        <br />
                         <Form>
                             <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
                                 <Form.Control

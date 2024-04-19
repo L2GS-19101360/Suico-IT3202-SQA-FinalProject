@@ -71,15 +71,20 @@ class RegisterPage extends Component {
             ]
 
             axios.post(
-               apiLink[0] , data
+                apiLink[0], data
             ).then(
                 (response) => {
                     console.log("Server Response", response.data);
 
                     localStorage.setItem('accessToken', response.data.accessToken);
                     localStorage.setItem('refreshToken', response.data.refreshToken);
+
+                    localStorage.setItem('userId', response.data.insertId);
+                    localStorage.setItem('userImage', data.image);
                     localStorage.setItem('firstname', this.state.newFirstName);
                     localStorage.setItem('lastname', this.state.newLastName);
+                    localStorage.setItem('email', data.email);
+                    localStorage.setItem('password', data.password);
                     localStorage.setItem('role', data.role);
 
                     this.props.history.push('/UserDashboard');

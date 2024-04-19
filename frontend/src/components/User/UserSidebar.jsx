@@ -56,9 +56,13 @@ class UserSidebar extends Component {
 
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userImage');
                 localStorage.removeItem('firstname');
                 localStorage.removeItem('lastname');
-                localStorage.removeItem('role')
+                localStorage.removeItem('role');
+                localStorage.removeItem('email');
+                localStorage.removeItem('password');
 
                 this.props.history.push('/');
             }

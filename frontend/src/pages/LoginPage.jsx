@@ -62,7 +62,8 @@ class LoginPage extends Component {
                 localStorage.setItem('accessToken', response.data.tokens.accessToken);
                 localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
 
-                localStorage.setItem('image', response.data.tokens.user.image);
+                localStorage.setItem('userId', response.data.tokens.user.id);
+                localStorage.setItem('userImage', response.data.tokens.user.image);
                 localStorage.setItem('firstname', response.data.tokens.user.firstname);
                 localStorage.setItem('lastname', response.data.tokens.user.lastname);
                 localStorage.setItem('email', response.data.tokens.user.email);
