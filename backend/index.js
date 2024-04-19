@@ -3,8 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3306
-const multer = require('multer');
-const path = require('path');
 
 app.use(express.json());
 app.use(cors());
@@ -18,15 +16,26 @@ app.get('/', (req, res) => {
 const userRoutes = require('./src/routes/users.route');
 app.use('/api/users', userRoutes);
 
-const userImageStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, '../frontend/src/assets/userimage') 
-    }
+const multer = require('multer');
+
+// Define storage for uploaded files
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '../frontend/src/assets/userimage'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Maintain the original filename
+  }
 });
 
-const upload = multer({ storage: userImageStorage });
-app.post('/upload-user-image', upload.single('image'), function (req, res, next) {
-    res.status(200).json({ message: 'User image uploaded successfully' });
+// Initialize multer instance with the storage options
+const upload = multer({ storage: storage });
+
+// Endpoint to handle file upload
+app.post('/api/upload-user-image', upload.single('profileImage'), (req, res) => {
+  // 'profileImage' is the name attribute of the file input field in your form
+  // req.file contains information about the uploaded file
+  res.status(200).json({ message: 'File uploaded successfully' });
 });
 
 app.listen(port, () => {
