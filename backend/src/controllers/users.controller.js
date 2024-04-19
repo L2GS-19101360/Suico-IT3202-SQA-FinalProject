@@ -46,7 +46,7 @@ exports.create = function (req, res) {
                         error: false,
                         message: "User Created",
                         data: {
-                            user: data.user,
+                            insertId: data.insertId,
                             accessToken: data.accessToken,
                             refreshToken: data.refreshToken
                         }
