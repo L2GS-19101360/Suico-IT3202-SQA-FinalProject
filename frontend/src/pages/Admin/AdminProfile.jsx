@@ -69,25 +69,7 @@ class AdminProfile extends Component {
         }
     }
 
-    handleImageUpload = () => {
-        const formData = new FormData();
-        formData.append('profileImage', this.state.profileImageFile);
-
-        const imageAPI = [
-            'http://localhost:3306/api/upload-user-image',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/upload-user-image'
-        ]
-
-        axios.post(imageAPI[1], formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then(response => {
-            console.log(response.data); // Handle success response
-        }).catch(error => {
-            console.error('Error uploading image:', error); // Handle error
-        });
-    }
+    
 
     toUpdateUser = (e) => {
         event.preventDefault();
