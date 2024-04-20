@@ -8,6 +8,10 @@ const UserImageController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+
+    storeFile: async (req, res) => {
+        
     }
 }
 
