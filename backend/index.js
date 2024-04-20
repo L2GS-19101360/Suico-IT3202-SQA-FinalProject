@@ -16,7 +16,8 @@ app.get('/', (req, res) => {
 const userRoutes = require('./src/routes/users.route');
 app.use('/api/users', userRoutes);
 
-
+const UserImageRoutes = require('./src/routes/users.image.route');
+app.use('/api/users-image', UserImageRoutes);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
