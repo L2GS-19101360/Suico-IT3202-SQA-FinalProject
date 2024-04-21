@@ -6,8 +6,26 @@ class Test extends Component {
   constructor() {
     super();
     this.state = {
-      file: null // Initialize file state to null
+      file: null,
+      imagesUrls: []
     };
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:3306/api/users-image')
+      .then((response) => {
+        // console.log(response.data);
+        const imageNames = response.data.map(image => image.publicUrl);
+        this.setState({ imagesUrls: imageNames }, () => {
+          console.log(this.state.imagesUrls);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  componentWillUnmount() {
+
   }
 
   handleFileChange = (e) => {
@@ -45,6 +63,9 @@ class Test extends Component {
           <Form.Control type="file" onChange={this.handleFileChange} />
           <Button variant="warning" type='submit'>Upload</Button>
         </Form>
+        {this.state.imagesUrls.map((image, index) => (
+          <img key={index} src={image} alt="" height={300} width={500}/>
+        ))}
       </div>
     );
   }

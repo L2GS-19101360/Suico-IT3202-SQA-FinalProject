@@ -2,12 +2,12 @@ const admin = require("firebase-admin");
 const serviceAccount = require("../../serviceAccountKey.json");
 
 try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
-  console.log("Firebase initialized successfully");
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase initialized successfully");
 } catch (error) {
-  console.error("Error initializing Firebase:", error);
+    console.error("Error initializing Firebase:", error);
 }
 
 const dbStorage = admin.storage();
@@ -21,9 +21,18 @@ const UserImage = {
 
             const filteredFiles = userFiles[0].filter(file => file.name !== 'UserImages/');
 
-            const files = filteredFiles.map(file => ({
-                name: file.name,
-                publicUrl: `https://storage.googleapis.com/suico-it3202-sqa-finalpr-b13ba.appspot.com/${file.name}`,
+            const files = await Promise.all(filteredFiles.map(async (file) => {
+                const token = await file.getSignedUrl({
+                    action: 'read',
+                    expires: '01-01-2100' // Set an expiration date far in the future
+                });
+
+                const publicUrl = `https://firebasestorage.googleapis.com/v0/b/suico-it3202-sqa-finalpr-b13ba.appspot.com/o/${encodeURIComponent(file.name)}?alt=media&token=${token}`;
+                
+                return {
+                    name: file.name,
+                    publicUrl: publicUrl,
+                };
             }));
 
             console.log("Fetched files from Storage:", files);
@@ -55,7 +64,14 @@ const UserImage = {
 
             stream.end(imageFile.buffer);
 
-            const publicUrl = `https://storage.googleapis.com/suico-it3202-sqa-finalpr-b13ba.appspot.com/${fileName}`;
+            // Construct the public URL with the desired format
+            const token = await file.getSignedUrl({
+                action: 'read',
+                expires: '01-01-2100' // Set an expiration date far in the future
+            });
+
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/suico-it3202-sqa-finalpr-b13ba.appspot.com/o/${encodeURIComponent(fileName)}?alt=media&token=${token}`;
+
             return publicUrl;
         } catch (error) {
             throw new Error(`Error storing image file: ${error.message}`);
