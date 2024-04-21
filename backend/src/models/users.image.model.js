@@ -34,7 +34,32 @@ const UserImage = {
     },
 
     storeImageFile: async (imageFile) => {
+        try {
+            const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");
+            const fileName = `UserImages/${imageFile.originalname}`; // Set the filename in Storage
 
+            const file = bucket.file(fileName);
+            const stream = file.createWriteStream({
+                metadata: {
+                    contentType: imageFile.mimetype
+                }
+            });
+
+            stream.on('error', (error) => {
+                throw error;
+            });
+
+            stream.on('finish', () => {
+                console.log('File uploaded successfully');
+            });
+
+            stream.end(imageFile.buffer);
+
+            const publicUrl = `https://storage.googleapis.com/suico-it3202-sqa-finalpr-b13ba.appspot.com/${fileName}`;
+            return publicUrl;
+        } catch (error) {
+            throw new Error(`Error storing image file: ${error.message}`);
+        }
     }
 }
 
