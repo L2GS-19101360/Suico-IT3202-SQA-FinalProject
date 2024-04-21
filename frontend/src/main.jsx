@@ -17,7 +17,7 @@ import Test from './Test.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div>
     <Router>
-      <Route exact path='/' component={Test} />
+      <Route exact path='/' component={App} />
       <Route path='/LoginPage' component={LoginPage} />
       <Route path='/RegisterPage' component={RegisterPage} />
 
