@@ -3,6 +3,19 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
+exports.getAllUsers = function(req, res) {
+    User.getAll(function(err, user) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(user);
+        res.send({
+            status: 200,
+            data: user
+        });
+    });
+}
+
 exports.update = function (req, res) {
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
         res.status(400).send({
