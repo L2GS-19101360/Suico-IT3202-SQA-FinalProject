@@ -22,8 +22,32 @@ const User = function (user) {
     this.updated = null;
 }
 
-User.getByRole = function(role, result) {
-    dbConnection.query("SELECT * FROM users WHERE role=?", role, function(err, res) {
+User.activateUser = function(id, result) {
+    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [1, new Date(), id], function(err, res) {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+        } else {
+            console.log("Update result:", res);
+            result(null, res);
+        }
+    });
+};
+
+User.deactivateUser = function(id, result) {
+    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [0, new Date(), id], function(err, res) {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+        } else {
+            console.log("Update result:", res);
+            result(null, res);
+        }
+    });
+};
+
+User.getByRole = function (role, result) {
+    dbConnection.query("SELECT * FROM users WHERE role=?", role, function (err, res) {
         if (err) {
             console.log(err);
             result(err, null);

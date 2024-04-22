@@ -3,6 +3,32 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
+exports.activateUser = function(req, res) {
+    const userId = req.params.id;
+
+    // Call the activateUser method on the User model
+    User.activateUser(userId, function(err, result) {
+        if (err) {
+            res.status(500).json({ error: true, message: "Failed to activate user" });
+        } else {
+            res.status(200).json({ error: false, message: "User activated successfully" });
+        }
+    });
+};
+
+exports.deactivateUser = function(req, res) {
+    const userId = req.params.id;
+
+    // Call the deactivateUser method on the User model
+    User.deactivateUser(userId, function(err, result) {
+        if (err) {
+            res.status(500).json({ error: true, message: "Failed to deactivate user" });
+        } else {
+            res.status(200).json({ error: false, message: "User deactivated successfully" });
+        }
+    });
+};
+
 exports.getAllUsers = function (req, res) {
     User.getAll(function (err, user) {
         if (err) {
@@ -16,12 +42,12 @@ exports.getAllUsers = function (req, res) {
     });
 }
 
-exports.getByRole = function(req, res) {
+exports.getByRole = function (req, res) {
     // Extract the role from the request parameters
     const role = req.params.input;
 
     // Call the getByRole method of the User model with the role
-    User.getByRole(role, function(err, users) {
+    User.getByRole(role, function (err, users) {
         if (err) {
             res.status(500).json({ status: 500, error: err });
         } else {
