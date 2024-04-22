@@ -22,8 +22,20 @@ const User = function (user) {
     this.updated = null;
 }
 
-User.getAll = function(result) {
-    dbConnection.query("SELECT * FROM users", function(err, res){
+User.getByRole = function(role, result) {
+    dbConnection.query("SELECT * FROM users WHERE role=?", role, function(err, res) {
+        if (err) {
+            console.log(err);
+            result(err, null);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+};
+
+User.getAll = function (result) {
+    dbConnection.query("SELECT * FROM users", function (err, res) {
         if (err) {
             console.log(err);
             result(null, err);

@@ -7,5 +7,6 @@ router.post('/login-user', userController.login);
 router.post('/logout-user', userController.logout);
 router.put('/update-user/:id', userController.update);
 router.get('/', userController.getAllUsers);
+router.get('/:input', userController.getByRole)
 
 module.exports = router;

@@ -3,8 +3,8 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
-exports.getAllUsers = function(req, res) {
-    User.getAll(function(err, user) {
+exports.getAllUsers = function (req, res) {
+    User.getAll(function (err, user) {
         if (err) {
             res.send(err);
         }
@@ -15,6 +15,20 @@ exports.getAllUsers = function(req, res) {
         });
     });
 }
+
+exports.getByRole = function(req, res) {
+    // Extract the role from the request parameters
+    const role = req.params.input;
+
+    // Call the getByRole method of the User model with the role
+    User.getByRole(role, function(err, users) {
+        if (err) {
+            res.status(500).json({ status: 500, error: err });
+        } else {
+            res.status(200).json({ status: 200, data: users });
+        }
+    });
+};
 
 exports.update = function (req, res) {
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
