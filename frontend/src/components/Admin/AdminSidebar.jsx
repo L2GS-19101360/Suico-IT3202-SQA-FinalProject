@@ -103,6 +103,7 @@ class AdminSidebar extends Component {
                             <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
                             <ul style={{ listStyle: "none" }}>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/AdminDashboard'>Admin Dashboard</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/ManageUsers'>Manage Users</Link></li>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/AdminProfile'>Admin Profile</Link></li>
                             </ul><br /><br />
                             <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>
