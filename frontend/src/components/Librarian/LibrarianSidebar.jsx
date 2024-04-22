@@ -15,6 +15,7 @@ class LibrarianSidebar extends Component {
             LAlastname: localStorage.getItem("lastname"),
             getAccessToken: localStorage.getItem("accessToken"),
             getRefreshToken: localStorage.getItem("refreshToken"),
+            imageFileName: localStorage.getItem('userImage'),
 
             show: false,
         }
@@ -80,7 +81,10 @@ class LibrarianSidebar extends Component {
 
         return (
             <div>
-                <img src={profileImage[0]} alt="" onClick={this.handleShow} style={{ cursor: "pointer" }} />
+                {this.state.imageFileName === "#%&{}>" ?
+                    <img src={profileImage[0]} alt="" onClick={this.handleShow} style={{ cursor: "pointer" }} /> :
+                    <img src={this.state.imageFileName} height={75} width={75} alt="" onClick={this.handleShow} style={{ cursor: "pointer" }} />
+                }
 
                 <Offcanvas show={this.state.show} onHide={this.handleClose} placement="end">
                     <Offcanvas.Header>
@@ -91,7 +95,10 @@ class LibrarianSidebar extends Component {
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <div>
-                            <img src={profileImage[1]} alt="" onClick={this.handleShow} /><br />
+                            {this.state.imageFileName === "#%&{}>" ?
+                                <img src={profileImage[1]} alt="" onClick={this.handleShow} /> :
+                                <img src={this.state.imageFileName} height={128} width={128} alt="" onClick={this.handleShow} />
+                            }<br />
                             <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
                             <ul style={{ listStyle: "none" }}>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/LibrarianDashboard'>Librarian Dashboard</Link></li>

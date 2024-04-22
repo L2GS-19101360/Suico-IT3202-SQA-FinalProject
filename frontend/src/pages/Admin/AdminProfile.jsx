@@ -164,15 +164,11 @@ class AdminProfile extends Component {
                         margin: "auto"
                     }}>
                         <Form>
-                            {this.state.profileImageUrl && (
-                                <img src={this.state.profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />
-                            )}
-                            {!this.state.profileImageUrl && this.state.imageFileName !== "#%&{}>" && (
-                                <img src={this.state.imageFileName} height={128} width={128} alt="" />
-                            )}
-                            {!this.state.profileImageUrl && !this.state.imageFileName && (
-                                <img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />
-                            )}
+                            {this.state.profileImageUrl ? 
+                                (<img src={this.state.profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />) : 
+                                (this.state.imageFileName !== "#%&{}>" ? 
+                                    (<img src={this.state.imageFileName} height={128} width={128} alt="" />) : 
+                                    (<img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />))}
 
                             <br /><br />
                             <Form.Control type="file" onChange={this.handleImageChange} />
