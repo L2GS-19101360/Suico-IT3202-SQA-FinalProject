@@ -42,6 +42,20 @@ exports.getAllUsers = function (req, res) {
     });
 }
 
+exports.getByStatus = function (req, res) {
+    // Extract the status from the request parameters
+    const status = req.params.input;
+
+    // Call the getByStatus method of the User model with the status
+    User.getByStatus(status, function (err, users) {
+        if (err) {
+            res.status(500).json({ status: 500, error: err });
+        } else {
+            res.status(200).json({ status: 200, data: users });
+        }
+    });
+};
+
 exports.getByRole = function (req, res) {
     // Extract the role from the request parameters
     const role = req.params.input;

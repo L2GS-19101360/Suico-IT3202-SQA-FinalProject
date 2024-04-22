@@ -54,7 +54,7 @@ class LoginPage extends Component {
         ]
 
         axios.post(
-           apiLink[0] , data
+            apiLink[0], data
         ).then(
             (response) => {
                 console.log(response.data.tokens.user);
@@ -70,12 +70,16 @@ class LoginPage extends Component {
                 localStorage.setItem('password', this.state.enterPassword);
                 localStorage.setItem('role', response.data.tokens.user.role)
 
-                if (response.data.tokens.user.role === "user") {
-                    this.props.history.push('/UserDashboard');
-                } else if (response.data.tokens.user.role === "librarian") {
-                    this.props.history.push('/LibrarianDashboard');
+                if (response.data.tokens.user.active_status == 1) {
+                    if (response.data.tokens.user.role === "user") {
+                        this.props.history.push('/UserDashboard');
+                    } else if (response.data.tokens.user.role === "librarian") {
+                        this.props.history.push('/LibrarianDashboard');
+                    } else {
+                        this.props.history.push('/AdminDashboard');
+                    }
                 } else {
-                    this.props.history.push('/AdminDashboard');
+                    console.log("User Deactivate")
                 }
             }
         ).catch(

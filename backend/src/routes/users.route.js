@@ -7,7 +7,8 @@ router.post('/login-user', userController.login);
 router.post('/logout-user', userController.logout);
 router.put('/update-user/:id', userController.update);
 router.get('/', userController.getAllUsers);
-router.get('/:input', userController.getByRole)
+router.get('/role/:input', userController.getByRole)
+router.get('/active-status/:input', userController.getByStatus)
 router.put('/deactivateUser/:id', userController.deactivateUser);
 router.put('/activateUser/:id', userController.activateUser);
 

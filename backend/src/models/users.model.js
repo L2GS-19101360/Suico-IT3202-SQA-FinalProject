@@ -46,6 +46,18 @@ User.deactivateUser = function(id, result) {
     });
 };
 
+User.getByStatus = function (status, result) {
+    dbConnection.query("SELECT * FROM users WHERE active_status=?", status, function (err, res) {
+        if (err) {
+            console.log(err);
+            result(err, null);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+};
+
 User.getByRole = function (role, result) {
     dbConnection.query("SELECT * FROM users WHERE role=?", role, function (err, res) {
         if (err) {
