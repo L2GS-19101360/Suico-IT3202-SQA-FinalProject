@@ -22,6 +22,18 @@ const User = function (user) {
     this.updated = null;
 }
 
+User.getAll = function(result) {
+    dbConnection.query("SELECT * FROM users", function(err, res){
+        if (err) {
+            console.log(err);
+            result(null, err);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
 User.update = function (id, user, result) {
     console.log("Updating User with ID:", id);
     console.log("User data:", user);
