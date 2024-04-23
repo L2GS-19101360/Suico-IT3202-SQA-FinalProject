@@ -13,6 +13,7 @@ import UserProfile from './pages/User/UserProfile.jsx'
 import LibrarianProfile from './pages/Librarian/LibrarianProfile.jsx'
 import AdminProfile from './pages/Admin/AdminProfile.jsx'
 import ManageUsers from './pages/Admin/ManageUsers.jsx'
+import ManageBooks from './pages/Admin/ManageBooks.jsx'
 import Test from './Test.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProtectedRoute path='/AdminDashboard' component={AdminDashboard} role='admin'/>
       <ProtectedRoute path='/AdminProfile' component={AdminProfile} role='admin'/>
       <ProtectedRoute path='/ManageUsers' component={ManageUsers} role='admin'/>
+      <ProtectedRoute path='/ManageBooks' component={ManageBooks} role='admin'/>
 
       <ProtectedRoute path='/LibrarianDashboard' component={LibrarianDashboard} role='librarian'/>
       <ProtectedRoute path='/LibrarianProfile' component={LibrarianProfile} role='librarian'/>
