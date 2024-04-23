@@ -11,5 +11,6 @@ router.get('/role/:input', userController.getByRole)
 router.get('/active-status/:input', userController.getByStatus)
 router.put('/deactivateUser/:id', userController.deactivateUser);
 router.put('/activateUser/:id', userController.activateUser);
+router.get('/find-user/:input', userController.findUserByInput);
 
 module.exports = router;

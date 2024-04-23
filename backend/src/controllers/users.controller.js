@@ -3,6 +3,18 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
+exports.findUserByInput = function(req, res) {
+    const searchInput = req.params.input;
+
+    User.findUserByInput(searchInput, function(err, user) {
+        if (err) {
+            res.status(500).json({ error: "Internal server error" });
+        } else {
+            res.status(200).json({ data: user });
+        }
+    });
+};
+
 exports.activateUser = function(req, res) {
     const userId = req.params.id;
 

@@ -22,6 +22,17 @@ const User = function (user) {
     this.updated = null;
 }
 
+User.findUserByInput = function(input, result) {
+    dbConnection.query("SELECT * FROM users WHERE firstname=? OR lastname=? OR email=?", [input, input, input], function(err, res) {
+        if (err) {
+            console.error("Database error:", err);
+            result("Internal server error", null);
+        } else {
+            result(null, res);
+        }
+    });
+};
+
 User.activateUser = function(id, result) {
     dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [1, new Date(), id], function(err, res) {
         if (err) {
