@@ -14,11 +14,14 @@ class ManageUsers extends Component {
         super(props);
         this.getAllUsers = this.getAllUsers.bind(this);
         this.deactivateUser = this.deactivateUser.bind(this);
+        this.searchUser = this.searchUser.bind(this)
         this.state = {
             selectedUserOption: "all",
             selectedStatusOption: "all",
 
-            users: []
+            users: [],
+
+            searchInput: ""
         }
     }
 
@@ -177,6 +180,37 @@ class ManageUsers extends Component {
         );
     }
 
+    searchUser = (e) => {
+        e.preventDefault();
+    
+        const { searchInput, selectedUserOption } = this.state;
+        const searchQuery = searchInput.trim(); // Remove extra whitespace
+    
+        console.log("Search Query:", searchQuery);
+    
+        if (searchQuery === "") {
+            // If search query is empty, reset to display all users and clear the search input
+            console.log("Empty search query, displaying all users");
+            this.setState({ searchInput: "" }, () => {
+                this.getAllUsers(selectedUserOption); // Reload all users
+                window.location.reload(); // Reload the page
+            });
+        } else {
+            // Filter users based on search query
+            const filteredUsers = this.state.users.filter(user =>
+                user.firstname.includes(searchQuery) ||
+                user.lastname.includes(searchQuery) ||
+                user.email.includes(searchQuery)
+            );
+    
+            console.log("Filtered Users:", filteredUsers);
+    
+            // Update state with filtered users
+            this.setState({ users: filteredUsers });
+        }
+    };
+
+
     handleOptionStatusSelect = (option) => {
         const statusValue = option === "active" ? "1" : "0";
         this.setState({ selectedStatusOption: option }, () => {
@@ -196,15 +230,17 @@ class ManageUsers extends Component {
         return (
             <div>
                 <AdminNavbar />
+                <h1>Manage User Page</h1>
                 <div style={{ textAlign: "center" }}>
-                    <h1>Manage User Page</h1>
                     <div style={{ padding: "1%" }}>
                         <Form>
                             <InputGroup className="mb-3">
                                 <Form.Control
                                     placeholder="Enter User Information"
+                                    value={this.state.searchInput}
+                                    onChange={(e) => { this.setState({ searchInput: e.target.value }) }}
                                 />
-                                <Button variant="secondary" id="button-addon2">
+                                <Button variant="secondary" id="button-addon2" type='submit' onClick={this.searchUser}>
                                     <FaSearch />
                                 </Button>
                             </InputGroup>
@@ -221,7 +257,7 @@ class ManageUsers extends Component {
                                         <Dropdown.Item onClick={() => this.handleOptionUserSelect("librarian")}>librarian</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
-                                &nbsp;&nbsp;&nbsp;
+                                {/* &nbsp;&nbsp;&nbsp;
                                 <Dropdown>
                                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                                         {selectedStatusOption}
@@ -232,7 +268,7 @@ class ManageUsers extends Component {
                                         <Dropdown.Item onClick={() => this.handleOptionStatusSelect("active")}>active</Dropdown.Item>
                                         <Dropdown.Item onClick={() => this.handleOptionStatusSelect("inactive")}>inactive</Dropdown.Item>
                                     </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </div>
                         </Form>
                     </div>
