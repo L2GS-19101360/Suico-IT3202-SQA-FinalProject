@@ -19,6 +19,9 @@ app.use('/api/users', userRoutes);
 const UserImageRoutes = require('./src/routes/users.image.route');
 app.use('/api/users-image', UserImageRoutes);
 
+const BookImageRoutes = require('./src/routes/books.image.route');
+app.use('/api/book-image', BookImageRoutes);
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
