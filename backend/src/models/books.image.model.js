@@ -13,7 +13,9 @@ try {
 const dbStorage = admin.storage();
 
 const BookImage = {
-
+    getAllFiles: async () => {
+        
+    }
 }
 
 module.exports = BookImage
