@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { BookImageController, upload } = require('../controllers/books.image.controller')
 
-router.get('/', BookImageController.getAllFiles);
+router.post('/', upload.single('file'), BookImageController.storeFile)
 
 module.exports = router

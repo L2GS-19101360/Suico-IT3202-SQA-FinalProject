@@ -22,6 +22,9 @@ app.use('/api/users-image', UserImageRoutes);
 const BookImageRoutes = require('./src/routes/books.image.route');
 app.use('/api/book-image', BookImageRoutes);
 
+const BookContentRoutes = require('./src/routes/books.content.route');
+app.use('/api/book-content', BookContentRoutes)
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });

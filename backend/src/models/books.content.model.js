@@ -13,16 +13,16 @@ if (!admin.apps.length) {
 
 const dbStorage = admin.storage();
 
-const BookImage = {
-    storeImageFile: async (imageFile) => {
+const BookContent = {
+    storePdfFile: async (pdfFile) => { // Rename method to storePdfFile
         try {
             const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");
-            const fileName = `BookImages/${imageFile.originalname}`; // Set the filename in Storage
+            const fileName = `BookContents/${pdfFile.originalname}`; // Set the filename in Storage
 
             const file = bucket.file(fileName);
             const stream = file.createWriteStream({
                 metadata: {
-                    contentType: imageFile.mimetype
+                    contentType: 'application/pdf' // Set content type to PDF
                 }
             });
 
@@ -34,7 +34,7 @@ const BookImage = {
                 console.log('File uploaded successfully');
             });
 
-            stream.end(imageFile.buffer);
+            stream.end(pdfFile.buffer);
 
             // Construct the public URL with the desired format
             const token = await file.getSignedUrl({
@@ -46,9 +46,9 @@ const BookImage = {
 
             return publicUrl;
         } catch (error) {
-            throw new Error(`Error storing image file: ${error.message}`);
+            throw new Error(`Error storing PDF file: ${error.message}`);
         }
     }
 }
 
-module.exports = BookImage
+module.exports = BookContent;
