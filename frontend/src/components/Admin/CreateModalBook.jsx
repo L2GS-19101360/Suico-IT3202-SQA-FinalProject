@@ -1,5 +1,5 @@
 import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal } from 'react-bootstrap'
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import AdminSidebar from '../../components/Admin/AdminSidebar'
@@ -18,6 +18,7 @@ class CreateModalBook extends Component {
         this.storeBook = this.storeBook.bind(this);
         this.state = {
             show: false,
+            loading: false,
 
             bookImageUrl: null,
             bookImageFile: null,
@@ -77,9 +78,10 @@ class CreateModalBook extends Component {
 
     storeBook = async (event) => {
         event.preventDefault();
+        this.setState({ loading: true }); // Set loading to true when saving starts
 
         const selectedImageFile = this.state.bookImageFile;
-        const selectedImageContent = this.state.bookContentFile
+        const selectedImageContent = this.state.bookContentFile;
         const apiLinks = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
             'http://localhost:3306/api/book-image',
@@ -115,7 +117,7 @@ class CreateModalBook extends Component {
                             console.log('File uploaded successfully:', response.data);
                             console.log('Public URL:', response.data.pdfUrl);
 
-                            this.setState({ bookContentURL: response.data.pdfUrl }, () => {
+                            this.setState({ bookContentURL: response.data.pdfUrl }, async () => {
                                 console.log('Book Image URL:', this.state.bookImageURL);
                                 console.log('Book Title:', this.state.bookTitle);
                                 console.log('Author Name:', this.state.authorName);
@@ -128,30 +130,28 @@ class CreateModalBook extends Component {
                                     author: this.state.authorName,
                                     genre: this.state.selectedGenre,
                                     content: this.state.bookContentURL
+                                };
+
+                                try {
+                                    const response = await axios.post(apiLinks[4], data);
+                                    console.log(response);
+                                    this.setState({ loading: false }); // Set loading to false when saving finishes
+                                    window.location.reload();
+                                } catch (error) {
+                                    console.log(error);
+                                    this.setState({ loading: false }); // Set loading to false in case of error
                                 }
-
-                                axios.post(
-                                    apiLinks[4], data
-                                ).then(
-                                    (response) => {
-                                        console.log(response);
-
-                                        window.location.reload();
-                                    }
-                                ).catch(
-                                    (error) => {
-                                        console.log(error);
-                                    }
-                                );
                             });
                         } catch (error) {
                             console.error('Error uploading file:', error);
+                            this.setState({ loading: false }); // Set loading to false in case of error
                         }
                     }
                 });
 
             } catch (error) {
                 console.error('Error uploading file:', error);
+                this.setState({ loading: false }); // Set loading to false in case of error
             }
         }
     };
@@ -194,7 +194,7 @@ class CreateModalBook extends Component {
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {this.state.selectedGenre}
                                         </Dropdown.Toggle>
-                                        
+
                                         <Dropdown.Menu>
                                             <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Historical Fiction" })}>Historical Fiction</Dropdown.Item>
                                             <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Crime and Mystery" })}>Crime and Mystery</Dropdown.Item>
@@ -210,7 +210,13 @@ class CreateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
-                                    <Button variant="success" onClick={this.storeBook} type='submit' style={{ marginTop: "10px" }}>Store Book</Button>
+                                    <Button variant="success" onClick={this.storeBook} disabled={this.state.loading}>
+                                        {this.state.loading ? (
+                                            <Spinner animation="border" size="sm" />
+                                        ) : (
+                                            'Store Book'
+                                        )}
+                                    </Button>
                                 </div>
                             </div>
                         </Form>
