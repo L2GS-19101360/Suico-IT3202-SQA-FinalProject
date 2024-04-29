@@ -212,7 +212,7 @@ class CreateModalBook extends Component {
                                     </Form.Group>
                                     <Button variant="success" onClick={this.storeBook} disabled={this.state.loading}>
                                         {this.state.loading ? (
-                                            <Spinner animation="border" size="sm" />
+                                            <Spinner animation="border" />
                                         ) : (
                                             'Store Book'
                                         )}
