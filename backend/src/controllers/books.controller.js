@@ -1,6 +1,19 @@
 'use strict';
 const Book = require('../models/books.model');
 
+exports.getAllBooks = function(req, res) {
+    Book.getAllBooks(function(err, book) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(book);
+        res.send({
+            status: 200,
+            data: book
+        });
+    });
+}
+
 exports.create = function(req, res) {
     const new_book = new Book(req.body);
 
