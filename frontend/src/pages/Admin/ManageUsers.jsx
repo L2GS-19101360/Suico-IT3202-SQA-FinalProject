@@ -1,12 +1,12 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap'
-import webName from '../../assets/website name.jpg'
-import ClockComponent from '../../components/ClockComponent'
-import AdminSidebar from '../../components/Admin/AdminSidebar'
-import AdminNavbar from '../../components/Admin/AdminNavbar'
-import { withRouter } from 'react-router-dom'
-import { FaSearch, FaLock, FaUnlockAlt } from 'react-icons/fa'
-import axios from 'axios'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap';
+import webName from '../../assets/website name.jpg';
+import ClockComponent from '../../components/ClockComponent';
+import AdminSidebar from '../../components/Admin/AdminSidebar';
+import AdminNavbar from '../../components/Admin/AdminNavbar';
+import { withRouter } from 'react-router-dom';
+import { FaSearch, FaLock, FaUnlockAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 class ManageUsers extends Component {
 
@@ -14,13 +14,11 @@ class ManageUsers extends Component {
         super(props);
         this.getAllUsers = this.getAllUsers.bind(this);
         this.deactivateUser = this.deactivateUser.bind(this);
-        this.searchUser = this.searchUser.bind(this)
+        this.searchUser = this.searchUser.bind(this);
         this.state = {
             selectedUserOption: "all",
             selectedStatusOption: "all",
-
             users: [],
-
             searchInput: ""
         }
     }
@@ -28,13 +26,8 @@ class ManageUsers extends Component {
     componentDidMount() {
         this.getAllUsers(this.state.selectedUserOption);
     }
-    componentWillUnmount() {
-
-    }
 
     getAllUsers(selectedUserOption) {
-        console.log(selectedUserOption);
-
         const apiLinks = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/',
             'http://localhost:3306/api/users/',
@@ -42,174 +35,85 @@ class ManageUsers extends Component {
             `http://localhost:3306/api/users/role/${selectedUserOption}`,
             `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/active-status/${selectedUserOption}`,
             `http://localhost:3306/api/users/active-status/${selectedUserOption}`
-        ]
+        ];
 
         if (selectedUserOption === "all") {
-            axios.get(
-                apiLinks[0]
-            ).then(
-                (response) => {
-                    // console.log(response.data)
-                    this.setState({ users: response.data.data }, () => {
-                        console.log(this.state.users)
-                    });
-                }
-            ).catch(
-                (error) => {
-                    console.log(error)
-                }
-            );
-        } else if (selectedUserOption === "user") {
-            axios.get(
-                apiLinks[2]
-            ).then(
-                (response) => {
-                    // console.log(response.data)
-                    this.setState({ users: response.data.data }, () => {
-                        console.log(this.state.users)
-                    });
-                }
-            ).catch(
-                (error) => {
-                    console.log(error)
-                }
-            );
-        } else if (selectedUserOption === "librarian") {
-            axios.get(
-                apiLinks[2]
-            ).then(
-                (response) => {
-                    // console.log(response.data)
-                    this.setState({ users: response.data.data }, () => {
-                        console.log(this.state.users)
-                    });
-                }
-            ).catch(
-                (error) => {
-                    console.log(error)
-                }
-            );
-        } else if (selectedUserOption === "1") {
-            axios.get(
-                apiLinks[4]
-            ).then(
-                (response) => {
-                    // console.log(response.data)
-                    this.setState({ users: response.data.data }, () => {
-                        console.log(this.state.users)
-                    });
-                }
-            ).catch(
-                (error) => {
-                    console.log(error)
-                }
-            );
+            axios.get(apiLinks[0])
+                .then(response => {
+                    this.setState({ users: response.data.data });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        } else if (selectedUserOption === "user" || selectedUserOption === "librarian") {
+            axios.get(apiLinks[2])
+                .then(response => {
+                    this.setState({ users: response.data.data });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         } else {
-            axios.get(
-                apiLinks[4]
-            ).then(
-                (response) => {
-                    // console.log(response.data)
-                    this.setState({ users: response.data.data }, () => {
-                        console.log(this.state.users)
-                    });
-                }
-            ).catch(
-                (error) => {
-                    console.log(error)
-                }
-            );
+            axios.get(apiLinks[4])
+                .then(response => {
+                    this.setState({ users: response.data.data });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
     }
 
     activateUser = (userId) => {
-        event.preventDefault();
-
-        console.log(userId)
-
         const apiLinks = [
             `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/activateUser/${userId}`,
             `http://localhost:3306/api/users/activateUser/${userId}`,
-        ]
+        ];
 
-        const data = {
-            active_status: 1
-        }
+        const data = { active_status: 1 };
 
-        axios.put(
-            apiLinks[0], data
-        ).then(
-            (response) => {
-                console.log(response)
-
-                this.getAllUsers(this.state.selectedUserOption)
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+        axios.put(apiLinks[0], data)
+            .then(response => {
+                this.getAllUsers(this.state.selectedUserOption);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     deactivateUser = (userId) => {
-        event.preventDefault();
-
-        console.log(userId)
-
         const apiLinks = [
             `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/deactivateUser/${userId}`,
             `http://localhost:3306/api/users/deactivateUser/${userId}`,
-        ]
+        ];
 
-        const data = {
-            active_status: 0
-        }
+        const data = { active_status: 0 };
 
-        axios.put(
-            apiLinks[0], data
-        ).then(
-            (response) => {
-                console.log(response)
-
-                this.getAllUsers(this.state.selectedUserOption)
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+        axios.put(apiLinks[0], data)
+            .then(response => {
+                this.getAllUsers(this.state.selectedUserOption);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
-    searchUser = (e) => {
-        e.preventDefault();
-    
-        const { searchInput, selectedUserOption } = this.state;
-        const searchQuery = searchInput.trim(); // Remove extra whitespace
-    
-        console.log("Search Query:", searchQuery);
-    
+    searchUser = () => {
+        const { searchInput, users } = this.state;
+        const searchQuery = searchInput.trim();
+
         if (searchQuery === "") {
-            // If search query is empty, reset to display all users and clear the search input
-            console.log("Empty search query, displaying all users");
-            this.setState({ searchInput: "" }, () => {
-                this.getAllUsers(selectedUserOption); // Reload all users
-                window.location.reload(); // Reload the page
-            });
+            this.getAllUsers(this.state.selectedUserOption);
         } else {
-            // Filter users based on search query
-            const filteredUsers = this.state.users.filter(user =>
-                user.firstname.includes(searchQuery) ||
-                user.lastname.includes(searchQuery) ||
-                user.email.includes(searchQuery)
+            const filteredUsers = users.filter(user =>
+                user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchQuery.toLowerCase())
             );
-    
-            console.log("Filtered Users:", filteredUsers);
-    
-            // Update state with filtered users
+
             this.setState({ users: filteredUsers });
         }
     };
-
 
     handleOptionStatusSelect = (option) => {
         const statusValue = option === "active" ? "1" : "0";
@@ -225,7 +129,7 @@ class ManageUsers extends Component {
     };
 
     render() {
-        const { selectedUserOption, users, selectedStatusOption } = this.state;
+        const { selectedUserOption, users } = this.state;
 
         return (
             <div>
@@ -238,11 +142,8 @@ class ManageUsers extends Component {
                                 <Form.Control
                                     placeholder="Enter User Information"
                                     value={this.state.searchInput}
-                                    onChange={(e) => { this.setState({ searchInput: e.target.value }) }}
+                                    onChange={(e) => { this.setState({ searchInput: e.target.value }, this.searchUser) }}
                                 />
-                                <Button variant="secondary" id="button-addon2" type='submit' onClick={this.searchUser}>
-                                    <FaSearch />
-                                </Button>
                             </InputGroup>
 
                             <div style={{ display: "inline-flex" }}>
@@ -257,23 +158,11 @@ class ManageUsers extends Component {
                                         <Dropdown.Item onClick={() => this.handleOptionUserSelect("librarian")}>librarian</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
-                                {/* &nbsp;&nbsp;&nbsp;
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                        {selectedStatusOption}
-                                    </Dropdown.Toggle>
-
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => this.handleOptionStatusSelect("all")}>all</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => this.handleOptionStatusSelect("active")}>active</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => this.handleOptionStatusSelect("inactive")}>inactive</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown> */}
                             </div>
                         </Form>
                     </div>
                 </div>
-                <div style={{ textAlign: "center" }}>
+                <div style={{ textAlign: "center", height: "600px", overflowY: "auto" }}>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -287,7 +176,7 @@ class ManageUsers extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.filter((user) => user.role !== "admin").map(user => (
+                            {users.filter(user => user.role !== "admin").map(user => (
                                 <tr key={user.id}>
                                     <td>
                                         {user.image !== "#%&{}>" ? <img src={user.image} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=random&size=75`} alt="" />}
@@ -317,4 +206,4 @@ class ManageUsers extends Component {
 
 }
 
-export default withRouter(ManageUsers)
+export default withRouter(ManageUsers);
