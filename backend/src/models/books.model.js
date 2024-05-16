@@ -1,7 +1,7 @@
 'use strict'
 const dbConnection = require('../../config/db.config');
 
-const Book = function(book) {
+const Book = function (book) {
     this.image = book.image;
     this.name = book.name;
     this.author = book.author;
@@ -11,8 +11,20 @@ const Book = function(book) {
     this.updated = null;
 }
 
-Book.getAllBooks = function(result) {
-    dbConnection.query("SELECT * FROM books", function(err, res) {
+Book.getByGenre = function (genre, result) {
+    dbConnection.query("SELECT * FROM books WHERE genre=?", genre, function (err, res) {
+        if (err) {
+            console.log(err);
+            result(err, null);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
+Book.getAllBooks = function (result) {
+    dbConnection.query("SELECT * FROM books", function (err, res) {
         if (err) {
             console.log(err);
             result(null, err);
@@ -23,8 +35,8 @@ Book.getAllBooks = function(result) {
     });
 }
 
-Book.create = function(newBook, result) {
-    dbConnection.query("INSERT INTO books set ?", newBook, function(err, res) {
+Book.create = function (newBook, result) {
+    dbConnection.query("INSERT INTO books set ?", newBook, function (err, res) {
         if (err) {
             console.log(err);
             result(err, null);
