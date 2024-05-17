@@ -1,16 +1,15 @@
-import { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap';
-import AdminNavbar from '../../components/Admin/AdminNavbar';
+import React, { Component } from 'react';
+import { Container, Form, InputGroup, Dropdown, Table, Button } from 'react-bootstrap';
 import { FaBookOpen, FaSync, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
-import CreateModalBook from '../../components/Admin/CreateModalBook';
 import { withRouter } from 'react-router-dom';
+import AdminNavbar from '../../components/Admin/AdminNavbar';
+import CreateModalBook from '../../components/Admin/CreateModalBook';
 
 class ManageBooks extends Component {
     constructor(props) {
         super(props);
-        this.getAllBooks = this.getAllBooks.bind(this);
-        this.searchBook = this.searchBook.bind(this);
+        this.deleteBooks = this.deleteBooks.bind(this);
         this.state = {
             books: [],
             searchInput: "",
@@ -20,16 +19,20 @@ class ManageBooks extends Component {
     }
 
     componentDidMount() {
-        this.getAllBooks();
+        this.getAllBooks(this.state.selectBookGenreOption);
     }
 
-    getAllBooks() {
+    getAllBooks = (selectBookGenreOption) => {
         const apiLinks = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/',
-            'http://localhost:3306/api/books/'
+            'http://localhost:3306/api/books/',
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/genre/${selectBookGenreOption}`,
+            `http://localhost:3306/api/books/genre/${selectBookGenreOption}`
         ];
 
-        axios.get(apiLinks[0])
+        const apiUrl = selectBookGenreOption === "All" ? apiLinks[0] : apiLinks[2];
+
+        axios.get(apiUrl)
             .then(response => {
                 this.setState({
                     books: response.data.data,
@@ -41,7 +44,7 @@ class ManageBooks extends Component {
             });
     }
 
-    searchBook(event) {
+    searchBook = (event) => {
         const searchInput = event.target.value;
         this.setState({ searchInput }, () => {
             const searchQuery = searchInput.toLowerCase();
@@ -63,6 +66,12 @@ class ManageBooks extends Component {
             this.getAllBooks(option);
         });
     };
+
+    deleteBooks = (id, bookimage, bookcontent) => {
+        console.log(id)
+        console.log(bookimage)
+        console.log(bookcontent)
+    }
 
     render() {
         const { selectBookGenreOption } = this.state
@@ -125,7 +134,7 @@ class ManageBooks extends Component {
                                             </a>
                                         </td>
                                         <td><Button variant="warning"><FaSync /></Button></td>
-                                        <td><Button variant="danger"><FaTrash /></Button></td>
+                                        <td><Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image, book.content)}><FaTrash /></Button></td>
                                     </tr>
                                 ))}
                             </tbody>
