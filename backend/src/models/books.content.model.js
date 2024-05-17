@@ -14,6 +14,16 @@ if (!admin.apps.length) {
 const dbStorage = admin.storage();
 
 const BookContent = {
+    deletePdfFile: async (pdfName) => {
+        try {
+            const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");
+            const file = bucket.file(`BookContents/${pdfName}`);
+            await file.delete();
+            console.log(`PDF ${pdfName} deleted successfully.`);
+        } catch (error) {
+            throw new Error(`Error deleting PDF file: ${error.message}`);
+        }
+    },
     storePdfFile: async (pdfFile) => { // Rename method to storePdfFile
         try {
             const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");

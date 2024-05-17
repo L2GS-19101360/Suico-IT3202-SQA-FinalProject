@@ -14,6 +14,16 @@ if (!admin.apps.length) {
 const dbStorage = admin.storage();
 
 const BookImage = {
+    deleteImageFile: async (imageName) => {
+        try {
+            const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");
+            const file = bucket.file(`BookImages/${imageName}`);
+            await file.delete();
+            console.log(`Image ${imageName} deleted successfully.`);
+        } catch (error) {
+            throw new Error(`Error deleting image file: ${error.message}`);
+        }
+    },
     storeImageFile: async (imageFile) => {
         try {
             const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");

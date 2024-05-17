@@ -4,6 +4,16 @@ const BookImage = require('../models/books.image.model')
 const upload = multer();
 
 const BookImageController = {
+    deleteFile: async (req, res) => {
+        try {
+            const imageName = req.params.imageName;
+            await BookImage.deleteImageFile(imageName);
+            res.status(200).json({ message: `Image ${imageName} deleted successfully` });
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            res.status(500).json({ error: error.message });
+        }
+    },
     storeFile: async (req, res) => {
         try {
             if (!req.file) {

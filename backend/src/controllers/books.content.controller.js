@@ -4,6 +4,16 @@ const BookContent = require('../models/books.content.model')
 const upload = multer();
 
 const BookContentController = {
+    deletePdf: async (req, res) => {
+        try {
+            const pdfName = req.params.pdfName;
+            await BookContent.deletePdfFile(pdfName);
+            res.status(200).json({ message: `PDF ${pdfName} deleted successfully` });
+        } catch (error) {
+            console.error('Error deleting PDF:', error);
+            res.status(500).json({ error: error.message });
+        }
+    },
     storePdf: async (req, res) => { // Rename method to storePdf
         try {
             if (!req.file) {
