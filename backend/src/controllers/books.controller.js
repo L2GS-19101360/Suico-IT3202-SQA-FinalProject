@@ -1,6 +1,21 @@
 'use strict';
 const Book = require('../models/books.model');
 
+exports.deleteBook = function (req, res) {
+    const bookId = req.params.id;
+
+    Book.deleteBook(bookId, function (err, book) {
+        if (err) {
+            res.send(err);
+        }
+        res.json({
+            error: false,
+            status: 200,
+            message: "Book Delete!"
+        });
+    });
+}
+
 exports.getByGenre = function (req, res) {
     const genre = req.params.input;
 

@@ -13,6 +13,18 @@ const Book = function (book) {
     this.updated = null;
 }
 
+Book.deleteBook = function (id, result) {
+    dbConnection.query("DELETE FROM books WHERE id=?", [id], function (err, res) {
+        if (err) {
+            console.log(err);
+            result(null, err);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
 Book.getByGenre = function (genre, result) {
     dbConnection.query("SELECT * FROM books WHERE genre=?", genre, function (err, res) {
         if (err) {
