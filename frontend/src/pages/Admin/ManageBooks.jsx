@@ -5,16 +5,22 @@ import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import AdminNavbar from '../../components/Admin/AdminNavbar';
 import CreateModalBook from '../../components/Admin/CreateModalBook';
+import UpdateModalBook from '../../components/Admin/UpdateModalBook';
 
 class ManageBooks extends Component {
     constructor(props) {
         super(props);
         this.deleteBooks = this.deleteBooks.bind(this);
+        this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
         this.state = {
             books: [],
             searchInput: "",
             selectBookGenreOption: "All",
-            filteredBooks: []
+            filteredBooks: [],
+
+            showModal: false,
+            selectedBook: null
         };
     }
 
@@ -71,10 +77,56 @@ class ManageBooks extends Component {
         console.log(id)
         console.log(bookimage)
         console.log(bookcontent)
+
+        const apiLinks = [
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${id}`,
+            `http://localhost:3306/api/books/${id}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${bookimage}`,
+            `http://localhost:3306/api/book-image/${bookimage}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${bookcontent}`,
+            `http://localhost:3306/api/book-content/${bookcontent}`,
+        ]
+
+        axios.delete(apiLinks[2]).then(
+            (response) => {
+                console.log(response)
+                axios.delete(apiLinks[4]).then(
+                    (response) => {
+                        console.log(response)
+                        axios.delete(apiLinks[0]).then(
+                            (response) => {
+                                console.log(response)
+                                window.location.reload();
+                            }
+                        ).catch(
+                            (error) => {
+                                console.log(error)
+                            }
+                        )
+                    }
+                ).catch(
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+            }
+        ).catch(
+            (error) => {
+                console.log(error)
+            }
+        )
+    }
+
+    openModal = (book) => {
+        this.setState({ showModal: true, selectedBook: book });
+    }
+
+    closeModal = () => {
+        this.setState({ showModal: false, selectedBook: null });
     }
 
     render() {
-        const { selectBookGenreOption } = this.state
+        const { selectBookGenreOption, showModal, selectedBook } = this.state
 
         return (
             <div>
@@ -133,14 +185,26 @@ class ManageBooks extends Component {
                                                 <Button variant="primary"><FaBookOpen /></Button>
                                             </a>
                                         </td>
-                                        <td><Button variant="warning"><FaSync /></Button></td>
-                                        <td><Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image, book.content)}><FaTrash /></Button></td>
+                                        <td>
+                                            <Button variant="warning" onClick={() => this.openModal(book)}>
+                                                <FaSync />
+                                            </Button>
+                                        </td>
+                                        <td><Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}><FaTrash /></Button></td>
                                     </tr>
                                 ))}
                             </tbody>
                         </Table>
                     </div>
                 </div>
+
+                {selectedBook && (
+                    <UpdateModalBook
+                        show={showModal}
+                        handleClose={this.closeModal}
+                        book={selectedBook}
+                    />
+                )}
             </div>
         );
     }
