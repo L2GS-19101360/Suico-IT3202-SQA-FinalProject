@@ -2,10 +2,12 @@
 const dbConnection = require('../../config/db.config');
 
 const Book = function (book) {
+    this.image_filename = book.image_filename;
     this.image = book.image;
     this.name = book.name;
     this.author = book.author;
     this.genre = book.genre;
+    this.content_filename = book.content_filename;
     this.content = book.content;
     this.created = new Date();
     this.updated = null;

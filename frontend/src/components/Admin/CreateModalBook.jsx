@@ -22,9 +22,11 @@ class CreateModalBook extends Component {
 
             bookImageUrl: null,
             bookImageFile: null,
+            bookImageFileName: "",
 
             bookContentUrl: null,
             bookContentFile: null,
+            bookContentFileName: "",
 
             bookImageURL: "",
             bookTitle: "",
@@ -55,7 +57,8 @@ class CreateModalBook extends Component {
             const fileName = file.name;
             this.setState({
                 bookImageUrl: URL.createObjectURL(file) || null, // Reset to null when new image selected
-                bookImageFile: file
+                bookImageFile: file,
+                bookImageFileName: fileName
             });
         }
     }
@@ -68,7 +71,8 @@ class CreateModalBook extends Component {
             if (file.type === 'application/pdf') {
                 this.setState({
                     bookContentUrl: URL.createObjectURL(file),
-                    bookContentFile: file
+                    bookContentFile: file,
+                    bookContentFileName: fileName
                 });
             } else {
                 alert('Please select a PDF file.');
@@ -119,16 +123,20 @@ class CreateModalBook extends Component {
 
                             this.setState({ bookContentURL: response.data.pdfUrl }, async () => {
                                 console.log('Book Image URL:', this.state.bookImageURL);
+                                console.log('Book Image Name:', this.state.bookImageFileName);
                                 console.log('Book Title:', this.state.bookTitle);
                                 console.log('Author Name:', this.state.authorName);
                                 console.log('Selected Genre:', this.state.selectedGenre);
+                                console.log('Book Content Name:', this.state.bookContentFileName);
                                 console.log('Book Content URL:', this.state.bookContentURL);
 
                                 const data = {
+                                    image_filename: this.state.bookImageFileName,
                                     image: this.state.bookImageURL,
                                     name: this.state.bookTitle,
                                     author: this.state.authorName,
                                     genre: this.state.selectedGenre,
+                                    content_filename: this.state.bookContentFileName,
                                     content: this.state.bookContentURL
                                 };
 
