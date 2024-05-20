@@ -13,6 +13,21 @@ const Book = function (book) {
     this.updated = null;
 }
 
+Book.update = function (id, book, result) {
+    const query = "UPDATE books SET image_filename=?, image=?, name=?, author=?, genre=?, content_filename=?, content=?, updated=? WHERE id=?";
+    const values = [book.image_filename, book.image, book.name, book.author, book.genre, book.content_filename, book.content, new Date(), id];
+
+    dbConnection.query(query, values, function (err, res) {
+        if (err) {
+            console.log(err);
+            result(err, null); // Note the order: err first, then result
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
 Book.deleteBook = function (id, result) {
     dbConnection.query("DELETE FROM books WHERE id=?", [id], function (err, res) {
         if (err) {

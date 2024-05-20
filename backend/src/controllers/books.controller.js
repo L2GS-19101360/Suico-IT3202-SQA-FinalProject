@@ -1,6 +1,29 @@
 'use strict';
 const Book = require('../models/books.model');
 
+exports.update = function(req, res) {
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        return res.status(400).send({
+            error: true,
+            message: "Please provide all required fields"
+        });
+    }
+
+    const book = new Book(req.body);
+    Book.update(req.params.id, book, function(err, result) {
+        if (err) {
+            return res.status(500).send(err); // Send error response with status 500
+        }
+
+        res.json({
+            error: false,
+            status: 200,
+            message: "Book updated successfully",
+            data: result
+        });
+    });
+}
+
 exports.deleteBook = function (req, res) {
     const bookId = req.params.id;
 
