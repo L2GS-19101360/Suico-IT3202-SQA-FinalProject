@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner } from 'react-bootstrap';
 import { FaBook } from 'react-icons/fa';
+import axios from 'axios';
 
 class UpdateModalBook extends Component {
     constructor(props) {
         super(props);
         this.handleImageChange = this.handleImageChange.bind(this);
+        this.handleContentChange = this.handleContentChange.bind(this);
+        this.updateBook = this.updateBook.bind(this);
         this.state = {
             loading: false,
 
@@ -17,9 +20,14 @@ class UpdateModalBook extends Component {
             bookContentFile: null,
             bookContentFileName: "",
 
+            selectedBookId: props.book.id,
+
             selectedGenre: props.book.genre,
             bookTitle: props.book.name,
             authorName: props.book.author,
+
+            oldImageFileName: props.book.image_filename,
+            oldContentFileName: props.book.content_filename
         };
     }
 
@@ -56,7 +64,97 @@ class UpdateModalBook extends Component {
         event.preventDefault();
         this.setState({ loading: true });
 
+        const selectedImageFile = this.state.bookImageFile;
+        const selectedImageContent = this.state.bookContentFile;
+        const apiLinks = [
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
+            'http://localhost:3306/api/book-image',
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content',
+            'http://localhost:3306/api/book-content',
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/',
+            'http://localhost:3306/api/books/',
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${this.state.oldImageFileName}`,
+            `http://localhost:3306/api/book-image/${this.state.oldImageFileName}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${this.state.oldContentFileName}`,
+            `http://localhost:3306/api/book-content/${this.state.oldContentFileName}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${this.state.selectedBookId}`,
+            `http://localhost:3306/api/books/${this.state.selectedBookId}`
+        ];
 
+        console.log(this.state.selectedBookId + " " + this.state.oldImageFileName + " " + this.state.oldContentFileName + " " + selectedImageFile + " " + selectedImageContent + " ");
+
+        axios.delete(apiLinks[6])
+        axios.delete(apiLinks[8])
+
+        if (selectedImageFile) {
+            const formImageData = new FormData();
+            formImageData.append('file', selectedImageFile);
+            try {
+                const response = await axios.post(apiLinks[0], formImageData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                });
+                console.log('File uploaded successfully:', response.data);
+                console.log('Public URL:', response.data.imageUrl);
+
+                this.setState({ bookImageURL: response.data.imageUrl }, async () => {
+                    if (selectedImageContent) {
+                        const formContentData = new FormData();
+                        formContentData.append('file', selectedImageContent);
+
+                        try {
+                            const response = await axios.post(apiLinks[2], formContentData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                },
+                            });
+                            console.log('File uploaded successfully:', response.data);
+                            console.log('Public URL:', response.data.pdfUrl);
+
+                            this.setState({ bookContentURL: response.data.pdfUrl }, async () => {
+                                console.log('Book Image URL:', this.state.bookImageURL);
+                                console.log('Book Image Name:', this.state.bookImageFileName);
+                                console.log('Book Title:', this.state.bookTitle);
+                                console.log('Author Name:', this.state.authorName);
+                                console.log('Selected Genre:', this.state.selectedGenre);
+                                console.log('Book Content Name:', this.state.bookContentFileName);
+                                console.log('Book Content URL:', this.state.bookContentURL);
+
+                                const data = {
+                                    image_filename: this.state.bookImageFileName,
+                                    image: this.state.bookImageURL,
+                                    name: this.state.bookTitle,
+                                    author: this.state.authorName,
+                                    genre: this.state.selectedGenre,
+                                    content_filename: this.state.bookContentFileName,
+                                    content: this.state.bookContentURL
+                                };
+
+                                // console.log(data);
+
+                                try {
+                                    const response = await axios.put(apiLinks[10], data);
+                                    console.log(response);
+                                    this.setState({ loading: false }); // Set loading to false when saving finishes
+                                    window.location.reload();
+                                } catch (error) {
+                                    console.log(error);
+                                    this.setState({ loading: false }); // Set loading to false in case of error
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Error uploading file:', error);
+                            this.setState({ loading: false }); // Set loading to false in case of error
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                this.setState({ loading: false }); // Set loading to false in case of error
+            }
+        }
     }
 
     render() {

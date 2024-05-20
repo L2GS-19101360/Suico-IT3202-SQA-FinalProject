@@ -7,6 +7,7 @@ import AdminNavbar from '../../components/Admin/AdminNavbar';
 import { withRouter } from 'react-router-dom';
 import { FaSearch, FaLock, FaUnlockAlt } from 'react-icons/fa';
 import axios from 'axios';
+import CreateModalLibrarian from '../../components/Admin/CreateModalLibrarian';
 
 class ManageUsers extends Component {
 
@@ -135,7 +136,7 @@ class ManageUsers extends Component {
             <div>
                 <AdminNavbar />
                 <h1>Manage User Page</h1>
-                <div style={{ textAlign: "center" }}>
+                <div style={{ textAlign: "center", marginBottom: "10px" }}>
                     <div style={{ padding: "1%" }}>
                         <Form>
                             <InputGroup className="mb-3">
@@ -146,7 +147,9 @@ class ManageUsers extends Component {
                                 />
                             </InputGroup>
 
-                            <div style={{ display: "inline-flex" }}>
+                            <div style={{ display: "inline-flex", gap: "20px" }}>
+                                <CreateModalLibrarian />
+
                                 <Dropdown>
                                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                                         {selectedUserOption}
