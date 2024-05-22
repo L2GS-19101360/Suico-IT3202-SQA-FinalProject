@@ -4,6 +4,8 @@ import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import axios from 'axios'
 import { withRouter, Link } from 'react-router-dom'
+import LibrarianBorrowBooks from '../../pages/Librarian/LibrarianBorrowBooks'
+import LibrarianReturnBooks from '../../pages/Librarian/LibrarianReturnBooks'
 
 class LibrarianSidebar extends Component {
 
@@ -102,6 +104,8 @@ class LibrarianSidebar extends Component {
                             <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
                             <ul style={{ listStyle: "none" }}>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/LibrarianDashboard'>Librarian Dashboard</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/LibrarianBorrowBooks'>Borrow Books Requests</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/LibrarianReturnBooks'>Return Books Requests</Link></li>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/LibrarianProfile'>Librarian Profile</Link></li>
                             </ul><br /><br />
                             <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>

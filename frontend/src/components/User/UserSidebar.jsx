@@ -5,6 +5,7 @@ import ClockComponent from '../../components/ClockComponent'
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
+import UserBookShelf from '../../pages/User/UserBookShelf'
 
 class UserSidebar extends Component {
 
@@ -103,6 +104,7 @@ class UserSidebar extends Component {
                             <h5>{this.state.LAfirstname} {this.state.LAlastname}</h5><br /><br />
                             <ul style={{ listStyle: "none" }}>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/UserDashboard'>User Dashboard</Link></li>
+                                <li><Link style={{ textDecoration: "none", color: "black" }} to='/UserBookShelf'>User Book Shelf</Link></li>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/UserProfile'>User Profile</Link></li>
                             </ul><br /><br />
                             <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>

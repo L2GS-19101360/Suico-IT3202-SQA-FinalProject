@@ -16,7 +16,7 @@ class UpdateModalBook extends Component {
             bookImageFile: null,
             bookImageFileName: "",
 
-            bookContentUrl: null,
+            bookContentUrl: props.book.content,
             bookContentFile: null,
             bookContentFileName: "",
 
@@ -63,9 +63,8 @@ class UpdateModalBook extends Component {
     updateBook = async (event) => {
         event.preventDefault();
         this.setState({ loading: true });
-
-        const selectedImageFile = this.state.bookImageFile;
-        const selectedImageContent = this.state.bookContentFile;
+    
+        const { bookImageFile, bookContentFile, selectedBookId, oldImageFileName, oldContentFileName, bookTitle, authorName, selectedGenre } = this.state;
         const apiLinks = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
             'http://localhost:3306/api/book-image',
@@ -73,87 +72,58 @@ class UpdateModalBook extends Component {
             'http://localhost:3306/api/book-content',
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/',
             'http://localhost:3306/api/books/',
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${this.state.oldImageFileName}`,
-            `http://localhost:3306/api/book-image/${this.state.oldImageFileName}`,
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${this.state.oldContentFileName}`,
-            `http://localhost:3306/api/book-content/${this.state.oldContentFileName}`,
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${this.state.selectedBookId}`,
-            `http://localhost:3306/api/books/${this.state.selectedBookId}`
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${oldImageFileName}`,
+            `http://localhost:3306/api/book-image/${oldImageFileName}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${oldContentFileName}`,
+            `http://localhost:3306/api/book-content/${oldContentFileName}`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${selectedBookId}`,
+            `http://localhost:3306/api/books/${selectedBookId}`
         ];
-
-        console.log(this.state.selectedBookId + " " + this.state.oldImageFileName + " " + this.state.oldContentFileName + " " + selectedImageFile + " " + selectedImageContent + " ");
-
-        axios.delete(apiLinks[6])
-        axios.delete(apiLinks[8])
-
-        if (selectedImageFile) {
-            const formImageData = new FormData();
-            formImageData.append('file', selectedImageFile);
-            try {
-                const response = await axios.post(apiLinks[0], formImageData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
+    
+        let bookImageURL = this.state.bookImageUrl;
+        let bookContentURL = this.state.bookContentUrl;
+    
+        try {
+            if (bookImageFile) {
+                const formImageData = new FormData();
+                formImageData.append('file', bookImageFile);
+                const imageResponse = await axios.post(apiLinks[0], formImageData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
                 });
-                console.log('File uploaded successfully:', response.data);
-                console.log('Public URL:', response.data.imageUrl);
-
-                this.setState({ bookImageURL: response.data.imageUrl }, async () => {
-                    if (selectedImageContent) {
-                        const formContentData = new FormData();
-                        formContentData.append('file', selectedImageContent);
-
-                        try {
-                            const response = await axios.post(apiLinks[2], formContentData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                },
-                            });
-                            console.log('File uploaded successfully:', response.data);
-                            console.log('Public URL:', response.data.pdfUrl);
-
-                            this.setState({ bookContentURL: response.data.pdfUrl }, async () => {
-                                console.log('Book Image URL:', this.state.bookImageURL);
-                                console.log('Book Image Name:', this.state.bookImageFileName);
-                                console.log('Book Title:', this.state.bookTitle);
-                                console.log('Author Name:', this.state.authorName);
-                                console.log('Selected Genre:', this.state.selectedGenre);
-                                console.log('Book Content Name:', this.state.bookContentFileName);
-                                console.log('Book Content URL:', this.state.bookContentURL);
-
-                                const data = {
-                                    image_filename: this.state.bookImageFileName,
-                                    image: this.state.bookImageURL,
-                                    name: this.state.bookTitle,
-                                    author: this.state.authorName,
-                                    genre: this.state.selectedGenre,
-                                    content_filename: this.state.bookContentFileName,
-                                    content: this.state.bookContentURL
-                                };
-
-                                // console.log(data);
-
-                                try {
-                                    const response = await axios.put(apiLinks[10], data);
-                                    console.log(response);
-                                    this.setState({ loading: false }); // Set loading to false when saving finishes
-                                    window.location.reload();
-                                } catch (error) {
-                                    console.log(error);
-                                    this.setState({ loading: false }); // Set loading to false in case of error
-                                }
-                            });
-                        } catch (error) {
-                            console.error('Error uploading file:', error);
-                            this.setState({ loading: false }); // Set loading to false in case of error
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                this.setState({ loading: false }); // Set loading to false in case of error
+                bookImageURL = imageResponse.data.imageUrl;
+    
+                // Delete old image file
+                await axios.delete(apiLinks[6]);
             }
+    
+            if (bookContentFile) {
+                const formContentData = new FormData();
+                formContentData.append('file', bookContentFile);
+                const contentResponse = await axios.post(apiLinks[2], formContentData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+                bookContentURL = contentResponse.data.pdfUrl;
+    
+                // Delete old content file
+                await axios.delete(apiLinks[8]);
+            }
+    
+            const data = {
+                image_filename: this.state.bookImageFileName || oldImageFileName,
+                image: bookImageURL,
+                name: bookTitle,
+                author: authorName,
+                genre: selectedGenre,
+                content_filename: this.state.bookContentFileName || oldContentFileName,
+                content: bookContentURL,
+            };
+    
+            await axios.put(apiLinks[10], data);
+            this.setState({ loading: false });
+            window.location.reload();
+        } catch (error) {
+            console.error('Error updating book:', error);
+            this.setState({ loading: false });
         }
     }
 

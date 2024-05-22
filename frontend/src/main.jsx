@@ -15,6 +15,9 @@ import AdminProfile from './pages/Admin/AdminProfile.jsx'
 import ManageUsers from './pages/Admin/ManageUsers.jsx'
 import ManageBooks from './pages/Admin/ManageBooks.jsx'
 import Test from './Test.jsx'
+import LibrarianBorrowBooks from './pages/Librarian/LibrarianBorrowBooks.jsx'
+import LibrarianReturnBooks from './pages/Librarian/LibrarianReturnBooks.jsx'
+import UserBookShelf from './pages/User/UserBookShelf.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div>
@@ -29,9 +32,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProtectedRoute path='/ManageBooks' component={ManageBooks} role='admin'/>
 
       <ProtectedRoute path='/LibrarianDashboard' component={LibrarianDashboard} role='librarian'/>
+      <ProtectedRoute path='/LibrarianBorrowBooks' component={LibrarianBorrowBooks} role='librarian'/>
+      <ProtectedRoute path='/LibrarianReturnBooks' component={LibrarianReturnBooks} role='librarian'/>
       <ProtectedRoute path='/LibrarianProfile' component={LibrarianProfile} role='librarian'/>
 
       <ProtectedRoute path='/UserDashboard' component={UserDashboard} role='user'/>
+      <ProtectedRoute path='/UserBookShelf' component={UserBookShelf} role='user'/>
       <ProtectedRoute path='/UserProfile' component={UserProfile} role='user' />
       
     </Router>
