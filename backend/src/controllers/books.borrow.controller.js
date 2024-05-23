@@ -2,7 +2,20 @@
 
 const BorrowBook = require('../models/books.borrow.model');
 
-exports.createRequest = function(req, res) {
+exports.getAllBorrowRequests = function (req, res) {
+    BorrowBook.getAllBorrowRequests(function (err, borrowBooksRequests) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(borrowBooksRequests);
+        res.send({
+            status: 200,
+            data: borrowBooksRequests
+        });
+    });
+}
+
+exports.createRequest = function (req, res) {
     const new_borrow_request = new BorrowBook(req.body);
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -11,7 +24,7 @@ exports.createRequest = function(req, res) {
             message: "Please Provide All Required Fields"
         });
     } else {
-        BorrowBook.createRequest(new_borrow_request, function(err, borrowBook) {
+        BorrowBook.createRequest(new_borrow_request, function (err, borrowBook) {
             if (err) {
                 res.status(500).send({
                     error: true,

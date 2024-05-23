@@ -2,7 +2,7 @@
 
 const dbConnection = require('../../config/db.config');
 
-const BorrowBook = function(borrowBook) {
+const BorrowBook = function (borrowBook) {
     this.user_id_fk = borrowBook.user_id_fk;
     this.book_id_fk = borrowBook.book_id_fk;
     this.librarian_id_fk = null;
@@ -11,8 +11,8 @@ const BorrowBook = function(borrowBook) {
     this.borrowed_updated = null;
 };
 
-BorrowBook.createRequest = function(newRequest, result) {
-    dbConnection.query("INSERT INTO borrow_books_request SET ?", newRequest, function(err, res) {
+BorrowBook.createRequest = function (newRequest, result) {
+    dbConnection.query("INSERT INTO borrow_books_request SET ?", newRequest, function (err, res) {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -22,5 +22,17 @@ BorrowBook.createRequest = function(newRequest, result) {
         }
     });
 };
+
+BorrowBook.getAllBorrowRequests = function (result) {
+    dbConnection.query("SELECT * FROM borrow_books_request", function (err, res) {
+        if (err) {
+            console.log(err);
+            result(null, err);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
 
 module.exports = BorrowBook;
