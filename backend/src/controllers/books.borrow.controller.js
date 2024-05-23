@@ -2,6 +2,19 @@
 
 const BorrowBook = require('../models/books.borrow.model');
 
+exports.viewBorrowBooksRequests = function(req, res) {
+    BorrowBook.viewBorrowBooksRequests(function (err, borrowBooksRequests) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(borrowBooksRequests);
+        res.send({
+            status: 200,
+            data: borrowBooksRequests
+        });
+    });
+}
+
 exports.getBorrowRequestByUserId = function(req, res) {
     const userId = req.params.id;
 
