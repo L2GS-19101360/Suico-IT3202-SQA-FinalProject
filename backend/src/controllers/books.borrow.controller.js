@@ -2,6 +2,26 @@
 
 const BorrowBook = require('../models/books.borrow.model');
 
+exports.getBorrowRequestByUserId = function(req, res) {
+    const userId = req.params.id;
+
+    BorrowBook.getBorrowRequestByUserId(userId, function(err, borrowRequest) {
+        if (err) {
+            res.status(500).send({
+                error: true,
+                message: "Error fetching borrow requests",
+                details: err
+            });
+        } else {
+            res.json({
+                error: false,
+                status: 200,
+                data: borrowRequest
+            });
+        }
+    });
+};
+
 exports.getAllBorrowRequests = function (req, res) {
     BorrowBook.getAllBorrowRequests(function (err, borrowBooksRequests) {
         if (err) {

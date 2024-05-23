@@ -11,6 +11,18 @@ const BorrowBook = function (borrowBook) {
     this.borrowed_updated = null;
 };
 
+BorrowBook.getBorrowRequestByUserId = function(userId, result) {
+    dbConnection.query("SELECT * FROM borrow_books_request WHERE user_id_fk = ?", [userId], function(err, res) {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+        } else {
+            console.log("Borrow Requests: ", res);
+            result(null, res);
+        }
+    });
+};
+
 BorrowBook.createRequest = function (newRequest, result) {
     dbConnection.query("INSERT INTO borrow_books_request SET ?", newRequest, function (err, res) {
         if (err) {
