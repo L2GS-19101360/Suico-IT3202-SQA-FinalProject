@@ -6,5 +6,7 @@ router.post('/', bookBorrowController.createRequest);
 router.get('/', bookBorrowController.getAllBorrowRequests);
 router.get('/userId/:id', bookBorrowController.getBorrowRequestByUserId);
 router.get('/View-Book-Request', bookBorrowController.viewBorrowBooksRequests);
+router.put('/approved-borrow-book-request/:id', bookBorrowController.approvedBorrowBooksRequest);
+router.put('/denied-borrow-book-request/:id', bookBorrowController.deniedBorrowBooksRequest);
 
 module.exports = router;

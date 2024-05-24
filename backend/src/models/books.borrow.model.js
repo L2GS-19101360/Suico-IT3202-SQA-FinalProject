@@ -5,10 +5,42 @@ const dbConnection = require('../../config/db.config');
 const BorrowBook = function (borrowBook) {
     this.user_id_fk = borrowBook.user_id_fk;
     this.book_id_fk = borrowBook.book_id_fk;
-    this.librarian_id_fk = null;
+    this.librarian_id_fk = borrowBook.librarian_id_fk;
     this.borrowed_status = "Pending";
     this.borrowed_created = new Date();
     this.borrowed_updated = null;
+};
+
+BorrowBook.approvedBorrowBooksRequest = function (borrowBook, borrowBooksRequestId, result) {
+    dbConnection.query(
+        "UPDATE borrow_books_request SET librarian_id_fk = ?, borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
+        [borrowBook.librarian_id_fk, "Approved", new Date(), borrowBooksRequestId],
+        function (err, res) {
+            if (err) {
+                console.error("Error updating database:", err);
+                result(null, err);
+            } else {
+                console.log("Database update result:", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+BorrowBook.deniedBorrowBooksRequest = function (borrowBook, borrowBooksRequestId, result) {
+    dbConnection.query(
+        "UPDATE borrow_books_request SET librarian_id_fk = ?, borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
+        [borrowBook.librarian_id_fk, "Denied", new Date(), borrowBooksRequestId],
+        function (err, res) {
+            if (err) {
+                console.error("Error updating database:", err);
+                result(null, err);
+            } else {
+                console.log("Database update result:", res);
+                result(null, res);
+            }
+        }
+    );
 };
 
 BorrowBook.viewBorrowBooksRequests = function (result) {

@@ -2,7 +2,69 @@
 
 const BorrowBook = require('../models/books.borrow.model');
 
-exports.viewBorrowBooksRequests = function(req, res) {
+exports.approvedBorrowBooksRequest = function (req, res) {
+    const borrowBookRequestId = req.params.id;
+    console.log("Request ID:", borrowBookRequestId);
+    console.log("Request Body:", req.body);
+
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        res.status(400).send({
+            error: true,
+            message: "Please Provide All Required Fields"
+        });
+    } else {
+        const borrowBook = new BorrowBook(req.body);
+        BorrowBook.approvedBorrowBooksRequest(borrowBook, borrowBookRequestId, function (err, result) {
+            if (err) {
+                res.status(500).send({
+                    error: true,
+                    message: "Error approving borrow request",
+                    details: err
+                });
+            } else {
+                res.json({
+                    error: false,
+                    status: 200,
+                    message: "Book Borrow Request Approved!",
+                    data: result
+                });
+            }
+        });
+    }
+};
+
+exports.deniedBorrowBooksRequest = function (req, res) {
+    const borrowBookRequestId = req.params.id;
+    console.log("Request ID:", borrowBookRequestId);
+    console.log("Request Body:", req.body);
+
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        res.status(400).send({
+            error: true,
+            message: "Please Provide All Required Fields"
+        });
+    } else {
+        const borrowBook = new BorrowBook(req.body);
+        BorrowBook.deniedBorrowBooksRequest(borrowBook, borrowBookRequestId, function (err, result) {
+            if (err) {
+                res.status(500).send({
+                    error: true,
+                    message: "Error denying borrow request",
+                    details: err
+                });
+            } else {
+                res.json({
+                    error: false,
+                    status: 200,
+                    message: "Book Borrow Request Denied!",
+                    data: result
+                });
+            }
+        });
+    }
+};
+
+exports.viewBorrowBooksRequests = function (req, res) {
     BorrowBook.viewBorrowBooksRequests(function (err, borrowBooksRequests) {
         if (err) {
             res.send(err);
@@ -15,10 +77,10 @@ exports.viewBorrowBooksRequests = function(req, res) {
     });
 }
 
-exports.getBorrowRequestByUserId = function(req, res) {
+exports.getBorrowRequestByUserId = function (req, res) {
     const userId = req.params.id;
 
-    BorrowBook.getBorrowRequestByUserId(userId, function(err, borrowRequest) {
+    BorrowBook.getBorrowRequestByUserId(userId, function (err, borrowRequest) {
         if (err) {
             res.status(500).send({
                 error: true,
