@@ -12,7 +12,7 @@ const BorrowBook = function (borrowBook) {
 };
 
 BorrowBook.viewBorrowBooksRequests = function (result) {
-    dbConnection.query("SELECT books.image, books.name, books.author, books.genre FROM books JOIN borrow_books_request ON books.id = borrow_books_request.book_id_fk", function (err, res) {
+    dbConnection.query("SELECT books.image, books.name, books.author, users.image, CONCAT(users.firstname, ' ', users.lastname) AS user_full_name, users.email, borrow_books_request.borrowed_status FROM borrow_books_request JOIN books ON borrow_books_request.book_id_fk = books.id JOIN users ON borrow_books_request.user_id_fk = users.id", function (err, res) {
         if (err) {
             console.log(err);
             result(null, err);
