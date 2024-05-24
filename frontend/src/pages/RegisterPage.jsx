@@ -70,16 +70,13 @@ class RegisterPage extends Component {
                 `http://localhost:3306/api/users/register-user`
             ]
 
-            axios.post(
-                apiLink[0], data
-            ).then(
-                (response) => {
-                    console.log("Server Response", response.data);
-
-                    localStorage.setItem('accessToken', response.data.accessToken);
-                    localStorage.setItem('refreshToken', response.data.refreshToken);
-
-                    localStorage.setItem('userId', response.data.insertId);
+            axios.post(apiLink[0], data).then((response) => {
+                console.log("Server Response", response.data);
+                if (response.data && response.data.data) {
+                    const { accessToken, refreshToken, insertId } = response.data.data;
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    localStorage.setItem('userId', insertId);
                     localStorage.setItem('userImage', data.image);
                     localStorage.setItem('firstname', this.state.newFirstName);
                     localStorage.setItem('lastname', this.state.newLastName);
@@ -88,8 +85,8 @@ class RegisterPage extends Component {
                     localStorage.setItem('role', data.role);
 
                     this.props.history.push('/UserDashboard');
-                }
-            ).catch(
+                }    
+        }).catch(
                 (error) => {
                     console.log(error);
                 }

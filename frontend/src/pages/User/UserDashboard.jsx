@@ -18,12 +18,15 @@ class UserDashboard extends Component {
             selectBookGenreOption: "All",
             filteredBooks: [],
             selectedBook: null,
-            showModal: false
+            showModal: false,
+
+            userId: localStorage.getItem("userId"),
         }
     }
 
     componentDidMount() {
         this.getAllBooks(this.state.selectBookGenreOption);
+        console.log(this.state.userId);
     }
     componentWillUnmount() {
 

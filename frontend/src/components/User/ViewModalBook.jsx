@@ -23,7 +23,7 @@ class ViewModalBook extends Component {
     }
 
     componentDidMount() {
-
+        console.log(this.state.userId);
     }
     componentWillUnmount() {
 
