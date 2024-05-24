@@ -31,6 +31,9 @@ app.use('/api/book-content', BookContentRoutes)
 const borrowBookRoutes = require('./src/routes/books.borrow.route');
 app.use('/api/borrow-books-request', borrowBookRoutes);
 
+const returnBookRoutes = require('./src/routes/books.return.route');
+app.use('/api/return-books-request', returnBookRoutes);
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
