@@ -56,7 +56,7 @@ BorrowBook.viewBorrowBooksRequests = function (result) {
 }
 
 BorrowBook.getBorrowRequestByUserId = function (userId, result) {
-    dbConnection.query("SELECT * FROM borrow_books_request WHERE user_id_fk = ?", [userId], function (err, res) {
+    dbConnection.query("SELECT borrow_books_request.id, borrow_books_request.book_id_fk, books.image, books.name, books.author, books.genre, books.content, borrow_books_request.user_id_fk, borrow_books_request.borrowed_status FROM borrow_books_request JOIN books ON borrow_books_request.book_id_fk = books.id JOIN users ON borrow_books_request.user_id_fk = users.id WHERE borrow_books_request.user_id_fk = ?", [userId], function (err, res) {
         if (err) {
             console.log("error: ", err);
             result(err, null);
