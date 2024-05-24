@@ -11,6 +11,22 @@ const BorrowBook = function (borrowBook) {
     this.borrowed_updated = null;
 };
 
+BorrowBook.borrowedBorrowBooksRequest = function (borrowBook, borrowBooksRequestId, result) {
+    dbConnection.query(
+        "UPDATE borrow_books_request SET librarian_id_fk = ?, borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
+        [borrowBook.librarian_id_fk, "Borrowed", new Date(), borrowBooksRequestId],
+        function (err, res) {
+            if (err) {
+                console.error("Error updating database:", err);
+                result(null, err);
+            } else {
+                console.log("Database update result:", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
 BorrowBook.approvedBorrowBooksRequest = function (borrowBook, borrowBooksRequestId, result) {
     dbConnection.query(
         "UPDATE borrow_books_request SET librarian_id_fk = ?, borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
