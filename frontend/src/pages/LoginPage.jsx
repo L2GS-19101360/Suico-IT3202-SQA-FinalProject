@@ -1,5 +1,5 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup } from 'react-bootstrap'
+import { Component } from 'react'
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap'
 import webName from '../assets/website name.jpg'
 import ClockComponent from '../components/ClockComponent'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
@@ -15,9 +15,12 @@ class LoginPage extends Component {
         this.toLoginUser = this.toLoginUser.bind(this);
         this.state = {
             showPassword: false,
-
             enterEmail: "",
-            enterPassword: ""
+            enterPassword: "",
+            showAlert: false,
+            alertMessage: "",
+            alertVariant: "",
+            isLoading: false // State to track loading state
         }
     }
 
@@ -39,7 +42,20 @@ class LoginPage extends Component {
     }
 
     toLoginUser = (e) => {
-        event.preventDefault();
+        e.preventDefault();
+
+        // Check if email and password are not empty
+        if (!this.state.enterEmail || !this.state.enterPassword) {
+            this.setState({
+                showAlert: true,
+                alertMessage: "Please fill in all input fields.",
+                alertVariant: "danger"
+            });
+            return; // Stop further execution
+        }
+
+        // Set loading state to true
+        this.setState({ isLoading: true });
 
         console.log(this.state.enterEmail + this.state.enterPassword);
 
@@ -70,7 +86,7 @@ class LoginPage extends Component {
                 localStorage.setItem('password', this.state.enterPassword);
                 localStorage.setItem('role', response.data.tokens.user.role)
 
-                if (response.data.tokens.user.active_status == 1) {
+                if (response.data.tokens.user.active_status === 1) {
                     if (response.data.tokens.user.role === "user") {
                         this.props.history.push('/UserDashboard');
                     } else if (response.data.tokens.user.role === "librarian") {
@@ -84,9 +100,24 @@ class LoginPage extends Component {
             }
         ).catch(
             (error) => {
+                let alertMessage = "An error occurred. Please try again.";
+                let alertVariant = "danger";
+                if (!error.response) {
+                    alertMessage = "Unable to connect to the server. Please check your connection.";
+                } else if (error.response.status === 401) {
+                    alertMessage = "Invalid email or password. Please try again.";
+                } else if (error.response.status === 404) {
+                    alertMessage = "User does not exist. Please register.";
+                } else {
+                    alertMessage = "An unexpected error occurred. Please try again later.";
+                }
+                this.setState({ showAlert: true, alertMessage, alertVariant });
                 console.log(error);
             }
-        )
+        ).finally(() => {
+            // Set loading state to false after API call is completed
+            this.setState({ isLoading: false });
+        });
     }
 
     render() {
@@ -105,6 +136,11 @@ class LoginPage extends Component {
                     textAlign: "center",
                     margin: "auto"
                 }}>
+                    {this.state.showAlert && (
+                        <Alert variant={this.state.alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
+                            {this.state.alertMessage}
+                        </Alert>
+                    )}
                     <Form>
                         <Form.Control
                             type="email"
@@ -118,9 +154,13 @@ class LoginPage extends Component {
                                 value={this.state.enterPassword}
                                 onChange={(e) => { this.setState({ enterPassword: e.target.value }) }}
                             />
-                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
+                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>
+                                {this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}
+                            </InputGroup.Text>
                         </InputGroup><br />
-                        <Button variant="secondary" onClick={this.toLoginUser} type='submit'>Login Account</Button>
+                        <Button variant="secondary" onClick={this.toLoginUser} type='submit' disabled={this.state.isLoading}>
+                            {this.state.isLoading ? <Spinner animation="border" size="sm" /> : "Login Account"}
+                        </Button>
                     </Form>
                 </div>
 
