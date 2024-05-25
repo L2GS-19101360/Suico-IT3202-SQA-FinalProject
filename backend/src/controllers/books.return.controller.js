@@ -2,6 +2,19 @@
 
 const ReturnBook = require('../models/books.return.model');
 
+exports.viewReturnBooksRequests = function(req, res) {
+    ReturnBook.viewReturnBooksRequests(function (err, returnBooksRequests) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(returnBooksRequests);
+        res.send({
+            status: 200,
+            data: returnBooksRequests
+        });
+    });
+}
+
 exports.createRequest = function (req, res) {
     const new_return_request = new ReturnBook(req.body);
 
