@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap'
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar'
@@ -18,10 +18,8 @@ class LibrarianBorrowBooks extends Component {
             searchInput: "",
             selectBookGenreOption: "All",
             filteredBooks: [],
-
+            loading: false,
             userId: localStorage.getItem("userId"),
-
-            
         }
     }
 
@@ -91,18 +89,17 @@ class LibrarianBorrowBooks extends Component {
             librarian_id_fk: userId
         }
 
-        axios.put(
-            apiLinks[0], data
-        ).then(
-            (response) => {
+        this.setState({ loading: true });
+
+        axios.put(apiLinks[0], data)
+            .then((response) => {
                 console.log(response);
                 window.location.reload();
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ loading: false });
+            });
     }
 
     deniedBorrowRequest = (borrowRequestId) => {
@@ -119,22 +116,21 @@ class LibrarianBorrowBooks extends Component {
             librarian_id_fk: userId
         }
 
-        axios.put(
-            apiLinks[0], data
-        ).then(
-            (response) => {
+        this.setState({ loading: true });
+
+        axios.put(apiLinks[0], data)
+            .then((response) => {
                 console.log(response);
                 window.location.reload();
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ loading: false });
+            });
     }
 
     render() {
-        const { selectBookGenreOption, filteredBooks } = this.state;
+        const { selectBookGenreOption, filteredBooks, loading } = this.state;
 
         return (
             <div>
@@ -199,13 +195,17 @@ class LibrarianBorrowBooks extends Component {
                                                     <div style={{ display: "inline-flex", gap: "15px" }}>
                                                         <Button
                                                             variant='success'
-                                                            onClick={() => this.approvedBorrowRequest(borrowRequests.id)}>
-                                                            <FaCheckSquare />
+                                                            onClick={() => this.approvedBorrowRequest(borrowRequests.id)}
+                                                            disabled={loading}
+                                                        >
+                                                            {loading ? <Spinner as="span" animation="border" size="sm" /> : <FaCheckSquare />}
                                                         </Button>
                                                         <Button
                                                             variant='danger'
-                                                            onClick={() => this.deniedBorrowRequest(borrowRequests.id)}>
-                                                            <FaTimesCircle />
+                                                            onClick={() => this.deniedBorrowRequest(borrowRequests.id)}
+                                                            disabled={loading}
+                                                        >
+                                                            {loading ? <Spinner as="span" animation="border" size="sm" /> : <FaTimesCircle />}
                                                         </Button>
                                                     </div>
                                                 ) : (
@@ -230,7 +230,7 @@ class LibrarianBorrowBooks extends Component {
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
         );
     }
 

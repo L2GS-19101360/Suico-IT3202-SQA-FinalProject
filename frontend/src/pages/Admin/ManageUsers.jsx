@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap';
 import webName from '../../assets/website name.jpg';
 import ClockComponent from '../../components/ClockComponent';
 import AdminSidebar from '../../components/Admin/AdminSidebar';
@@ -20,7 +20,8 @@ class ManageUsers extends Component {
             selectedUserOption: "all",
             selectedStatusOption: "all",
             users: [],
-            searchInput: ""
+            searchInput: "",
+            loading: {}  // State to track loading for each user action
         }
     }
 
@@ -73,12 +74,21 @@ class ManageUsers extends Component {
 
         const data = { active_status: 1 };
 
+        this.setState(prevState => ({
+            loading: { ...prevState.loading, [userId]: true }
+        }));
+
         axios.put(apiLinks[0], data)
             .then(response => {
                 this.getAllUsers(this.state.selectedUserOption);
             })
             .catch(error => {
                 console.log(error);
+            })
+            .finally(() => {
+                this.setState(prevState => ({
+                    loading: { ...prevState.loading, [userId]: false }
+                }));
             });
     }
 
@@ -90,12 +100,21 @@ class ManageUsers extends Component {
 
         const data = { active_status: 0 };
 
+        this.setState(prevState => ({
+            loading: { ...prevState.loading, [userId]: true }
+        }));
+
         axios.put(apiLinks[0], data)
             .then(response => {
                 this.getAllUsers(this.state.selectedUserOption);
             })
             .catch(error => {
                 console.log(error);
+            })
+            .finally(() => {
+                this.setState(prevState => ({
+                    loading: { ...prevState.loading, [userId]: false }
+                }));
             });
     }
 
@@ -130,7 +149,7 @@ class ManageUsers extends Component {
     };
 
     render() {
-        const { selectedUserOption, users } = this.state;
+        const { selectedUserOption, users, loading } = this.state;
 
         return (
             <div>
@@ -192,10 +211,10 @@ class ManageUsers extends Component {
                                     <td>
                                         {user.active_status ?
                                             (<Button variant="danger" onClick={() => this.deactivateUser(user.id)}>
-                                                <FaLock />
+                                                {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaLock />}
                                             </Button>) :
                                             (<Button variant="success" onClick={() => this.activateUser(user.id)}>
-                                                <FaUnlockAlt />
+                                                {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaUnlockAlt />}
                                             </Button>)}
                                     </td>
                                 </tr>

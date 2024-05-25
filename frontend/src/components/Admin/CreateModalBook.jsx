@@ -1,24 +1,27 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner } from 'react-bootstrap'
-import webName from '../../assets/website name.jpg'
-import ClockComponent from '../../components/ClockComponent'
-import AdminSidebar from '../../components/Admin/AdminSidebar'
-import AdminNavbar from '../../components/Admin/AdminNavbar'
-import axios from 'axios'
-import { FaSearch, FaLock, FaUnlockAlt, FaBook } from 'react-icons/fa'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner, Alert } from 'react-bootstrap';
+import webName from '../../assets/website name.jpg';
+import ClockComponent from '../../components/ClockComponent';
+import AdminSidebar from '../../components/Admin/AdminSidebar';
+import AdminNavbar from '../../components/Admin/AdminNavbar';
+import axios from 'axios';
+import { FaSearch, FaLock, FaUnlockAlt, FaBook } from 'react-icons/fa';
 
 class CreateModalBook extends Component {
 
     constructor() {
         super();
-        this.handleShow = this.handleShow.bind(this)
-        this.handleClose = this.handleClose.bind(this)
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
         this.handleContentChange = this.handleContentChange.bind(this);
         this.storeBook = this.storeBook.bind(this);
         this.state = {
             show: false,
             loading: false,
+            showAlert: false,
+            alertMessage: "",
+            alertVariant: "danger",
 
             bookImageUrl: null,
             bookImageFile: null,
@@ -34,19 +37,13 @@ class CreateModalBook extends Component {
             selectedGenre: "Select Genre",
             bookGenre: "",
             bookContentURL: ""
-        }
-    }
-
-    componentDidMount() {
-
-    }
-    componentWillUnmount() {
-
+        };
     }
 
     handleClose() {
-        this.setState({ show: false });
+        this.setState({ show: false, showAlert: false });
     }
+
     handleShow() {
         this.setState({ show: true });
     }
@@ -56,18 +53,17 @@ class CreateModalBook extends Component {
         if (file) {
             const fileName = file.name;
             this.setState({
-                bookImageUrl: URL.createObjectURL(file) || null, // Reset to null when new image selected
+                bookImageUrl: URL.createObjectURL(file) || null,
                 bookImageFile: file,
                 bookImageFileName: fileName
             });
         }
     }
-    // Update handleContentChange method to handle PDF files
+
     handleContentChange(e) {
         const file = e.target.files[0];
         if (file) {
             const fileName = file.name;
-            // Ensure the file type is PDF before setting the state
             if (file.type === 'application/pdf') {
                 this.setState({
                     bookContentUrl: URL.createObjectURL(file),
@@ -80,9 +76,27 @@ class CreateModalBook extends Component {
         }
     }
 
+    validateInputs() {
+        const { bookImageFile, bookContentFile, bookTitle, authorName, selectedGenre } = this.state;
+        if (!bookImageFile || !bookContentFile || !bookTitle || !authorName || selectedGenre === "Select Genre") {
+            this.setState({
+                showAlert: true,
+                alertMessage: "All fields are required.",
+                alertVariant: "danger"
+            });
+            return false;
+        }
+        return true;
+    }
+
     storeBook = async (event) => {
         event.preventDefault();
-        this.setState({ loading: true }); // Set loading to true when saving starts
+
+        if (!this.validateInputs()) {
+            return;
+        }
+
+        this.setState({ loading: true, showAlert: false });
 
         const selectedImageFile = this.state.bookImageFile;
         const selectedImageContent = this.state.bookContentFile;
@@ -95,93 +109,83 @@ class CreateModalBook extends Component {
             'http://localhost:3306/api/books/'
         ];
 
-        if (selectedImageFile) {
-            const formImageData = new FormData();
-            formImageData.append('file', selectedImageFile);
-            try {
-                const response = await axios.post(apiLinks[0], formImageData, {
+        try {
+            if (selectedImageFile) {
+                const formImageData = new FormData();
+                formImageData.append('file', selectedImageFile);
+                const imageResponse = await axios.post(apiLinks[0], formImageData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
-                    },
-                });
-                console.log('File uploaded successfully:', response.data);
-                console.log('Public URL:', response.data.imageUrl);
-
-                this.setState({ bookImageURL: response.data.imageUrl }, async () => {
-                    if (selectedImageContent) {
-                        const formContentData = new FormData();
-                        formContentData.append('file', selectedImageContent);
-
-                        try {
-                            const response = await axios.post(apiLinks[2], formContentData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                },
-                            });
-                            console.log('File uploaded successfully:', response.data);
-                            console.log('Public URL:', response.data.pdfUrl);
-
-                            this.setState({ bookContentURL: response.data.pdfUrl }, async () => {
-                                console.log('Book Image URL:', this.state.bookImageURL);
-                                console.log('Book Image Name:', this.state.bookImageFileName);
-                                console.log('Book Title:', this.state.bookTitle);
-                                console.log('Author Name:', this.state.authorName);
-                                console.log('Selected Genre:', this.state.selectedGenre);
-                                console.log('Book Content Name:', this.state.bookContentFileName);
-                                console.log('Book Content URL:', this.state.bookContentURL);
-
-                                const data = {
-                                    image_filename: this.state.bookImageFileName,
-                                    image: this.state.bookImageURL,
-                                    name: this.state.bookTitle,
-                                    author: this.state.authorName,
-                                    genre: this.state.selectedGenre,
-                                    content_filename: this.state.bookContentFileName,
-                                    content: this.state.bookContentURL
-                                };
-
-                                try {
-                                    const response = await axios.post(apiLinks[4], data);
-                                    console.log(response);
-                                    this.setState({ loading: false }); // Set loading to false when saving finishes
-                                    window.location.reload();
-                                } catch (error) {
-                                    console.log(error);
-                                    this.setState({ loading: false }); // Set loading to false in case of error
-                                }
-                            });
-                        } catch (error) {
-                            console.error('Error uploading file:', error);
-                            this.setState({ loading: false }); // Set loading to false in case of error
-                        }
                     }
                 });
-
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                this.setState({ loading: false }); // Set loading to false in case of error
+                this.setState({ bookImageURL: imageResponse.data.imageUrl });
             }
+
+            if (selectedImageContent) {
+                const formContentData = new FormData();
+                formContentData.append('file', selectedImageContent);
+                const contentResponse = await axios.post(apiLinks[2], formContentData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                this.setState({ bookContentURL: contentResponse.data.pdfUrl });
+            }
+
+            const { bookImageURL, bookTitle, authorName, selectedGenre, bookContentURL, bookImageFileName, bookContentFileName } = this.state;
+            const data = {
+                image_filename: bookImageFileName,
+                image: bookImageURL,
+                name: bookTitle,
+                author: authorName,
+                genre: selectedGenre,
+                content_filename: bookContentFileName,
+                content: bookContentURL
+            };
+
+            const response = await axios.post(apiLinks[4], data);
+            console.log(response);
+            this.setState({ loading: false });
+            window.location.reload();
+
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            this.setState({
+                loading: false,
+                showAlert: true,
+                alertMessage: "Failed to connect to the server.",
+                alertVariant: "danger"
+            });
         }
     };
 
     render() {
+        const { show, loading, showAlert, alertMessage, alertVariant, bookImageUrl, bookTitle, authorName, selectedGenre, bookContentUrl } = this.state;
+
         return (
             <div>
                 <Button variant="success" onClick={this.handleShow}>
                     <FaBook /> Create New Book
                 </Button>
 
-                <Modal show={this.state.show} onHide={this.handleClose} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal show={show} onHide={this.handleClose} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
                     <Modal.Header closeButton>
                         <Modal.Title><FaBook /> Create New Book</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+
+                        {showAlert && (
+                            <Alert variant={alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
+                                {alertMessage}
+                            </Alert>
+                        )}
+
                         <Form>
                             <div style={{ display: 'inline-flex' }}>
                                 <div id='leftDiv'>
-                                    {this.state.bookImageUrl ? (
+                                    {bookImageUrl ? (
                                         <img
-                                            src={this.state.bookImageUrl}
+                                            src={bookImageUrl}
                                             alt="Book Cover"
                                             height={300}
                                             width={200}
@@ -195,12 +199,12 @@ class CreateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} />
                                     </Form.Group>
-                                    <Form.Control type="text" placeholder="Enter Book Title" value={this.state.bookTitle} onChange={(e) => (this.setState({ bookTitle: e.target.value }))} /><br />
-                                    <Form.Control type="text" placeholder="Enter Book Author" value={this.state.authorName} onChange={(e) => (this.setState({ authorName: e.target.value }))} /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
 
                                     <Dropdown>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                            {this.state.selectedGenre}
+                                            {selectedGenre}
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu>
@@ -218,13 +222,11 @@ class CreateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
-                                    <Button variant="success" onClick={this.storeBook} disabled={this.state.loading}>
-                                        {this.state.loading ? (
-                                            <Spinner animation="border" />
-                                        ) : (
-                                            'Store Book'
-                                        )}
-                                    </Button>
+                                    <div style={{textAlign: "center"}}>
+                                        <Button variant="success" onClick={this.storeBook} disabled={loading}>
+                                            {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </Form>
@@ -241,4 +243,4 @@ class CreateModalBook extends Component {
 
 }
 
-export default CreateModalBook
+export default CreateModalBook;

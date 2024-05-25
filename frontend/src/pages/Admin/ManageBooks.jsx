@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Form, InputGroup, Dropdown, Table, Button } from 'react-bootstrap';
+import { Container, Form, InputGroup, Dropdown, Table, Button, Spinner } from 'react-bootstrap';
 import { FaBookOpen, FaSync, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
@@ -20,7 +20,8 @@ class ManageBooks extends Component {
             filteredBooks: [],
 
             showModal: false,
-            selectedBook: null
+            selectedBook: null,
+            loadingBookId: null // Add this state variable to track loading state
         };
     }
 
@@ -78,6 +79,8 @@ class ManageBooks extends Component {
         console.log(bookimage)
         console.log(bookcontent)
 
+        this.setState({ loadingBookId: id }); // Set loading state for the book being deleted
+
         const apiLinks = [
             `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${id}`,
             `http://localhost:3306/api/books/${id}`,
@@ -96,23 +99,27 @@ class ManageBooks extends Component {
                         axios.delete(apiLinks[0]).then(
                             (response) => {
                                 console.log(response)
+                                this.setState({ loadingBookId: null }); // Reset loading state after deletion
                                 window.location.reload();
                             }
                         ).catch(
                             (error) => {
                                 console.log(error)
+                                this.setState({ loadingBookId: null }); // Reset loading state on error
                             }
                         )
                     }
                 ).catch(
                     (error) => {
                         console.log(error)
+                        this.setState({ loadingBookId: null }); // Reset loading state on error
                     }
                 )
             }
         ).catch(
             (error) => {
                 console.log(error)
+                this.setState({ loadingBookId: null }); // Reset loading state on error
             }
         )
     }
@@ -126,7 +133,7 @@ class ManageBooks extends Component {
     }
 
     render() {
-        const { selectBookGenreOption, showModal, selectedBook } = this.state
+        const { selectBookGenreOption, showModal, selectedBook, loadingBookId } = this.state
 
         return (
             <div>
@@ -190,7 +197,11 @@ class ManageBooks extends Component {
                                                 <FaSync />
                                             </Button>
                                         </td>
-                                        <td><Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}><FaTrash /></Button></td>
+                                        <td>
+                                            <Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}>
+                                                {loadingBookId === book.id ? <Spinner as="span" animation="border" size="sm" /> : <FaTrash />}
+                                            </Button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -1,5 +1,5 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap'
+import { Component } from 'react'
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar'
@@ -16,7 +16,7 @@ class LibrarianReturnBooks extends Component {
             searchInput: "",
             selectBookGenreOption: "All",
             filteredBooks: [],
-
+            loading: false, // Add loading state
             userId: localStorage.getItem("userId"),
         }
     }
@@ -90,18 +90,17 @@ class LibrarianReturnBooks extends Component {
             librarian_id_fk: userId
         }
 
-        axios.put(
-            apiLinks[0], data
-        ).then(
-            (response) => {
+        this.setState({ loading: true }); // Set loading to true
+
+        axios.put(apiLinks[0], data)
+            .then((response) => {
                 console.log(response);
                 window.location.reload();
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ loading: false }); // Set loading to false in case of error
+            });
     }
 
     deniedReturnRequest = (returnRequestId, deniedtoReturnBookId) => {
@@ -120,33 +119,29 @@ class LibrarianReturnBooks extends Component {
             librarian_id_fk: userId
         }
 
-        axios.put(
-            apiLinks[2]
-        ).then(
-            (response) => {
+        this.setState({ loading: true }); // Set loading to true
+
+        axios.put(apiLinks[2])
+            .then((response) => {
                 console.log(response)
-                axios.put(
-                    apiLinks[0], data
-                ).then(
-                    (response) => {
+                axios.put(apiLinks[0], data)
+                    .then((response) => {
                         console.log(response);
                         window.location.reload();
-                    }
-                ).catch(
-                    (error) => {
-                        console.log(error)
-                    }
-                );
-            }
-        ).catch(
-            (error) => {
-                console.log(error)
-            }
-        );
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.setState({ loading: false }); // Set loading to false in case of error
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ loading: false }); // Set loading to false in case of error
+            });
     }
 
     render() {
-        const { selectBookGenreOption, filteredBooks } = this.state;
+        const { selectBookGenreOption, filteredBooks, loading } = this.state;
 
         return (
             <div>
@@ -211,29 +206,20 @@ class LibrarianReturnBooks extends Component {
                                                     <div style={{ display: "inline-flex", gap: "15px" }}>
                                                         <Button
                                                             variant='success'
-                                                            onClick={() => this.approvedReturnRequest(returnRequests.id)}>
-                                                            <FaCheckSquare />
+                                                            onClick={() => this.approvedReturnRequest(returnRequests.id)}
+                                                            disabled={loading}
+                                                        >
+                                                            {loading ? <Spinner as="span" animation="border" size="sm" /> : <FaCheckSquare />}
                                                         </Button>
                                                         <Button
                                                             variant='danger'
-                                                            onClick={() => this.deniedReturnRequest(returnRequests.id, returnRequests.borrow_books_request_id_fk)}>
-                                                            <FaTimesCircle />
+                                                            onClick={() => this.deniedReturnRequest(returnRequests.id, returnRequests.borrow_books_request_id_fk)}
+                                                            disabled={loading}
+                                                        >
+                                                            {loading ? <Spinner as="span" animation="border" size="sm" /> : <FaTimesCircle />}
                                                         </Button>
                                                     </div>
-                                                ) : (
-                                                    <div style={{ display: "inline-flex", gap: "15px" }}>
-                                                        <Button
-                                                            variant='success'
-                                                            disabled>
-                                                            <FaCheckSquare />
-                                                        </Button>
-                                                        <Button
-                                                            variant='danger'
-                                                            disabled>
-                                                            <FaTimesCircle />
-                                                        </Button>
-                                                    </div>
-                                                )}
+                                                ) : null}
                                             </td>
                                         </tr>
                                     ))}
@@ -243,9 +229,8 @@ class LibrarianReturnBooks extends Component {
                     </div>
                 </div>
             </div>
-        );
+        )
     }
-
 }
 
-export default LibrarianReturnBooks
+export default LibrarianReturnBooks;

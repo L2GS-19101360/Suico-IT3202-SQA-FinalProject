@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner, Alert } from 'react-bootstrap';
 import { FaBook } from 'react-icons/fa';
 import axios from 'axios';
 
@@ -11,6 +11,8 @@ class UpdateModalBook extends Component {
         this.updateBook = this.updateBook.bind(this);
         this.state = {
             loading: false,
+            showAlert: false,
+            alertMessage: "",
 
             bookImageUrl: props.book.image,
             bookImageFile: null,
@@ -62,7 +64,7 @@ class UpdateModalBook extends Component {
 
     updateBook = async (event) => {
         event.preventDefault();
-        this.setState({ loading: true });
+        this.setState({ loading: true, showAlert: false });
     
         const { bookImageFile, bookContentFile, selectedBookId, oldImageFileName, oldContentFileName, bookTitle, authorName, selectedGenre } = this.state;
         const apiLinks = [
@@ -123,12 +125,17 @@ class UpdateModalBook extends Component {
             window.location.reload();
         } catch (error) {
             console.error('Error updating book:', error);
-            this.setState({ loading: false });
+            this.setState({
+                loading: false,
+                showAlert: true,
+                alertMessage: "Failed to connect to the server."
+            });
         }
     }
 
     render() {
         const { show, handleClose, book } = this.props;
+        const { showAlert, alertMessage, loading } = this.state;
 
         return (
             <div>
@@ -137,6 +144,11 @@ class UpdateModalBook extends Component {
                         <Modal.Title><FaBook /> Update Book</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        {showAlert && (
+                            <Alert variant="danger" onClose={() => this.setState({ showAlert: false })} dismissible>
+                                {alertMessage}
+                            </Alert>
+                        )}
                         <Form>
                             <div style={{ display: 'inline-flex' }}>
                                 <div id='leftDiv'>
@@ -180,8 +192,8 @@ class UpdateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
-                                    <Button variant="warning" onClick={this.updateBook} disabled={this.state.loading}>
-                                        {this.state.loading ? (
+                                    <Button variant="warning" onClick={this.updateBook} disabled={loading}>
+                                        {loading ? (
                                             <Spinner animation="border" />
                                         ) : (
                                             'Update Book'
