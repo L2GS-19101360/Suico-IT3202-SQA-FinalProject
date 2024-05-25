@@ -2,7 +2,58 @@
 
 const ReturnBook = require('../models/books.return.model');
 
-exports.viewReturnBooksRequests = function(req, res) {
+exports.approvedReturnBooksRequest = function (req, res) {
+    const returnBooksRequestId = req.params.id;
+    const returnBook = new ReturnBook(req.body);
+
+    ReturnBook.approvedReturnBooksRequest(returnBook, returnBooksRequestId, function (err, result) {
+        if (err) {
+            return res.status(500).send({
+                error: true,
+                message: "Error approving returned request",
+                details: err
+            });
+        } else {
+            return res.json({
+                error: false,
+                status: 200,
+                message: "Book Request Returned!",
+                data: result
+            });
+        }
+    });
+}
+
+exports.deniedReturnBooksRequest = function (req, res) {
+    const returnBooksRequestId = req.params.id;
+
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        res.status(400).send({
+            error: true,
+            message: "Please Provide All Required Fields"
+        });
+    } else {
+        const returnBook = new ReturnBook(req.body);
+        ReturnBook.deniedReturnBooksRequest(returnBook, returnBooksRequestId, function (err, result) {
+            if (err) {
+                res.status(500).send({
+                    error: true,
+                    message: "Error denying return request",
+                    details: err
+                });
+            } else {
+                res.json({
+                    error: false,
+                    status: 200,
+                    message: "Book Return Request Denied!",
+                    data: result
+                });
+            }
+        });
+    }
+}
+
+exports.viewReturnBooksRequests = function (req, res) {
     ReturnBook.viewReturnBooksRequests(function (err, returnBooksRequests) {
         if (err) {
             res.send(err);
@@ -29,14 +80,14 @@ exports.createRequest = function (req, res) {
         if (err) {
             return res.status(500).send({
                 error: true,
-                message: "Error creating borrow request",
+                message: "Error creating return request",
                 details: err
             });
         } else {
             return res.json({
                 error: false,
                 status: 200,
-                message: "Book Borrow Request Created!",
+                message: "Book Return Request Created!",
                 data: returnBook
             });
         }
