@@ -34,8 +34,8 @@ class GeneralNavbar extends Component {
       <div>
         <Navbar expand="lg" className="bg-body-tertiary">
           <Container>
-            <Navbar.Brand>
-              <img src={webName} alt="" height={75} width={75} href="/"/> &nbsp; L2GS Library System
+            <Navbar.Brand href="/">
+              <img src={webName} alt="" height={75} width={75} /> &nbsp; L2GS Library System
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
