@@ -23,8 +23,8 @@ const User = function (user) {
     this.updated = null;
 }
 
-User.findUserByInput = function(input, result) {
-    dbConnection.query("SELECT * FROM users WHERE firstname=? OR lastname=? OR email=?", [input, input, input], function(err, res) {
+User.findUserByInput = function (input, result) {
+    dbConnection.query("SELECT * FROM users WHERE firstname=? OR lastname=? OR email=?", [input, input, input], function (err, res) {
         if (err) {
             console.error("Database error:", err);
             result("Internal server error", null);
@@ -34,8 +34,8 @@ User.findUserByInput = function(input, result) {
     });
 };
 
-User.activateUser = function(id, result) {
-    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [1, new Date(), id], function(err, res) {
+User.activateUser = function (id, result) {
+    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [1, new Date(), id], function (err, res) {
         if (err) {
             console.log("Error: ", err);
             result(err, null);
@@ -46,8 +46,8 @@ User.activateUser = function(id, result) {
     });
 };
 
-User.deactivateUser = function(id, result) {
-    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [0, new Date(), id], function(err, res) {
+User.deactivateUser = function (id, result) {
+    dbConnection.query("UPDATE users SET active_status=?, updated=? WHERE id=?", [0, new Date(), id], function (err, res) {
         if (err) {
             console.log("Error: ", err);
             result(err, null);
@@ -105,7 +105,7 @@ User.update = function (id, user, result) {
         } else {
             user.password = hash;
 
-            dbConnection.query("UPDATE users SET image=?, firstname=?, lastname=?, email=?, password=?, updated=? WHERE id=?", [user.image, user.firstname, user.lastname, user.email, user.password, new Date(), id], function (err, res) {
+            dbConnection.query("UPDATE users SET image=?, image_filename=?, firstname=?, lastname=?, email=?, password=?, updated=? WHERE id=?", [user.image, user.image_filename, user.firstname, user.lastname, user.email, user.password, new Date(), id], function (err, res) {
                 if (err) {
                     console.log("Error: ", err);
                     result(null, err);
