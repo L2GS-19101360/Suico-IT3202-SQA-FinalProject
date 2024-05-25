@@ -149,7 +149,7 @@ User.login = function (email, password, result) {
         }
 
         if (!rows.length) {
-            return result(null, null);
+            return result(null, null); // User not found
         }
 
         const user = rows[0];
@@ -160,8 +160,8 @@ User.login = function (email, password, result) {
                 return result(err, null);
             }
 
-            if (res && !res) {
-                return result(null, null);
+            if (!res) {
+                return result(null, null); // Invalid password
             } else {
                 // Generate JWT token
                 const accessToken = jwt.sign({ id: user.id, email: user.email }, accessTokenSecret, { expiresIn: '7d' });
@@ -170,7 +170,8 @@ User.login = function (email, password, result) {
             }
         });
     });
-}
+};
+
 
 User.logout = function (accessToken, refreshToken, result) {
     const revokedTokens = [];
