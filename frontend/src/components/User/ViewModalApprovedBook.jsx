@@ -13,7 +13,7 @@ class ViewModalApprovedBook extends Component {
         super();
         this.handleShow = this.handleShow.bind(this)
         this.handleClose = this.handleClose.bind(this)
-        this.createBorrowRequest = this.createBorrowRequest.bind(this);
+        this.createReturnRequest = this.createReturnRequest.bind(this);
         this.state = {
             show: false,
             loading: false,
@@ -36,8 +36,8 @@ class ViewModalApprovedBook extends Component {
         this.setState({ show: true });
     }
 
-    createBorrowRequest = (bookId) => {
-        console.log(this.state.userId + " ", bookId);
+    createReturnRequest = (bookId, borrowRequestId) => {
+        console.log(this.state.userId + " " + bookId + " " + borrowRequestId);
 
         const data = {
             user_id_fk: this.state.userId,
@@ -45,16 +45,29 @@ class ViewModalApprovedBook extends Component {
         }
 
         const apiLink = [
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/borrow-books-request`,
-            `http://localhost:3306/api/borrow-books-request`
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/return-books-request`,
+            `http://localhost:3306/api/return-books-request`,
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/borrow-books-request/borrowed-borrow-book-request/${borrowRequestId}`,
+            `http://localhost:3306/api/borrow-books-request/borrowed-borrow-book-request/${borrowRequestId}`
         ];
 
-        axios.post(
-            apiLink[0], data
+        axios.put(
+            apiLink[2]
         ).then(
             (response) => {
                 console.log(response)
-                window.location.reload();
+                axios.post(
+                    apiLink[0], data
+                ).then(
+                    (response) => {
+                        console.log(response);
+                        window.location.reload();
+                    }
+                ).catch(
+                    (error) => {
+                        console.log(error)
+                    }
+                )
             }
         ).catch(
             (error) => {
@@ -91,7 +104,7 @@ class ViewModalApprovedBook extends Component {
                                         <a href={book.content} target="_blank" rel="noopener noreferrer">
                                             <Button variant="primary"><h4><FaBookOpen /> Read Book</h4></Button>
                                         </a>
-                                        <Button variant="warning"><h4><FaUndoAlt /> Return Book</h4></Button>
+                                        <Button variant="warning" onClick={() => this.createReturnRequest(book.book_id_fk, book.id)}><h4><FaUndoAlt /> Return Book</h4></Button>
                                     </div>
                                 </div>
                             </div>
