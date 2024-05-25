@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, InputGroup } from 'react-bootstrap';
+import { Form, Button, InputGroup, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import UserNavbar from '../../components/User/UserNavbar';
@@ -14,6 +14,7 @@ class UserProfile extends Component {
         this.toUpdateUser = this.toUpdateUser.bind(this);
         this.handleEditProfile = this.handleEditProfile.bind(this);
         this.handleCancelChanges = this.handleCancelChanges.bind(this);
+        this.toLogoutUser = this.toLogoutUser.bind(this);
         this.state = {
             LAfirstname: localStorage.getItem('firstname'),
             LAlastname: localStorage.getItem('lastname'),
@@ -23,6 +24,8 @@ class UserProfile extends Component {
             profileImageFile: null,
             currId: localStorage.getItem('userId'),
             imageFileName: localStorage.getItem('userImage'),
+            imageFileName_oldfilename: localStorage.getItem('userImage_filename'),
+            imageFileName_newfilename: "",
             currFirstname: localStorage.getItem('firstname'),
             currLastname: localStorage.getItem('lastname'),
             currEmail: localStorage.getItem('email').replace(/@gmail\.com$/, ""),
@@ -31,12 +34,16 @@ class UserProfile extends Component {
             getAccessToken: localStorage.getItem("accessToken"),
             getRefreshToken: localStorage.getItem("refreshToken"),
             imagesUrl: "",
-
-            isEditing: false
+            isEditing: false,
+            isLoading: false, // Loading state for Spinner
+            showError: false, // Error state for Alert
+            errorMessage: '', // Error message for Alert
         };
     }
 
-    componentDidMount() { }
+    componentDidMount() {
+        console.log(this.state.imageFileName_oldfilename)
+     }
 
     togglePasswordVisibility() {
         this.setState(prevState => ({
@@ -57,7 +64,8 @@ class UserProfile extends Component {
             this.setState({
                 profileImageUrl: URL.createObjectURL(file) || null, // Reset to null when new image selected
                 profileImageFile: file,
-                imageFileName: fileName
+                imageFileName: fileName,
+                imageFileName_newfilename: fileName
             });
         }
     }
@@ -66,7 +74,9 @@ class UserProfile extends Component {
         const selectedFile = this.state.profileImageFile;
         const apiLinks = [
             'http://localhost:3306/api/users-image',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users-image'
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users-image',
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users-image/${this.state.imageFileName_oldfilename}`,
+            `http://localhost:3306/api/users-image/${this.state.imageFileName_oldfilename}`
         ];
 
         if (selectedFile) {
@@ -74,6 +84,8 @@ class UserProfile extends Component {
             formData.append('file', selectedFile);
 
             try {
+                axios.delete(apiLinks[2])
+
                 const response = await axios.post(apiLinks[1], formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -85,6 +97,7 @@ class UserProfile extends Component {
                 this.setState({ imagesUrl: response.data.imageUrl }, this.updateUserData);
             } catch (error) {
                 console.error('Error uploading file:', error);
+                this.setState({ showError: true, errorMessage: 'Error uploading file' });
             }
         } else {
             this.updateUserData();
@@ -94,6 +107,7 @@ class UserProfile extends Component {
     async updateUserData() {
         const data = {
             image: this.state.imagesUrl || this.state.imageFileName,
+            image_filename: this.state.imageFileName_newfilename || this.state.imageFileName_oldfilename,
             firstname: this.state.currFirstname,
             lastname: this.state.currLastname,
             email: this.state.currEmail + "@gmail.com",
@@ -122,6 +136,7 @@ class UserProfile extends Component {
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('userId');
             localStorage.removeItem('userImage');
+            localStorage.removeItem('userImage_filename');
             localStorage.removeItem('firstname');
             localStorage.removeItem('lastname');
             localStorage.removeItem('role');
@@ -131,6 +146,7 @@ class UserProfile extends Component {
             this.props.history.push('/');
         } catch (error) {
             console.error(error);
+            this.setState({ showError: true, errorMessage: 'Server connection lost' });
         }
     }
 
@@ -138,7 +154,10 @@ class UserProfile extends Component {
         e.preventDefault();
 
         if (this.state.currPassword === this.state.confirmPassword) {
+            this.setState({ isLoading: true, showError: false });
             await this.handleImageUpload();
+        } else {
+            this.setState({ showError: true, errorMessage: 'Passwords do not match' });
         }
     }
 
@@ -150,6 +169,42 @@ class UserProfile extends Component {
     handleCancelChanges() {
         event.preventDefault();
         this.setState({ isEditing: false });
+    }
+
+    toLogoutUser() {
+        this.setState({ isLoading: true, showError: false });
+
+        const tokens = {
+            accessToken: this.state.getAccessToken,
+            refreshToken: this.state.getRefreshToken
+        }
+
+        const apiLink = [
+            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
+            'http://localhost:3306/api/users/logout-user'
+        ]
+
+        axios.post(apiLink[0], tokens)
+            .then((response) => {
+                console.log(response.data);
+
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userImage');
+                localStorage.removeItem('userImage_filename');
+                localStorage.removeItem('firstname');
+                localStorage.removeItem('lastname');
+                localStorage.removeItem('role');
+                localStorage.removeItem('email');
+                localStorage.removeItem('password');
+
+                this.props.history.push('/');
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ showError: true, errorMessage: 'Server connection lost', isLoading: false });
+            });
     }
 
     render() {
@@ -166,7 +221,12 @@ class UserProfile extends Component {
                         textAlign: "center",
                         margin: "auto"
                     }}>
-                        <Form>
+                        {this.state.showError && (
+                            <Alert variant="danger">
+                                {this.state.errorMessage}
+                            </Alert>
+                        )}
+                        <Form onSubmit={this.toUpdateUser}>
                             {this.state.profileImageUrl ?
                                 (<img src={this.state.profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />) :
                                 (this.state.imageFileName !== "#%&{}>" ?
@@ -174,7 +234,7 @@ class UserProfile extends Component {
                                     (<img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />))}
 
                             <br /><br />
-                            <Form.Control type="file" onChange={this.handleImageChange} disabled={!this.state.isEditing}/>
+                            <Form.Control type="file" onChange={this.handleImageChange} disabled={!this.state.isEditing} />
                             <br />
                             <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
                                 <Form.Control
@@ -226,15 +286,18 @@ class UserProfile extends Component {
                             {this.state.isEditing ? (
                                 <div style={{ display: "inline-flex", gap: "50px" }}>
                                     <Button variant="danger" onClick={this.handleCancelChanges}>Cancel Changes</Button>
-                                    <Button variant="warning" type='submit' onClick={(e) => this.toUpdateUser(e)}>Save Changes</Button>
+                                    <Button variant="warning" type='submit'>
+                                        {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Save Changes'}
+                                    </Button>
                                 </div>
                             ) : (
                                 <div style={{ display: "inline-flex", gap: "50px" }}>
-                                    <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>
+                                    <Button variant="danger" onClick={this.toLogoutUser}>
+                                        {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Logout Account'}
+                                    </Button>
                                     <Button variant="warning" onClick={this.handleEditProfile}>Update Profile</Button>
                                 </div>
                             )}
-
                         </Form>
                     </div>
                 </div>

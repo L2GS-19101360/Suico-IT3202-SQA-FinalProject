@@ -60,6 +60,7 @@ class UserSidebar extends Component {
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('userId');
                 localStorage.removeItem('userImage');
+                localStorage.removeItem('userImage_filename');
                 localStorage.removeItem('firstname');
                 localStorage.removeItem('lastname');
                 localStorage.removeItem('role');

@@ -85,6 +85,7 @@ class RegisterPage extends Component {
 
         const data = {
             image: "#%&{}>",
+            image_filename: "#%&{}>",
             firstname: newFirstName,
             lastname: newLastName,
             email: email,
@@ -105,6 +106,7 @@ class RegisterPage extends Component {
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('userId', insertId);
                 localStorage.setItem('userImage', data.image);
+                localStorage.setItem('userImage_filename', data.image_filename)
                 localStorage.setItem('firstname', newFirstName);
                 localStorage.setItem('lastname', newLastName);
                 localStorage.setItem('email', data.email);

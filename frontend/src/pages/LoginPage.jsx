@@ -85,6 +85,7 @@ class LoginPage extends Component {
                 localStorage.setItem('email', response.data.tokens.user.email);
                 localStorage.setItem('password', this.state.enterPassword);
                 localStorage.setItem('role', response.data.tokens.user.role)
+                localStorage.setItem('userImage_filename', response.data.tokens.user.image_filename)
 
                 if (response.data.tokens.user.active_status === 1) {
                     if (response.data.tokens.user.role === "user") {
