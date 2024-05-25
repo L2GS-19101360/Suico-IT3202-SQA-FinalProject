@@ -1,10 +1,10 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup } from 'react-bootstrap'
-import webName from '../assets/website name.jpg'
-import ClockComponent from '../components/ClockComponent'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import axios from 'axios'
-import GeneralNavbar from '../components/GeneralNavbar'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
+import webName from '../assets/website name.jpg';
+import ClockComponent from '../components/ClockComponent';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
+import GeneralNavbar from '../components/GeneralNavbar';
 
 class RegisterPage extends Component {
 
@@ -17,12 +17,15 @@ class RegisterPage extends Component {
         this.state = {
             showPassword: false,
             reshowPassword: false,
-
             newFirstName: "",
             newLastName: "",
             newEmail: "",
             newPassword: "",
-            rePassword: ""
+            rePassword: "",
+            showAlert: false,
+            alertMessage: "",
+            alertVariant: "",
+            isLoading: false // State to track loading state
         }
     }
 
@@ -49,49 +52,81 @@ class RegisterPage extends Component {
     }
 
     toRegisterUser = (e) => {
-        event.preventDefault();
+        e.preventDefault();
 
-        const email = this.state.newEmail + "@gmail.com"
+        const { newFirstName, newLastName, newEmail, newPassword, rePassword } = this.state;
 
-        if (this.state.newPassword === this.state.rePassword) {
-            console.log(this.state.newFirstName + this.state.newLastName + email + this.state.newPassword)
-
-            const data = {
-                image: "#%&{}>",
-                firstname: this.state.newFirstName,
-                lastname: this.state.newLastName,
-                email: email,
-                password: this.state.newPassword,
-                role: "user"
-            }
-
-            const apiLink = [
-                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/register-user`,
-                `http://localhost:3306/api/users/register-user`
-            ]
-
-            axios.post(apiLink[0], data).then((response) => {
-                console.log("Server Response", response.data);
-                if (response.data && response.data.data) {
-                    const { accessToken, refreshToken, insertId } = response.data.data;
-                    localStorage.setItem('accessToken', accessToken);
-                    localStorage.setItem('refreshToken', refreshToken);
-                    localStorage.setItem('userId', insertId);
-                    localStorage.setItem('userImage', data.image);
-                    localStorage.setItem('firstname', this.state.newFirstName);
-                    localStorage.setItem('lastname', this.state.newLastName);
-                    localStorage.setItem('email', data.email);
-                    localStorage.setItem('password', data.password);
-                    localStorage.setItem('role', data.role);
-
-                    this.props.history.push('/UserDashboard');
-                }    
-        }).catch(
-                (error) => {
-                    console.log(error);
-                }
-            );
+        // Check if any input field is empty
+        if (!newFirstName || !newLastName || !newEmail || !newPassword || !rePassword) {
+            this.setState({
+                showAlert: true,
+                alertMessage: "Please fill in all input fields.",
+                alertVariant: "danger"
+            });
+            return;
         }
+
+        // Check if passwords match
+        if (newPassword !== rePassword) {
+            this.setState({
+                showAlert: true,
+                alertMessage: "Passwords do not match.",
+                alertVariant: "danger"
+            });
+            return;
+        }
+
+        // Set loading state to true
+        this.setState({ isLoading: true });
+
+        const email = newEmail + "@gmail.com";
+
+        console.log(newFirstName + newLastName + email + newPassword);
+
+        const data = {
+            image: "#%&{}>",
+            firstname: newFirstName,
+            lastname: newLastName,
+            email: email,
+            password: newPassword,
+            role: "user"
+        };
+
+        const apiLink = [
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/register-user`,
+            `http://localhost:3306/api/users/register-user`
+        ];
+
+        axios.post(apiLink[0], data).then((response) => {
+            console.log("Server Response", response.data);
+            if (response.data && response.data.data) {
+                const { accessToken, refreshToken, insertId } = response.data.data;
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('userId', insertId);
+                localStorage.setItem('userImage', data.image);
+                localStorage.setItem('firstname', newFirstName);
+                localStorage.setItem('lastname', newLastName);
+                localStorage.setItem('email', data.email);
+                localStorage.setItem('password', data.password);
+                localStorage.setItem('role', data.role);
+
+                this.props.history.push('/UserDashboard');
+            }
+        }).catch((error) => {
+            let alertMessage = "An error occurred. Please try again.";
+            let alertVariant = "danger";
+            if (!error.response) {
+                alertMessage = "Unable to connect to the server. Please check your connection.";
+            } else {
+                alertMessage = "An unexpected error occurred. Please try again later.";
+            }
+            this.setState({ showAlert: true, alertMessage, alertVariant });
+            console.log(error);
+        }).finally(() => {
+            // Set loading state to false after API call is completed
+            this.setState({ isLoading: false });
+        });
     }
 
     render() {
@@ -110,6 +145,11 @@ class RegisterPage extends Component {
                     textAlign: "center",
                     margin: "auto"
                 }}>
+                    {this.state.showAlert && (
+                        <Alert variant={this.state.alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
+                            {this.state.alertMessage}
+                        </Alert>
+                    )}
                     <Form>
                         <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
                             <Form.Control
@@ -144,14 +184,16 @@ class RegisterPage extends Component {
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <Form.Control
-                                placeholder="Enter Password"
+                                placeholder="Confirm Password"
                                 type={this.state.reshowPassword ? "text" : "password"}
                                 value={this.state.rePassword}
                                 onChange={(e) => { this.setState({ rePassword: e.target.value }) }}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup><br />
-                        <Button variant="primary" onClick={this.toRegisterUser} type='submit'>Register Account</Button>
+                        <Button variant="primary" onClick={this.toRegisterUser} type='submit' disabled={this.state.isLoading}>
+                            {this.state.isLoading ? <Spinner animation="border" size="sm" /> : "Register Account"}
+                        </Button>
                     </Form>
                 </div>
 
