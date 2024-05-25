@@ -2,6 +2,27 @@
 
 const ReturnBook = require('../models/books.return.model');
 
+exports.deniedBorrowtoReturnBookRequest = function(req, res) {
+    const deniedBorrowtoReturnBooksRequestId = req.params.id;
+
+    ReturnBook.deniedBorrowtoReturnBookRequest(deniedBorrowtoReturnBooksRequestId, function (err, result) {
+        if (err) {
+            return res.status(500).send({
+                error: true,
+                message: "Error denying borrow to return book request", // Updated message
+                details: err
+            });
+        } else {
+            return res.json({
+                error: false,
+                status: 200,
+                message: "Borrow to return book request denied!",
+                data: result
+            });
+        }
+    });
+}
+
 exports.approvedReturnBooksRequest = function (req, res) {
     const returnBooksRequestId = req.params.id;
     const returnBook = new ReturnBook(req.body);

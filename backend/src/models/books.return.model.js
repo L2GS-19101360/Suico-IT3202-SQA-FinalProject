@@ -12,6 +12,22 @@ const ReturnBook = function (returnBook) {
     this.returned_updated = null;
 };
 
+ReturnBook.deniedBorrowtoReturnBookRequest = function (borrowBookRequestId, result) {
+    dbConnection.query(
+        "UPDATE borrow_books_request SET borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
+        ["Approved", new Date(), borrowBookRequestId], // Corrected status and added date
+        function (err, res) {
+            if (err) {
+                console.error("Error updating database:", err);
+                result(err, null); // Corrected order of parameters
+            } else {
+                console.log("Database update result:", res);
+                result(null, res);
+            }
+        }
+    );
+}
+
 ReturnBook.approvedReturnBooksRequest = function (returnBook, returnBooksRequestId, result) {
     dbConnection.query(
         "UPDATE return_books_request SET librarian_id_fk = ?, returned_status = ?, returned_updated = ? WHERE id = ?",

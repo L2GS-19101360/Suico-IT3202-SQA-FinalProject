@@ -41,7 +41,8 @@ class ViewModalApprovedBook extends Component {
 
         const data = {
             user_id_fk: this.state.userId,
-            book_id_fk: bookId
+            book_id_fk: bookId,
+            borrow_books_request_id_fk: borrowRequestId
         }
 
         const apiLink = [
