@@ -20,6 +20,8 @@ class LibrarianBorrowBooks extends Component {
             filteredBooks: [],
 
             userId: localStorage.getItem("userId"),
+
+            
         }
     }
 
@@ -181,7 +183,7 @@ class LibrarianBorrowBooks extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredBooks.map((borrowRequests) => (
+                                    {filteredBooks.filter((borrowRequests => borrowRequests.borrowed_status === "Pending")).map((borrowRequests) => (
                                         <tr key={borrowRequests.id}>
                                             <td><img src={borrowRequests.bookImage} height={75} width={75} alt="" /></td>
                                             <td style={{ wordWrap: "break-word", wordBreak: "break-word", maxWidth: "150px" }}>{borrowRequests.name}</td>
