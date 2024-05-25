@@ -44,7 +44,7 @@ ReturnBook.deniedReturnBooksRequest = function (returnBook, returnBooksRequestId
 }
 
 ReturnBook.viewReturnBooksRequests = function (result) {
-    dbConnection.query("SELECT return_books_request.id, books.image as bookImage, books.name, books.author, books.genre, users.image as userImage, users.firstname, users.lastname, users.email, return_books_request.returned_status FROM return_books_request JOIN books ON books.id = return_books_request.book_id_fk JOIN users ON users.id = return_books_request.user_id_fk", function (err, res) {
+    dbConnection.query("SELECT return_books_request.id, books.image as bookImage, books.name, books.author, books.genre, return_books_request.user_id_fk,users.image as userImage, users.firstname, users.lastname, users.email, return_books_request.returned_status FROM return_books_request JOIN books ON books.id = return_books_request.book_id_fk JOIN users ON users.id = return_books_request.user_id_fk", function (err, res) {
         if (err) {
             console.log(err);
             result(null, err);
