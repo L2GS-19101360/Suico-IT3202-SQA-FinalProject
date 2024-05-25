@@ -12,5 +12,7 @@ router.get('/active-status/:input', userController.getByStatus)
 router.put('/deactivateUser/:id', userController.deactivateUser);
 router.put('/activateUser/:id', userController.activateUser);
 router.get('/find-user/:input', userController.findUserByInput);
+router.get('/get-recorded-borrowed-books', userController.viewAllBorrowedBooks);
+router.get('/get-recorded-returned-books', userController.viewAllReturnedBooks)
 
 module.exports = router;

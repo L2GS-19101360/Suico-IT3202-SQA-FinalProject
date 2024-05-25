@@ -3,10 +3,36 @@
 const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 
-exports.findUserByInput = function(req, res) {
+exports.viewAllReturnedBooks = function (req, res) {
+    User.viewAllReturnedBooks(function (err, recordedReturnedBooks) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(recordedReturnedBooks);
+        res.send({
+            status: 200,
+            data: recordedReturnedBooks
+        });
+    });
+}
+
+exports.viewAllBorrowedBooks = function (req, res) {
+    User.viewAllBorrowedBooks(function (err, recordedBorrowBooks) {
+        if (err) {
+            res.send(err);
+        }
+        console.log(recordedBorrowBooks);
+        res.send({
+            status: 200,
+            data: recordedBorrowBooks
+        });
+    });
+}
+
+exports.findUserByInput = function (req, res) {
     const searchInput = req.params.input;
 
-    User.findUserByInput(searchInput, function(err, user) {
+    User.findUserByInput(searchInput, function (err, user) {
         if (err) {
             res.status(500).json({ error: "Internal server error" });
         } else {
@@ -15,11 +41,11 @@ exports.findUserByInput = function(req, res) {
     });
 };
 
-exports.activateUser = function(req, res) {
+exports.activateUser = function (req, res) {
     const userId = req.params.id;
 
     // Call the activateUser method on the User model
-    User.activateUser(userId, function(err, result) {
+    User.activateUser(userId, function (err, result) {
         if (err) {
             res.status(500).json({ error: true, message: "Failed to activate user" });
         } else {
@@ -28,11 +54,11 @@ exports.activateUser = function(req, res) {
     });
 };
 
-exports.deactivateUser = function(req, res) {
+exports.deactivateUser = function (req, res) {
     const userId = req.params.id;
 
     // Call the deactivateUser method on the User model
-    User.deactivateUser(userId, function(err, result) {
+    User.deactivateUser(userId, function (err, result) {
         if (err) {
             res.status(500).json({ error: true, message: "Failed to deactivate user" });
         } else {

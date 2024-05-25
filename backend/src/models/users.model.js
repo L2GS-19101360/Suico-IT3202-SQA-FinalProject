@@ -23,6 +23,30 @@ const User = function (user) {
     this.updated = null;
 }
 
+User.viewAllReturnedBooks = function(result) {
+    dbConnection.query(`SELECT return_books_request.id, user.image as userImage, CONCAT(user.firstname, ' ', user.lastname) as userFullname, user.email as userEmail, books.image, books.name, books.author, books.genre, librarian.image as librarianImage, CONCAT(librarian.firstname, ' ', librarian.lastname) as librarianFullname, librarian.email as librarianEmail, return_books_request.returned_status, return_books_request.returned_updated FROM return_books_request JOIN  users AS user ON user.id = return_books_request.user_id_fk JOIN users AS librarian ON librarian.id = return_books_request.librarian_id_fk JOIN books ON books.id = return_books_request.book_id_fk WHERE return_books_request.returned_status = "Returned"`, function (err, res) {
+        if (err) {
+            console.log(err);
+            result(null, err);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
+User.viewAllBorrowedBooks = function (result) {
+    dbConnection.query(`SELECT borrow_books_request.id, user.image as userImage, CONCAT(user.firstname, ' ', user.lastname) as userFullname, user.email as userEmail, books.image, books.name, books.author, books.genre, librarian.image as librarianImage, CONCAT(librarian.firstname, ' ', librarian.lastname) as librarianFullname, librarian.email as librarianEmail, borrow_books_request.borrowed_status, borrow_books_request.borrowed_updated FROM borrow_books_request JOIN  users AS user ON user.id = borrow_books_request.user_id_fk JOIN users AS librarian ON librarian.id = borrow_books_request.librarian_id_fk JOIN books ON books.id = borrow_books_request.book_id_fk WHERE borrow_books_request.borrowed_status = "Borrowed"`, function (err, res) {
+        if (err) {
+            console.log(err);
+            result(null, err);
+        } else {
+            console.log(res);
+            result(null, res);
+        }
+    });
+}
+
 User.findUserByInput = function (input, result) {
     dbConnection.query("SELECT * FROM users WHERE firstname=? OR lastname=? OR email=?", [input, input, input], function (err, res) {
         if (err) {
