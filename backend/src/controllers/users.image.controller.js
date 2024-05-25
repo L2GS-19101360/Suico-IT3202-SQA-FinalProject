@@ -5,6 +5,16 @@ const UserImage = require('../models/users.image.model');
 const upload = multer();
 
 const UserImageController = {
+    deleteFile: async (req, res) => {
+        try {
+            const imageName = req.params.imageName;
+            await UserImage.deleteImageFile(imageName);
+            res.status(200).json({ message: `Image ${imageName} deleted successfully` });
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            res.status(500).json({ error: error.message });
+        }
+    },
     getAllUsers: async (req, res) => {
         try {
             const users = await UserImage.getAllFiles();

@@ -13,6 +13,16 @@ try {
 const dbStorage = admin.storage();
 
 const UserImage = {
+    deleteImageFile: async (imageName) => {
+        try {
+            const bucket = dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com");
+            const file = bucket.file(`UserImages/${imageName}`);
+            await file.delete();
+            console.log(`Image ${imageName} deleted successfully.`);
+        } catch (error) {
+            throw new Error(`Error deleting image file: ${error.message}`);
+        }
+    },
     getAllFiles: async () => {
         try {
             const userFiles = await dbStorage.bucket("suico-it3202-sqa-finalpr-b13ba.appspot.com").getFiles({

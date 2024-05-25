@@ -5,5 +5,6 @@ const router = express.Router();
 // Use multer middleware to handle file uploads
 router.get('/', UserImageController.getAllUsers);
 router.post('/', upload.single('file'), UserImageController.storeFile);
+router.delete('/:imageName', UserImageController.deleteFile);
 
 module.exports = router;
