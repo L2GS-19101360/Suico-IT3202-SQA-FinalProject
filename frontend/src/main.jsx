@@ -18,6 +18,8 @@ import Test from './Test.jsx'
 import LibrarianBorrowBooks from './pages/Librarian/LibrarianBorrowBooks.jsx'
 import LibrarianReturnBooks from './pages/Librarian/LibrarianReturnBooks.jsx'
 import UserBookShelf from './pages/User/UserBookShelf.jsx'
+import ViewBorrowedBooks from './pages/Admin/ViewBorrowedBooks.jsx'
+import ViewReturnedBooks from './pages/Admin/ViewReturnedBooks.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div>
@@ -30,6 +32,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProtectedRoute path='/AdminProfile' component={AdminProfile} role='admin'/>
       <ProtectedRoute path='/ManageUsers' component={ManageUsers} role='admin'/>
       <ProtectedRoute path='/ManageBooks' component={ManageBooks} role='admin'/>
+      <ProtectedRoute path='/ViewBorrowedBooks' component={ViewBorrowedBooks} role='admin'/>
+      <ProtectedRoute path='/ViewReturnedBooks' component={ViewReturnedBooks} role='admin'/>
 
       <ProtectedRoute path='/LibrarianDashboard' component={LibrarianDashboard} role='librarian'/>
       <ProtectedRoute path='/LibrarianBorrowBooks' component={LibrarianBorrowBooks} role='librarian'/>
