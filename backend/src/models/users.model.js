@@ -12,6 +12,7 @@ const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
 const User = function (user) {
     this.image = user.image;
+    this.image_filename = user.image_filename
     this.firstname = user.firstname;
     this.lastname = user.lastname;
     this.email = user.email;
