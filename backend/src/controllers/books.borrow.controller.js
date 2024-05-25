@@ -5,17 +5,8 @@ const BorrowBook = require('../models/books.borrow.model');
 exports.borrowedBorrowBooksRequest = function (req, res) {
     const borrowBooksRequestId = req.params.id;
     console.log("Request ID:", borrowBooksRequestId);
-    console.log("Request Body:", req.body);
 
-    if (Object.keys(req.body).length === 0) {
-        return res.status(400).send({
-            error: true,
-            message: "Please Provide All Required Fields"
-        });
-    }
-
-    const borrowBook = new BorrowBook(req.body);
-    BorrowBook.borrowedBorrowBooksRequest(borrowBook, borrowBooksRequestId, function (err, result) {
+    BorrowBook.borrowedBorrowBooksRequest( borrowBooksRequestId, function (err, result) {
         if (err) {
             return res.status(500).send({
                 error: true,

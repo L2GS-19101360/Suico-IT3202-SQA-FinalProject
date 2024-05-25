@@ -11,10 +11,10 @@ const BorrowBook = function (borrowBook) {
     this.borrowed_updated = null;
 };
 
-BorrowBook.borrowedBorrowBooksRequest = function (borrowBook, borrowBooksRequestId, result) {
+BorrowBook.borrowedBorrowBooksRequest = function (borrowBooksRequestId, result) {
     dbConnection.query(
-        "UPDATE borrow_books_request SET librarian_id_fk = ?, borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
-        [borrowBook.librarian_id_fk, "Borrowed", new Date(), borrowBooksRequestId],
+        "UPDATE borrow_books_request SET borrowed_status = ?, borrowed_updated = ? WHERE id = ?",
+        ["Borrowed", new Date(), borrowBooksRequestId],
         function (err, res) {
             if (err) {
                 console.error("Error updating database:", err);
