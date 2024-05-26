@@ -192,13 +192,15 @@ class UpdateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
-                                    <Button variant="warning" onClick={this.updateBook} disabled={loading}>
-                                        {loading ? (
-                                            <Spinner animation="border" />
-                                        ) : (
-                                            'Update Book'
-                                        )}
-                                    </Button>
+                                    <div style={{ textAlign: "center" }}>
+                                        <Button variant="warning" onClick={this.updateBook} disabled={loading}>
+                                            {loading ? (
+                                                <Spinner animation="border" />
+                                            ) : (
+                                                'Update Book'
+                                            )}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </Form>

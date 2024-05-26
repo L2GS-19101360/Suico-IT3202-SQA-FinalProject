@@ -1,9 +1,9 @@
-import { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
-import wallpaper from '../assets/wallpaper.jpeg';
+import React, { Component } from 'react';
+import { Container, Form, InputGroup, Alert, Spinner, Button } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 import GeneralNavbar from '../components/GeneralNavbar';
+import wallpaper from '../assets/wallpaper.jpeg';
 
 class LoginPage extends Component {
     constructor() {
@@ -90,7 +90,11 @@ class LoginPage extends Component {
                         this.props.history.push('/AdminDashboard');
                     }
                 } else {
-                    console.log("User Deactivate");
+                    this.setState({
+                        showAlert: true,
+                        alertMessage: "Your account has been deactivated.",
+                        alertVariant: "danger"
+                    });
                 }
             }
         ).catch(
@@ -197,3 +201,4 @@ class LoginPage extends Component {
 }
 
 export default LoginPage;
+
