@@ -4,6 +4,7 @@ import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import LibrarianNavbar from '../../components/Librarian/LibrarianNavbar';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class LibrarianProfile extends Component {
     constructor() {
@@ -43,7 +44,7 @@ class LibrarianProfile extends Component {
 
     componentDidMount() {
         console.log(this.state.imageFileName_oldfilename)
-     }
+    }
 
     togglePasswordVisibility() {
         this.setState(prevState => ({
@@ -208,10 +209,37 @@ class LibrarianProfile extends Component {
     }
 
     render() {
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+            },
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
                 <LibrarianNavbar />
-                <div>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
                     <h1>Librarian Profile</h1>
                     <div style={{
                         backgroundColor: "white",

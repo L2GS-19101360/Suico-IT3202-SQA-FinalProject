@@ -1,14 +1,14 @@
 import { Component } from 'react'
 import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap'
+import axios from 'axios'
+import { FaCheckSquare, FaTimesCircle } from 'react-icons/fa'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar'
 import LibrarianNavbar from '../../components/Librarian/LibrarianNavbar'
-import axios from 'axios'
-import { FaCheckSquare, FaTimesCircle } from 'react-icons/fa'
+import wallpaper from '../../assets/wallpaper.jpeg' // Import the wallpaper image
 
 class LibrarianReturnBooks extends Component {
-
     constructor() {
         super();
         this.state = {
@@ -24,9 +24,8 @@ class LibrarianReturnBooks extends Component {
     componentDidMount() {
         this.getReturnBooksRequests();
     }
-    componentWillUnmount() {
 
-    }
+    componentWillUnmount() {}
 
     getReturnBooksRequests() {
         const apiLink = [
@@ -143,10 +142,37 @@ class LibrarianReturnBooks extends Component {
     render() {
         const { selectBookGenreOption, filteredBooks, loading } = this.state;
 
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+            },
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
                 <LibrarianNavbar />
-                <div>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
                     <h1>Return Books Request Page</h1>
                     <div style={{ padding: "1%", textAlign: "center" }}>
                         <InputGroup className="mb-3">
@@ -196,7 +222,7 @@ class LibrarianReturnBooks extends Component {
                                             <td style={{ wordWrap: "break-word", wordBreak: "break-word", maxWidth: "150px" }}>{returnRequests.name}</td>
                                             <td>{returnRequests.author}</td>
                                             <td>
-                                                {returnRequests.userImage !== "#%&{}>" ? <img src={returnRequests.userImage} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${returnRequests.firstname}+${returnRequests.lastname}&background=random&size=75`} alt="" />}
+                                                {returnRequests.userImage !== "#%&{}>" ? <img src={returnRequests.userImage} height={75} width={75} alt="" /> : <img                                                     src={`https://ui-avatars.com/api/?name=${returnRequests.firstname}+${returnRequests.lastname}&background=random&size=75`} alt="" />}
                                             </td>
                                             <td>{returnRequests.firstname + " " + returnRequests.lastname}</td>
                                             <td>{returnRequests.email}</td>
@@ -229,8 +255,9 @@ class LibrarianReturnBooks extends Component {
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 
 export default LibrarianReturnBooks;
+

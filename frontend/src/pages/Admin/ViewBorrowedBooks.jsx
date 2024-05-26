@@ -1,10 +1,11 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap'
-import webName from '../../assets/website name.jpg'
-import ClockComponent from '../../components/ClockComponent'
-import AdminSidebar from '../../components/Admin/AdminSidebar'
-import AdminNavbar from '../../components/Admin/AdminNavbar'
-import axios from 'axios'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Spinner } from 'react-bootstrap';
+import webName from '../../assets/website name.jpg';
+import ClockComponent from '../../components/ClockComponent';
+import AdminSidebar from '../../components/Admin/AdminSidebar';
+import AdminNavbar from '../../components/Admin/AdminNavbar';
+import axios from 'axios';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class ViewBorrowedBooks extends Component {
 
@@ -22,9 +23,6 @@ class ViewBorrowedBooks extends Component {
 
     componentDidMount() {
         this.getAllRecordedBorrowedBooks();
-    }
-    componentWillUnmount() {
-
     }
 
     getAllRecordedBorrowedBooks() {
@@ -78,10 +76,38 @@ class ViewBorrowedBooks extends Component {
     render() {
         const { selectBookGenreOption, filteredBooks } = this.state;
 
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+                padding: '20px',
+            },
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
                 <AdminNavbar />
-                <div>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
                     <h1>View Borrowed Books History</h1>
                     <div style={{ padding: "1%", textAlign: "center" }}>
                         <InputGroup className="mb-3">
@@ -156,4 +182,4 @@ class ViewBorrowedBooks extends Component {
 
 }
 
-export default ViewBorrowedBooks
+export default ViewBorrowedBooks;

@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import AdminNavbar from '../../components/Admin/AdminNavbar';
 import CreateModalBook from '../../components/Admin/CreateModalBook';
 import UpdateModalBook from '../../components/Admin/UpdateModalBook';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class ManageBooks extends Component {
     constructor(props) {
@@ -133,89 +134,119 @@ class ManageBooks extends Component {
     }
 
     render() {
-        const { selectBookGenreOption, showModal, selectedBook, loadingBookId } = this.state
+        const { selectBookGenreOption, showModal, selectedBook, loadingBookId } = this.state;
+
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+                padding: '20px',
+            },
+        };
 
         return (
-            <div>
+            <div style={styles.container}>
                 <AdminNavbar />
-                <h1>Manage Books Page</h1>
-                <div style={{ padding: "1%", textAlign: "center" }}>
-                    <InputGroup className="mb-3">
-                        <Form.Control
-                            placeholder="Enter Book Information"
-                            value={this.state.searchInput}
-                            onChange={this.searchBook}
-                        />
-                    </InputGroup>
-                    <div style={{ display: "inline-flex", gap: "20px" }}>
-                        <CreateModalBook />
-                        <Dropdown>
-                            <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                {selectBookGenreOption}
-                            </Dropdown.Toggle>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
+                    <h1>Manage Books Page</h1>
+                    <div style={{ padding: "1%", textAlign: "center" }}>
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                placeholder="Enter Book Information"
+                                value={this.state.searchInput}
+                                onChange={this.searchBook}
+                            />
+                        </InputGroup>
+                        <div style={{ display: "inline-flex", gap: "20px" }}>
+                            <CreateModalBook />
+                            <Dropdown>
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    {selectBookGenreOption}
+                                </Dropdown.Toggle>
 
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("All")}>All</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Historical Fiction")}>Historical Fiction</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Crime and Mystery")}>Crime and Mystery</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Horror")}>Horror</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Science Fiction")}>Science Fiction</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Education")}>Education</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Romance")}>Romance</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.handleOptionBookSelect("Fantasy")}>Fantasy</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </div>
-                    <br /><br />
-                    <div style={{ textAlign: "center", height: "600px", overflowY: "auto" }}>
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>Book Image</th>
-                                    <th>Book Title</th>
-                                    <th>Book Author</th>
-                                    <th>Book Genre</th>
-                                    <th>Book Content</th>
-                                    <th>Update</th>
-                                    <th>Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.filteredBooks.map((book) => (
-                                    <tr key={book.id}>
-                                        <td><img src={book.image} height={75} width={75} alt="" /></td>
-                                        <td style={{ wordWrap: "break-word", wordBreak: "break-word", maxWidth: "150px" }}>{book.name}</td>
-                                        <td>{book.author}</td>
-                                        <td>{book.genre}</td>
-                                        <td>
-                                            <a href={book.content} target="_blank" rel="noopener noreferrer">
-                                                <Button variant="primary"><FaBookOpen /></Button>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <Button variant="warning" onClick={() => this.openModal(book)}>
-                                                <FaSync />
-                                            </Button>
-                                        </td>
-                                        <td>
-                                            <Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}>
-                                                {loadingBookId === book.id ? <Spinner as="span" animation="border" size="sm" /> : <FaTrash />}
-                                            </Button>
-                                        </td>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("All")}>All</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Historical Fiction")}>Historical Fiction</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Crime and Mystery")}>Crime and Mystery</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Horror")}>Horror</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Science Fiction")}>Science Fiction</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Education")}>Education</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Romance")}>Romance</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOptionBookSelect("Fantasy")}>Fantasy</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
+                        <br /><br />
+                        <div style={{ textAlign: "center", height: "600px", overflowY: "auto" }}>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Book Image</th>
+                                        <th>Book Title</th>
+                                        <th>Book Author</th>
+                                        <th>Book Genre</th>
+                                        <th>Book Content</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                                </thead>
+                                <tbody>
+                                    {this.state.filteredBooks.map((book) => (
+                                        <tr key={book.id}>
+                                            <td><img src={book.image} height={75} width={75} alt="" /></td>
+                                            <td style={{ wordWrap: "break-word", wordBreak: "break-word", maxWidth: "150px" }}>{book.name}</td>
+                                            <td>{book.author}</td>
+                                            <td>{book.genre}</td>
+                                            <td>
+                                                <a href={book.content} target="_blank" rel="noopener noreferrer">
+                                                    <Button variant="primary"><FaBookOpen /></Button>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <Button variant="warning" onClick={() => this.openModal(book)}>
+                                                    <FaSync />
+                                                </Button>
+                                            </td>
+                                            <td>
+                                                <Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}>
+                                                    {loadingBookId === book.id ? <Spinner as="span" animation="border" size="sm" /> : <FaTrash />}
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </div>
                     </div>
-                </div>
 
-                {selectedBook && (
-                    <UpdateModalBook
-                        show={showModal}
-                        handleClose={this.closeModal}
-                        book={selectedBook}
-                    />
-                )}
+                    {selectedBook && (
+                        <UpdateModalBook
+                            show={showModal}
+                            handleClose={this.closeModal}
+                            book={selectedBook}
+                        />
+                    )}
+                </div>
             </div>
         );
     }

@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { FaSearch, FaLock, FaUnlockAlt } from 'react-icons/fa';
 import axios from 'axios';
 import CreateModalLibrarian from '../../components/Admin/CreateModalLibrarian';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class ManageUsers extends Component {
 
@@ -151,76 +152,106 @@ class ManageUsers extends Component {
     render() {
         const { selectedUserOption, users, loading } = this.state;
 
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+                padding: '20px',
+            },
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
                 <AdminNavbar />
-                <h1>Manage User Page</h1>
-                <div style={{ textAlign: "center", marginBottom: "10px" }}>
-                    <div style={{ padding: "1%" }}>
-                        <Form>
-                            <InputGroup className="mb-3">
-                                <Form.Control
-                                    placeholder="Enter User Information"
-                                    value={this.state.searchInput}
-                                    onChange={(e) => { this.setState({ searchInput: e.target.value }, this.searchUser) }}
-                                />
-                            </InputGroup>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
+                    <h1>Manage User Page</h1>
+                    <div style={{ textAlign: "center", marginBottom: "10px" }}>
+                        <div style={{ padding: "1%" }}>
+                            <Form>
+                                <InputGroup className="mb-3">
+                                    <Form.Control
+                                        placeholder="Enter User Information"
+                                        value={this.state.searchInput}
+                                        onChange={(e) => { this.setState({ searchInput: e.target.value }, this.searchUser) }}
+                                    />
+                                </InputGroup>
 
-                            <div style={{ display: "inline-flex", gap: "20px" }}>
-                                <CreateModalLibrarian />
+                                <div style={{ display: "inline-flex", gap: "20px" }}>
+                                    <CreateModalLibrarian />
 
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                        {selectedUserOption}
-                                    </Dropdown.Toggle>
+                                    <Dropdown>
+                                        <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                            {selectedUserOption}
+                                        </Dropdown.Toggle>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => this.handleOptionUserSelect("all")}>all</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => this.handleOptionUserSelect("user")}>user</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => this.handleOptionUserSelect("librarian")}>librarian</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                        </Form>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => this.handleOptionUserSelect("all")}>all</Dropdown.Item>
+                                            <Dropdown.Item onClick={() => this.handleOptionUserSelect("user")}>user</Dropdown.Item>
+                                            <Dropdown.Item onClick={() => this.handleOptionUserSelect("librarian")}>librarian</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                            </Form>
+                        </div>
                     </div>
-                </div>
-                <div style={{ textAlign: "center", height: "600px", overflowY: "auto" }}>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Active Status</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.filter(user => user.role !== "admin").map(user => (
-                                <tr key={user.id}>
-                                    <td>
-                                        {user.image !== "#%&{}>" ? <img src={user.image} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=random&size=75`} alt="" />}
-                                    </td>
-                                    <td>{user.firstname}</td>
-                                    <td>{user.lastname}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
-                                    <td>{user.active_status ? <p style={{ color: "green", fontWeight: "bolder" }}>active</p> : <p style={{ color: "red", fontWeight: "bolder" }}>inactive</p>}</td>
-                                    <td>
-                                        {user.active_status ?
-                                            (<Button variant="danger" onClick={() => this.deactivateUser(user.id)}>
-                                                {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaLock />}
-                                            </Button>) :
-                                            (<Button variant="success" onClick={() => this.activateUser(user.id)}>
-                                                {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaUnlockAlt />}
-                                            </Button>)}
-                                    </td>
+                    <div style={{ textAlign: "center", height: "600px", overflowY: "auto" }}>
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Active Status</th>
+                                    <th></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                            </thead>
+                            <tbody>
+                                {users.filter(user => user.role !== "admin").map(user => (
+                                    <tr key={user.id}>
+                                        <td>
+                                            {user.image !== "#%&{}>" ? <img src={user.image} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=random&size=75`} alt="" />}
+                                        </td>
+                                        <td>{user.firstname}</td>
+                                        <td>{user.lastname}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.role}</td>
+                                        <td>{user.active_status ? <p style={{ color: "green", fontWeight: "bolder" }}>active</p> : <p style={{ color: "red", fontWeight: "bolder" }}>inactive</p>}</td>
+                                        <td>
+                                            {user.active_status ?
+                                                (<Button variant="danger" onClick={() => this.deactivateUser(user.id)}>
+                                                    {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaLock />}
+                                                </Button>) :
+                                                (<Button variant="success" onClick={() => this.activateUser(user.id)}>
+                                                    {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaUnlockAlt />}
+                                                </Button>)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         );

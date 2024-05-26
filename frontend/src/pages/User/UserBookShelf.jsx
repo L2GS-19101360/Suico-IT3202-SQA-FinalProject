@@ -1,11 +1,12 @@
-import { Component, useState } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap'
-import webName from '../../assets/website name.jpg'
-import ClockComponent from '../../components/ClockComponent'
-import UserSidebar from '../../components/User/UserSidebar'
-import UserNavbar from '../../components/User/UserNavbar'
-import axios from 'axios'
-import ViewModalApprovedBook from '../../components/User/ViewModalApprovedBook'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table } from 'react-bootstrap';
+import webName from '../../assets/website name.jpg';
+import ClockComponent from '../../components/ClockComponent';
+import UserSidebar from '../../components/User/UserSidebar';
+import UserNavbar from '../../components/User/UserNavbar';
+import axios from 'axios';
+import ViewModalApprovedBook from '../../components/User/ViewModalApprovedBook';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class UserBookShelf extends Component {
 
@@ -18,20 +19,16 @@ class UserBookShelf extends Component {
             filteredBooks: [],
             selectedBook: null,
             showModal: false,
-
             userId: localStorage.getItem("userId"),
-        }
+        };
     }
 
     componentDidMount() {
-        this.getApproveBorrowBooksRequests()
-    }
-    componentWillUnmount() {
-
+        this.getApproveBorrowBooksRequests();
     }
 
     getApproveBorrowBooksRequests() {
-        const { userId } = this.state
+        const { userId } = this.state;
 
         const apiLink = [
             `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/borrow-books-request/userId/${userId}`,
@@ -66,7 +63,7 @@ class UserBookShelf extends Component {
                 this.setState({ filteredBooks });
             }
         });
-    }
+    };
 
     handleOptionBookSelect = (option) => {
         this.setState({ selectBookGenreOption: option }, () => {
@@ -82,19 +79,46 @@ class UserBookShelf extends Component {
 
     handleBookClick = (book) => {
         this.setState({ selectedBook: book, showModal: true });
-    }
+    };
 
     handleCloseModal = () => {
         this.setState({ showModal: false, selectedBook: null });
-    }
+    };
 
     render() {
         const { selectBookGenreOption, filteredBooks, selectedBook, showModal } = this.state;
 
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+            },
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
                 <UserNavbar />
-                <div>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
                     <h1>User Book Shelf</h1>
                     <div style={{ padding: "1%", textAlign: "center" }}>
                         <InputGroup className="mb-3">
@@ -109,7 +133,6 @@ class UserBookShelf extends Component {
                                 <Dropdown.Toggle variant="primary" id="dropdown-basic">
                                     {selectBookGenreOption}
                                 </Dropdown.Toggle>
-
                                 <Dropdown.Menu>
                                     <Dropdown.Item onClick={() => this.handleOptionBookSelect("All")}>All</Dropdown.Item>
                                     <Dropdown.Item onClick={() => this.handleOptionBookSelect("Historical Fiction")}>Historical Fiction</Dropdown.Item>
@@ -149,7 +172,6 @@ class UserBookShelf extends Component {
             </div>
         );
     }
-
 }
 
-export default UserBookShelf
+export default UserBookShelf;

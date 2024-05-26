@@ -4,6 +4,7 @@ import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import AdminNavbar from '../../components/Admin/AdminNavbar';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class LibrarianProfile extends Component {
     constructor() {
@@ -208,10 +209,37 @@ class LibrarianProfile extends Component {
     }
 
     render() {
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                zIndex: 1, // Ensure content is above the overlay
+                padding: '20px',
+            },
+        };        
+
         return (
-            <div>
+            <div style={styles.container}>
                 <AdminNavbar />
-                <div>
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
                     <h1>Admin Profile</h1>
                     <div style={{
                         backgroundColor: "white",
@@ -232,7 +260,7 @@ class LibrarianProfile extends Component {
                                 (this.state.imageFileName !== "#%&{}>" ?
                                     (<img src={this.state.imageFileName} height={128} width={128} alt="" />) :
                                     (<img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />))}
-
+    
                             <br /><br />
                             <Form.Control type="file" onChange={this.handleImageChange} disabled={!this.state.isEditing} />
                             <br />
@@ -250,7 +278,7 @@ class LibrarianProfile extends Component {
                                     value={this.state.currLastname}
                                     onChange={(e) => { this.setState({ currLastname: e.target.value }) }} />
                             </div>
-
+    
                             <InputGroup className="mb-3">
                                 <Form.Control
                                     placeholder="Enter Email"
@@ -261,7 +289,7 @@ class LibrarianProfile extends Component {
                                 />
                                 <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
                             </InputGroup>
-
+    
                             <InputGroup className="mb-3">
                                 <Form.Control
                                     placeholder="Enter Password"
@@ -282,7 +310,7 @@ class LibrarianProfile extends Component {
                                 />
                                 <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                             </InputGroup><br />
-
+    
                             {this.state.isEditing ? (
                                 <div style={{ display: "inline-flex", gap: "50px" }}>
                                     <Button variant="danger" onClick={this.handleCancelChanges}>Cancel Changes</Button>
@@ -304,6 +332,7 @@ class LibrarianProfile extends Component {
             </div>
         );
     }
+    
 }
 
 export default withRouter(LibrarianProfile);
