@@ -1,13 +1,11 @@
-import { Component } from 'react'
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap'
-import webName from '../assets/website name.jpg'
-import ClockComponent from '../components/ClockComponent'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import axios from 'axios'
-import GeneralNavbar from '../components/GeneralNavbar'
+import { Component } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
+import wallpaper from '../assets/wallpaper.jpeg';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
+import GeneralNavbar from '../components/GeneralNavbar';
 
 class LoginPage extends Component {
-
     constructor() {
         super();
         this.toRegisterPage = this.toRegisterPage.bind(this);
@@ -21,15 +19,11 @@ class LoginPage extends Component {
             alertMessage: "",
             alertVariant: "",
             isLoading: false // State to track loading state
-        }
+        };
     }
 
-    componentDidMount() {
-
-    }
-    componentWillUnmount() {
-
-    }
+    componentDidMount() { }
+    componentWillUnmount() { }
 
     toRegisterPage() {
         this.props.history.push('RegisterPage');
@@ -62,12 +56,12 @@ class LoginPage extends Component {
         const data = {
             email: this.state.enterEmail,
             password: this.state.enterPassword
-        }
+        };
 
         const apiLink = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/login-user',
             'http://localhost:3306/api/users/login-user'
-        ]
+        ];
 
         axios.post(
             apiLink[0], data
@@ -84,8 +78,8 @@ class LoginPage extends Component {
                 localStorage.setItem('lastname', response.data.tokens.user.lastname);
                 localStorage.setItem('email', response.data.tokens.user.email);
                 localStorage.setItem('password', this.state.enterPassword);
-                localStorage.setItem('role', response.data.tokens.user.role)
-                localStorage.setItem('userImage_filename', response.data.tokens.user.image_filename)
+                localStorage.setItem('role', response.data.tokens.user.role);
+                localStorage.setItem('userImage_filename', response.data.tokens.user.image_filename);
 
                 if (response.data.tokens.user.active_status === 1) {
                     if (response.data.tokens.user.role === "user") {
@@ -96,7 +90,7 @@ class LoginPage extends Component {
                         this.props.history.push('/AdminDashboard');
                     }
                 } else {
-                    console.log("User Deactivate")
+                    console.log("User Deactivate");
                 }
             }
         ).catch(
@@ -122,27 +116,60 @@ class LoginPage extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <GeneralNavbar />
-                <div>
-                    <h1>Login Page</h1>
-                </div>
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '40%',
+                padding: '3%',
+                textAlign: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '10px',
+            },
+            whiteBackgroundLetter: {
+                backgroundColor: 'white',
+                display: 'inline-block',
+            }
+        };
 
-                <div style={{
-                    backgroundColor: "white",
-                    height: "60%",
-                    width: "40%",
-                    padding: "3%",
-                    textAlign: "center",
-                    margin: "auto"
-                }}>
+        return (
+            <div style={styles.container}>
+                <GeneralNavbar />
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
+                    <h1>
+                        {Array.from('Login Page').map((char, index) => (
+                            <span key={index} style={styles.whiteBackgroundLetter}>{char}</span>
+                        ))}
+                    </h1>
+                    <br />
                     {this.state.showAlert && (
                         <Alert variant={this.state.alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
                             {this.state.alertMessage}
                         </Alert>
                     )}
-                    <Form>
+                    <Form onSubmit={this.toLoginUser}>
                         <Form.Control
                             type="email"
                             placeholder="Enter Email"
@@ -159,16 +186,14 @@ class LoginPage extends Component {
                                 {this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}
                             </InputGroup.Text>
                         </InputGroup><br />
-                        <Button variant="secondary" onClick={this.toLoginUser} type='submit' disabled={this.state.isLoading}>
+                        <Button variant="secondary" type='submit' disabled={this.state.isLoading}>
                             {this.state.isLoading ? <Spinner animation="border" size="sm" /> : "Login Account"}
                         </Button>
                     </Form>
                 </div>
-
             </div>
         );
     }
-
 }
 
-export default LoginPage
+export default LoginPage;

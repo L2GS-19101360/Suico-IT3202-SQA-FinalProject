@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
+import wallpaper from '../assets/wallpaper.jpeg';
 import webName from '../assets/website name.jpg';
 import ClockComponent from '../components/ClockComponent';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -132,27 +133,51 @@ class RegisterPage extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <GeneralNavbar />
-                <div>
-                    <h1>Register Page</h1>
-                </div>
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '40%',
+                padding: '3%',
+                textAlign: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '10px',
+            }
+        };
 
-                <div style={{
-                    backgroundColor: "white",
-                    height: "50%",
-                    width: "40%",
-                    padding: "3%",
-                    textAlign: "center",
-                    margin: "auto"
-                }}>
+        return (
+            <div style={styles.container}>
+                <GeneralNavbar />
+                <div style={styles.overlay}></div>
+                <div style={styles.content}>
+                    <h1>Register Page</h1>
                     {this.state.showAlert && (
                         <Alert variant={this.state.alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
                             {this.state.alertMessage}
                         </Alert>
                     )}
-                    <Form>
+                    <Form onSubmit={this.toRegisterUser}>
                         <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
                             <Form.Control
                                 type="text"
@@ -182,7 +207,9 @@ class RegisterPage extends Component {
                                 value={this.state.newPassword}
                                 onChange={(e) => { this.setState({ newPassword: e.target.value }) }}
                             />
-                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
+                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>
+                                {this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}
+                            </InputGroup.Text>
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <Form.Control
@@ -191,18 +218,19 @@ class RegisterPage extends Component {
                                 value={this.state.rePassword}
                                 onChange={(e) => { this.setState({ rePassword: e.target.value }) }}
                             />
-                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
-                        </InputGroup><br />
+                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>
+                                {this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}
+                            </InputGroup.Text>
+                        </InputGroup>
                         <Button variant="primary" onClick={this.toRegisterUser} type='submit' disabled={this.state.isLoading}>
                             {this.state.isLoading ? <Spinner animation="border" size="sm" /> : "Register Account"}
                         </Button>
                     </Form>
                 </div>
-
             </div>
         );
     }
 
 }
 
-export default RegisterPage
+export default RegisterPage;

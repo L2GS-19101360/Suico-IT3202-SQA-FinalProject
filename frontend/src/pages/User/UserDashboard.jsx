@@ -1,6 +1,6 @@
-import { Component, useState } from 'react'
+import { Component } from 'react'
 import { Container, Form, InputGroup, Dropdown, Table, Button } from 'react-bootstrap';
-import webName from '../../assets/website name.jpg'
+import wallpaper from '../../assets/wallpaper.jpeg';
 import ClockComponent from '../../components/ClockComponent'
 import UserSidebar from '../../components/User/UserSidebar'
 import UserNavbar from '../../components/User/UserNavbar'
@@ -90,10 +90,39 @@ class UserDashboard extends Component {
     render() {
         const { selectBookGenreOption, showModal, selectedBook } = this.state;
 
+        // Styles for the overlay and the content
+        const styles = {
+            container: {
+                position: 'relative',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+            },
+            overlay: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${wallpaper})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.1, // Adjust the opacity as needed
+                zIndex: -1, // Ensure the overlay is behind other content
+            },
+            content: {
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                padding: '1%',
+            }
+        };
+
         return (
-            <div>
+            <div style={styles.container}>
+                <div style={styles.overlay}></div>
                 <UserNavbar />
-                <div>
+                <div style={styles.content}>
                     <h1>User Dashboard</h1>
                     <div style={{ padding: "1%", textAlign: "center" }}>
                         <InputGroup className="mb-3">
@@ -148,4 +177,4 @@ class UserDashboard extends Component {
 
 }
 
-export default UserDashboard
+export default UserDashboard;
