@@ -5,21 +5,123 @@ import ClockComponent from '../../components/ClockComponent';
 import LibrarianSidebar from '../../components/Librarian/LibrarianSidebar';
 import LibrarianNavbar from '../../components/Librarian/LibrarianNavbar';
 import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
+import axios from 'axios';
 
 class LibrarianDashboard extends Component {
 
     constructor() {
         super();
         this.state = {
+            currFirstname: localStorage.getItem('firstname'),
+            currLastname: localStorage.getItem('lastname'),
 
+            borrowBooksRequest: [],
+            borrowStatistics: {
+                pendingCount: 0,
+                approvedCount: 0,
+                deniedCount: 0
+            },
+
+            returnBooksRequest: [],
+            returnStatistics: {
+                pendingCount: 0,
+                approvedCount: 0,
+                deniedCount: 0
+            },
         }
     }
 
     componentDidMount() {
-
+        this.getBorrowBooksRequests();
+        this.getReturnBooksRequests();
     }
-    componentWillUnmount() {
 
+    getBorrowBooksRequests() {
+        const apiLink = [
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/borrow-books-request/View-Book-Request`,
+            `http://localhost:3306/api/borrow-books-request/View-Book-Request`
+        ];
+
+        axios.get(apiLink[0])
+            .then(response => {
+                this.setState({
+                    borrowBooksRequest: response.data.data,
+                }, () => {
+                    console.log("Borrow Books Request:", this.state.borrowBooksRequest); // Log the updated borrowBooksRequest state
+                    this.calculateBorrowStatistics(); // Call calculateBorrowStatistics after state update
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching borrow books requests:", error); // Log the error
+            });
+    }
+
+    getReturnBooksRequests() {
+        const apiLink = [
+            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/return-books-request/View-Book-Request`,
+            `http://localhost:3306/api/return-books-request/View-Book-Request`
+        ];
+
+        axios.get(apiLink[0])
+            .then(response => {
+                this.setState({
+                    returnBooksRequest: response.data.data,
+                }, () => {
+                    console.log("Return Books Request:", this.state.returnBooksRequest);
+                    this.calculateReturnStatistics();
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    calculateReturnStatistics() {
+        const { returnBooksRequest } = this.state;
+        let updatedStatistics = {
+            pendingCount: 0,
+            approvedCount: 0,
+            deniedCount: 0
+        };
+
+        returnBooksRequest.forEach(request => {
+            if (request.returned_status === "Pending") {
+                updatedStatistics.pendingCount++;
+            } else if (request.returned_status === "Approved") {
+                updatedStatistics.approvedCount++;
+            } else if (request.returned_status === "Denied") {
+                updatedStatistics.deniedCount++;
+            }
+        });
+
+        // Update the returnStatistics state with the updated statistics
+        this.setState({ returnStatistics: updatedStatistics });
+
+        console.log(updatedStatistics);
+    }
+
+    calculateBorrowStatistics() {
+        const { borrowBooksRequest } = this.state;
+        let updatedStatistics = {
+            pendingCount: 0,
+            approvedCount: 0,
+            deniedCount: 0
+        };
+
+        borrowBooksRequest.forEach(request => {
+            if (request.borrowed_status === "Pending") {
+                updatedStatistics.pendingCount++;
+            } else if (request.borrowed_status === "Approved") {
+                updatedStatistics.approvedCount++;
+            } else if (request.borrowed_status === "Denied") {
+                updatedStatistics.deniedCount++;
+            }
+        });
+
+        // Update the borrowStatistics state with the updated statistics
+        this.setState({ borrowStatistics: updatedStatistics });
+
+        console.log(updatedStatistics);
     }
 
     render() {
@@ -50,6 +152,8 @@ class LibrarianDashboard extends Component {
             },
         };
 
+        const { currFirstname, currLastname } = this.state
+
         return (
             <div style={styles.container}>
                 <LibrarianNavbar />
@@ -58,7 +162,7 @@ class LibrarianDashboard extends Component {
                     <h1>Librarian Dashboard</h1>
                     <Card className="mb-3">
                         <Card.Body>
-                            <h2>Welcome, [Librarian Name]</h2>
+                            <h2>Welcome, {currFirstname + " " + currLastname}</h2>
                             <p>Here is an overview of your library management system.</p>
                         </Card.Body>
                     </Card>
@@ -66,24 +170,16 @@ class LibrarianDashboard extends Component {
                         <Col md={4}>
                             <Card className="mb-3">
                                 <Card.Body>
-                                    <Card.Title>Manage Books</Card.Title>
-                                    <Button variant="primary" href="/manage-books">Go to Manage Books</Button>
+                                    <Card.Title>Borrow Book Requests</Card.Title>
+                                    <Button variant="primary" href="/LibrarianBorrowBooks">View Borrow Book Requests</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
                         <Col md={4}>
                             <Card className="mb-3">
                                 <Card.Body>
-                                    <Card.Title>Manage Users</Card.Title>
-                                    <Button variant="primary" href="/manage-users">Go to Manage Users</Button>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={4}>
-                            <Card className="mb-3">
-                                <Card.Body>
-                                    <Card.Title>Borrow Requests</Card.Title>
-                                    <Button variant="primary" href="/borrow-requests">View Borrow Requests</Button>
+                                    <Card.Title>Returned Book Requests</Card.Title>
+                                    <Button variant="primary" href="/LibrarianReturnBooks">View Returned Book Requests</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -92,18 +188,20 @@ class LibrarianDashboard extends Component {
                         <Col md={4}>
                             <Card className="mb-3">
                                 <Card.Body>
-                                    <Card.Title>Returned Books</Card.Title>
-                                    <Button variant="primary" href="/returned-books">View Returned Books</Button>
+                                    <Card.Title>Borrow Books Statistics</Card.Title>
+                                    <p>Pending Borrow Requests: {this.state.borrowStatistics.pendingCount}</p>
+                                    <p>Approved Borrow Requests: {this.state.borrowStatistics.approvedCount}</p>
+                                    <p>Denied Borrow Requests: {this.state.borrowStatistics.deniedCount}</p>
                                 </Card.Body>
                             </Card>
                         </Col>
                         <Col md={4}>
                             <Card className="mb-3">
                                 <Card.Body>
-                                    <Card.Title>Statistics</Card.Title>
-                                    <p>Books Borrowed: 120</p>
-                                    <p>Books Returned: 110</p>
-                                    <p>Pending Requests: 10</p>
+                                    <Card.Title>Return Books Statistics</Card.Title>
+                                    <p>Pending Return Requests: {this.state.returnStatistics.pendingCount}</p>
+                                    <p>Approved Return Requests: {this.state.returnStatistics.approvedCount}</p>
+                                    <p>Denied Return Requests: {this.state.returnStatistics.deniedCount}</p>
                                 </Card.Body>
                             </Card>
                         </Col>
