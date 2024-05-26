@@ -129,7 +129,20 @@ class ViewReturnedBooks extends Component {
                                 <tbody>
                                     {filteredBooks.map((returnBooksRequest) => (
                                         <tr key={returnBooksRequest.id}>
-
+                                            <td>
+                                                {returnBooksRequest.userImage !== "#%&{}>" ? <img src={returnBooksRequest.userImage} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${returnBooksRequest.userFirstname}+${returnBooksRequest.userLastname}&background=random&size=75`} alt="" />}
+                                            </td>
+                                            <td>{returnBooksRequest.userFirstname + " " + returnBooksRequest.userLastname}</td>
+                                            <td>{returnBooksRequest.userEmail}</td>
+                                            <td><img src={returnBooksRequest.image} height={75} width={75} alt="" /></td>
+                                            <td>{returnBooksRequest.name}</td>
+                                            <td>{returnBooksRequest.author}</td>
+                                            <td>
+                                                {returnBooksRequest.librarianImage !== "#%&{}>" ? <img src={returnBooksRequest.librarianImage} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${returnBooksRequest.librarianFirstname}+${returnBooksRequest.librarianLastname}&background=random&size=75`} alt="" />}
+                                            </td>
+                                            <td>{returnBooksRequest.librarianFirstname + " " + returnBooksRequest.librarianLastname}</td>
+                                            <td>{returnBooksRequest.librarianEmail}</td>
+                                            <td>{returnBooksRequest.returned_date}</td>
                                         </tr>
                                     ))}
                                 </tbody>

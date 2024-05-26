@@ -129,7 +129,20 @@ class ViewBorrowedBooks extends Component {
                                 <tbody>
                                     {filteredBooks.map((borrowRequests) => (
                                         <tr key={borrowRequests.id}>
-                                            
+                                            <td>
+                                                {borrowRequests.userImage !== "#%&{}>" ? <img src={borrowRequests.userImage} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${borrowRequests.userFirstname}+${borrowRequests.userLastname}&background=random&size=75`} alt="" />}
+                                            </td>
+                                            <td>{borrowRequests.userFirstname + " " + borrowRequests.userLastname}</td>
+                                            <td>{borrowRequests.userEmail}</td>
+                                            <td><img src={borrowRequests.image} height={75} width={75} alt="" /></td>
+                                            <td>{borrowRequests.name}</td>
+                                            <td>{borrowRequests.author}</td>
+                                            <td>
+                                                {borrowRequests.librarianImage !== "#%&{}>" ? <img src={borrowRequests.librarianImage} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${borrowRequests.librarianFirstname}+${borrowRequests.librarianLastname}&background=random&size=75`} alt="" />}
+                                            </td>
+                                            <td>{borrowRequests.librarianFirstname + " " + borrowRequests.librarianLastname}</td>
+                                            <td>{borrowRequests.librarianEmail}</td>
+                                            <td>{borrowRequests.borrowed_date}</td>
                                         </tr>
                                     ))}
                                 </tbody>
