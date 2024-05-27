@@ -3,7 +3,7 @@ const { loginPageAdminFrontend, loginPageLibrarianFrontend, loginPageUserFronten
 jest.setTimeout(30000); // Set a higher timeout for Selenium tests
 
 describe('Testing User Login Page Frontend with Jest and Selenium-Webdriver', () => {
-    test('Login with valid admin credentials', async () => {
+    test('Login with valid user credentials', async () => {
         const email = 'HomerSimpson@gmail.com';
         const password = 'Simpson';
         
@@ -19,7 +19,7 @@ describe('Testing User Login Page Frontend with Jest and Selenium-Webdriver', ()
         expect(result).toBe(false);
     });
 
-    test('Login admin with valid email and invalid password', async () => {
+    test('Login user with valid email and invalid password', async () => {
         const email = 'HomerSimpson@gmail.com';
         const password = 'Apple';
         
@@ -27,7 +27,7 @@ describe('Testing User Login Page Frontend with Jest and Selenium-Webdriver', ()
         expect(result).toBe(true);
     });
 
-    test('Login admin with invalid email and valid password', async () => {
+    test('Login user with invalid email and valid password', async () => {
         const email = 'IssacNewton@gmail.com';
         const password = 'Simpson';
         
@@ -35,7 +35,7 @@ describe('Testing User Login Page Frontend with Jest and Selenium-Webdriver', ()
         expect(result).toBe(true);
     });
 
-    test('Login with invalid admin credentials', async () => {
+    test('Login with invalid user credentials', async () => {
         const email = 'IssacNetwon@gmail.com';
         const password = 'Apple';
         
@@ -45,7 +45,7 @@ describe('Testing User Login Page Frontend with Jest and Selenium-Webdriver', ()
 });
 
 describe('Testing Librarian Login Page Frontend with Jest and Selenium-Webdriver', () => {
-    test('Login with valid admin credentials', async () => {
+    test('Login with valid librarian credentials', async () => {
         const email = 'HouseGregory@gmail.com';
         const password = 'Gregory';
         
@@ -61,7 +61,7 @@ describe('Testing Librarian Login Page Frontend with Jest and Selenium-Webdriver
         expect(result).toBe(false);
     });
 
-    test('Login admin with valid email and invalid password', async () => {
+    test('Login librarian with valid email and invalid password', async () => {
         const email = 'HouseGregory@gmail.com';
         const password = 'Apple';
         
@@ -69,7 +69,7 @@ describe('Testing Librarian Login Page Frontend with Jest and Selenium-Webdriver
         expect(result).toBe(true);
     });
 
-    test('Login admin with invalid email and valid password', async () => {
+    test('Login librarian with invalid email and valid password', async () => {
         const email = 'IssacNewton@gmail.com';
         const password = 'Gregory';
         
@@ -77,7 +77,7 @@ describe('Testing Librarian Login Page Frontend with Jest and Selenium-Webdriver
         expect(result).toBe(true);
     });
 
-    test('Login with invalid admin credentials', async () => {
+    test('Login with invalid librarian credentials', async () => {
         const email = 'IssacNetwon@gmail.com';
         const password = 'Apple';
         
