@@ -1,29 +1,29 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
-import LoginPage from './pages/LoginPage.jsx'
-import RegisterPage from './pages/RegisterPage.jsx'
-import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
-import LibrarianDashboard from './pages/Librarian/LibrarianDashboard.jsx'
-import UserDashboard from './pages/User/UserDashboard.jsx'
-import ProtectedRoute from './auth/ProtectedRoute.jsx'
-import UserProfile from './pages/User/UserProfile.jsx'
-import LibrarianProfile from './pages/Librarian/LibrarianProfile.jsx'
-import AdminProfile from './pages/Admin/AdminProfile.jsx'
-import ManageUsers from './pages/Admin/ManageUsers.jsx'
-import ManageBooks from './pages/Admin/ManageBooks.jsx'
-import Test from './Test.jsx'
-import LibrarianBorrowBooks from './pages/Librarian/LibrarianBorrowBooks.jsx'
-import LibrarianReturnBooks from './pages/Librarian/LibrarianReturnBooks.jsx'
-import UserBookShelf from './pages/User/UserBookShelf.jsx'
-import ViewBorrowedBooks from './pages/Admin/ViewBorrowedBooks.jsx'
-import ViewReturnedBooks from './pages/Admin/ViewReturnedBooks.jsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import App from './App.jsx';
+import './index.css';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
+import LibrarianDashboard from './pages/Librarian/LibrarianDashboard.jsx';
+import UserDashboard from './pages/User/UserDashboard.jsx';
+import ProtectedRoute from './auth/ProtectedRoute.jsx';
+import UserProfile from './pages/User/UserProfile.jsx';
+import LibrarianProfile from './pages/Librarian/LibrarianProfile.jsx';
+import AdminProfile from './pages/Admin/AdminProfile.jsx';
+import ManageUsers from './pages/Admin/ManageUsers.jsx';
+import ManageBooks from './pages/Admin/ManageBooks.jsx';
+import Test from './Test.jsx';
+import LibrarianBorrowBooks from './pages/Librarian/LibrarianBorrowBooks.jsx';
+import LibrarianReturnBooks from './pages/Librarian/LibrarianReturnBooks.jsx';
+import UserBookShelf from './pages/User/UserBookShelf.jsx';
+import ViewBorrowedBooks from './pages/Admin/ViewBorrowedBooks.jsx';
+import ViewReturnedBooks from './pages/Admin/ViewReturnedBooks.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <div>
-    <Router>
+  <Router>
+    <Switch>
       <Route exact path='/' component={App} />
       <Route path='/LoginPage' component={LoginPage} />
       <Route path='/RegisterPage' component={RegisterPage} />
@@ -43,7 +43,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProtectedRoute path='/UserDashboard' component={UserDashboard} role='user'/>
       <ProtectedRoute path='/UserBookShelf' component={UserBookShelf} role='user'/>
       <ProtectedRoute path='/UserProfile' component={UserProfile} role='user' />
-      
-    </Router>
-  </div>
-)
+    </Switch>
+  </Router>
+);
