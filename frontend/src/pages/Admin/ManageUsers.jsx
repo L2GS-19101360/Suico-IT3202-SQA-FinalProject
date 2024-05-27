@@ -31,40 +31,20 @@ class ManageUsers extends Component {
     }
 
     getAllUsers(selectedUserOption) {
-        const apiLinks = [
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/',
-            'http://localhost:3306/api/users/',
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/role/${selectedUserOption}`,
-            `http://localhost:3306/api/users/role/${selectedUserOption}`,
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/active-status/${selectedUserOption}`,
-            `http://localhost:3306/api/users/active-status/${selectedUserOption}`
-        ];
-
+        let apiLink;
         if (selectedUserOption === "all") {
-            axios.get(apiLinks[0])
-                .then(response => {
-                    this.setState({ users: response.data.data });
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        } else if (selectedUserOption === "user" || selectedUserOption === "librarian") {
-            axios.get(apiLinks[2])
-                .then(response => {
-                    this.setState({ users: response.data.data });
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            apiLink = 'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/';
         } else {
-            axios.get(apiLinks[4])
-                .then(response => {
-                    this.setState({ users: response.data.data });
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            apiLink = `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/role/${selectedUserOption}`;
         }
+    
+        axios.get(apiLink)
+            .then(response => {
+                this.setState({ users: response.data.data });
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     activateUser = (userId) => {
@@ -203,7 +183,6 @@ class ManageUsers extends Component {
                                         <Dropdown.Toggle variant="primary" id="dropdown-basic">
                                             {selectedUserOption}
                                         </Dropdown.Toggle>
-
                                         <Dropdown.Menu>
                                             <Dropdown.Item onClick={() => this.handleOptionUserSelect("all")}>all</Dropdown.Item>
                                             <Dropdown.Item onClick={() => this.handleOptionUserSelect("user")}>user</Dropdown.Item>
