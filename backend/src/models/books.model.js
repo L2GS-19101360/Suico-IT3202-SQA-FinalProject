@@ -13,6 +13,28 @@ const Book = function (book) {
     this.updated = null;
 }
 
+Book.getBookByAuthor = function (author, result) {
+    dbConnection.query("SELECT * FROM books WHERE author=?", [author], function (err, res) {
+        if (err) {
+            console.error("Database error:", err);
+            result("Internal server error", null);
+        } else {
+            result(null, res);
+        }
+    });
+};
+
+Book.getBookByTitle = function (title, result) {
+    dbConnection.query("SELECT * FROM books WHERE name=?", [title], function (err, res) {
+        if (err) {
+            console.error("Database error:", err);
+            result("Internal server error", null);
+        } else {
+            result(null, res);
+        }
+    });
+};
+
 Book.update = function (id, book, result) {
     const query = "UPDATE books SET image_filename=?, image=?, name=?, author=?, genre=?, content_filename=?, content=?, updated=? WHERE id=?";
     const values = [book.image_filename, book.image, book.name, book.author, book.genre, book.content_filename, book.content, new Date(), id];

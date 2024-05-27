@@ -1,6 +1,28 @@
 'use strict';
 const Book = require('../models/books.model');
 
+exports.getBookByAuthor = function (req, res) {
+    const author = req.params.author; // Use the correct parameter name
+    Book.getBookByAuthor(author, function (err, book) {
+        if (err) {
+            res.status(500).json({ status: 500, error: err });
+        } else {
+            res.status(200).json({ status: 200, data: book });
+        }
+    });
+};
+
+exports.getBookByTitle = function (req, res) {
+    const title = req.params.title; // Use the correct parameter name
+    Book.getBookByTitle(title, function (err, book) {
+        if (err) {
+            res.status(500).json({ status: 500, error: err });
+        } else {
+            res.status(200).json({ status: 200, data: book });
+        }
+    });
+};
+
 exports.update = function(req, res) {
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
         return res.status(400).send({
