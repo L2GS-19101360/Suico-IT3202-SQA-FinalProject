@@ -11,19 +11,20 @@ import CreateModalLibrarian from '../../components/Admin/CreateModalLibrarian';
 import wallpaper from '../../assets/wallpaper.jpeg'; // Import the wallpaper image
 
 class ManageUsers extends Component {
-
     constructor(props) {
         super(props);
         this.getAllUsers = this.getAllUsers.bind(this);
         this.deactivateUser = this.deactivateUser.bind(this);
         this.searchUser = this.searchUser.bind(this);
+        this.handleOptionUserSelect = this.handleOptionUserSelect.bind(this);
         this.state = {
             selectedUserOption: "all",
             selectedStatusOption: "all",
             users: [],
             searchInput: "",
+            filteredUsers: [],
             loading: {}  // State to track loading for each user action
-        }
+        };
     }
 
     componentDidMount() {
@@ -37,10 +38,13 @@ class ManageUsers extends Component {
         } else {
             apiLink = `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/role/${selectedUserOption}`;
         }
-    
+
         axios.get(apiLink)
             .then(response => {
-                this.setState({ users: response.data.data });
+                this.setState({
+                    users: response.data.data,
+                    filteredUsers: response.data.data
+                });
             })
             .catch(error => {
                 console.log(error);
@@ -99,21 +103,21 @@ class ManageUsers extends Component {
             });
     }
 
-    searchUser = () => {
-        const { searchInput, users } = this.state;
-        const searchQuery = searchInput.trim();
-
-        if (searchQuery === "") {
-            this.getAllUsers(this.state.selectedUserOption);
-        } else {
-            const filteredUsers = users.filter(user =>
-                user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-
-            this.setState({ users: filteredUsers });
-        }
+    searchUser = (event) => {
+        const searchInput = event.target.value;
+        this.setState({ searchInput }, () => {
+            const searchQuery = searchInput.toLowerCase();
+            if (searchQuery === "") {
+                this.setState({ filteredUsers: this.state.users });
+            } else {
+                const filteredUsers = this.state.users.filter(user =>
+                    user.firstname.toLowerCase().includes(searchQuery) ||
+                    user.lastname.toLowerCase().includes(searchQuery) ||
+                    user.email.toLowerCase().includes(searchQuery)
+                );
+                this.setState({ filteredUsers });
+            }
+        });
     };
 
     handleOptionStatusSelect = (option) => {
@@ -130,7 +134,7 @@ class ManageUsers extends Component {
     };
 
     render() {
-        const { selectedUserOption, users, loading } = this.state;
+        const { selectedUserOption, searchInput, filteredUsers, loading } = this.state;
 
         // Styles for the overlay and the content
         const styles = {
@@ -171,8 +175,8 @@ class ManageUsers extends Component {
                                 <InputGroup className="mb-3">
                                     <Form.Control
                                         placeholder="Enter User Information"
-                                        value={this.state.searchInput}
-                                        onChange={(e) => { this.setState({ searchInput: e.target.value }, this.searchUser) }}
+                                        value={searchInput}
+                                        onChange={this.searchUser}
                                     />
                                 </InputGroup>
 
@@ -207,7 +211,7 @@ class ManageUsers extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.filter(user => user.role !== "admin").map(user => (
+                                {filteredUsers.filter(user => user.role !== "admin").map(user => (
                                     <tr key={user.id}>
                                         <td>
                                             {user.image !== "#%&{}>" ? <img src={user.image} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=random&size=75`} alt="" />}
@@ -235,7 +239,6 @@ class ManageUsers extends Component {
             </div>
         );
     }
-
 }
 
 export default withRouter(ManageUsers);
