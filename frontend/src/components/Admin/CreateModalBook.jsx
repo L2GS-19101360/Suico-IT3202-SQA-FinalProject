@@ -1,82 +1,64 @@
-import { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner, Alert } from 'react-bootstrap';
-import webName from '../../assets/website name.jpg';
-import ClockComponent from '../../components/ClockComponent';
-import AdminSidebar from '../../components/Admin/AdminSidebar';
-import AdminNavbar from '../../components/Admin/AdminNavbar';
+import React, { Component } from 'react';
+import { Button, Form, Modal, Spinner, Alert, Dropdown } from 'react-bootstrap';
+import { FaBook } from 'react-icons/fa';
 import axios from 'axios';
-import { FaSearch, FaLock, FaUnlockAlt, FaBook } from 'react-icons/fa';
 
 class CreateModalBook extends Component {
-
     constructor() {
         super();
-        this.handleShow = this.handleShow.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleImageChange = this.handleImageChange.bind(this);
-        this.handleContentChange = this.handleContentChange.bind(this);
-        this.storeBook = this.storeBook.bind(this);
         this.state = {
             show: false,
             loading: false,
             showAlert: false,
             alertMessage: "",
             alertVariant: "danger",
-
             bookImageUrl: null,
             bookImageFile: null,
             bookImageFileName: "",
-
             bookContentUrl: null,
             bookContentFile: null,
             bookContentFileName: "",
-
-            bookImageURL: "",
             bookTitle: "",
             authorName: "",
             selectedGenre: "Select Genre",
-            bookGenre: "",
+            bookImageURL: "",
             bookContentURL: ""
         };
     }
 
-    handleClose() {
+    handleClose = () => {
         this.setState({ show: false, showAlert: false });
     }
 
-    handleShow() {
+    handleShow = () => {
         this.setState({ show: true });
     }
 
-    handleImageChange(e) {
+    handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const fileName = file.name;
             this.setState({
-                bookImageUrl: URL.createObjectURL(file) || null,
+                bookImageUrl: URL.createObjectURL(file),
                 bookImageFile: file,
-                bookImageFileName: fileName
+                bookImageFileName: file.name
             });
         }
     }
 
-    handleContentChange(e) {
+    handleContentChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const fileName = file.name;
-            if (file.type === 'application/pdf') {
-                this.setState({
-                    bookContentUrl: URL.createObjectURL(file),
-                    bookContentFile: file,
-                    bookContentFileName: fileName
-                });
-            } else {
-                alert('Please select a PDF file.');
-            }
+        if (file && file.type === 'application/pdf') {
+            this.setState({
+                bookContentUrl: URL.createObjectURL(file),
+                bookContentFile: file,
+                bookContentFileName: file.name
+            });
+        } else {
+            alert('Please select a PDF file.');
         }
     }
 
-    validateInputs() {
+    validateInputs = () => {
         const { bookImageFile, bookContentFile, bookTitle, authorName, selectedGenre } = this.state;
         if (!bookImageFile || !bookContentFile || !bookTitle || !authorName || selectedGenre === "Select Genre") {
             this.setState({
@@ -92,62 +74,41 @@ class CreateModalBook extends Component {
     storeBook = async (event) => {
         event.preventDefault();
 
-        if (!this.validateInputs()) {
-            return;
-        }
+        if (!this.validateInputs()) return;
 
         this.setState({ loading: true, showAlert: false });
 
-        const selectedImageFile = this.state.bookImageFile;
-        const selectedImageContent = this.state.bookContentFile;
-        const apiLinks = [
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
-            'http://localhost:3306/api/book-image',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content',
-            'http://localhost:3306/api/book-content',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/',
-            'http://localhost:3306/api/books/'
-        ];
-
         try {
-            if (selectedImageFile) {
-                const formImageData = new FormData();
-                formImageData.append('file', selectedImageFile);
-                const imageResponse = await axios.post(apiLinks[0], formImageData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                this.setState({ bookImageURL: imageResponse.data.imageUrl });
-            }
+            const { bookImageFile, bookContentFile } = this.state;
 
-            if (selectedImageContent) {
-                const formContentData = new FormData();
-                formContentData.append('file', selectedImageContent);
-                const contentResponse = await axios.post(apiLinks[2], formContentData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                this.setState({ bookContentURL: contentResponse.data.pdfUrl });
-            }
+            const formData = new FormData();
+            formData.append('file', bookImageFile);
 
-            const { bookImageURL, bookTitle, authorName, selectedGenre, bookContentURL, bookImageFileName, bookContentFileName } = this.state;
-            const data = {
-                image_filename: bookImageFileName,
-                image: bookImageURL,
-                name: bookTitle,
-                author: authorName,
-                genre: selectedGenre,
-                content_filename: bookContentFileName,
-                content: bookContentURL
+            const imageResponse = await axios.post('https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            const contentData = new FormData();
+            contentData.append('file', bookContentFile);
+
+            const contentResponse = await axios.post('https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content', contentData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            const bookData = {
+                image_filename: this.state.bookImageFileName,
+                image: imageResponse.data.imageUrl,
+                name: this.state.bookTitle,
+                author: this.state.authorName,
+                genre: this.state.selectedGenre,
+                content_filename: this.state.bookContentFileName,
+                content: contentResponse.data.pdfUrl
             };
 
-            const response = await axios.post(apiLinks[4], data);
-            console.log(response);
+            await axios.post('https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/', bookData);
+
             this.setState({ loading: false });
             window.location.reload();
-
         } catch (error) {
             console.error('Error uploading file:', error);
             this.setState({
@@ -173,23 +134,16 @@ class CreateModalBook extends Component {
                         <Modal.Title><FaBook /> Create New Book</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-
                         {showAlert && (
                             <Alert variant={alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
                                 {alertMessage}
                             </Alert>
                         )}
-
                         <Form>
                             <div style={{ display: 'inline-flex' }}>
                                 <div id='leftDiv'>
                                     {bookImageUrl ? (
-                                        <img
-                                            src={bookImageUrl}
-                                            alt="Book Cover"
-                                            height={300}
-                                            width={200}
-                                        />
+                                        <img src={bookImageUrl} alt="Book Cover" height={300} width={200} />
                                     ) : (
                                         <img src="" alt="" height={300} width={200} />
                                     )}
@@ -206,7 +160,6 @@ class CreateModalBook extends Component {
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {selectedGenre}
                                         </Dropdown.Toggle>
-
                                         <Dropdown.Menu>
                                             <Dropdown.Item eventKey="Historical Fiction">Historical Fiction</Dropdown.Item>
                                             <Dropdown.Item eventKey="Crime and Mystery">Crime and Mystery</Dropdown.Item>
