@@ -202,19 +202,19 @@ class CreateModalBook extends Component {
                                     <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
                                     <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
 
-                                    <Dropdown>
+                                    <Dropdown onSelect={(eventKey) => this.setState({ selectedGenre: eventKey })}>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {selectedGenre}
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Historical Fiction" })}>Historical Fiction</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Crime and Mystery" })}>Crime and Mystery</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Horror" })}>Horror</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Science Fiction" })}>Science Fiction</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Fantasy" })}>Fantasy</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Education" })}>Education</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Romance" })}>Romance</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Historical Fiction">Historical Fiction</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Crime and Mystery">Crime and Mystery</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Horror">Horror</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Science Fiction">Science Fiction</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Fantasy">Fantasy</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Education">Education</Dropdown.Item>
+                                            <Dropdown.Item eventKey="Romance">Romance</Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown><br />
 
@@ -222,7 +222,7 @@ class CreateModalBook extends Component {
                                     <Form.Group controlId="formFile" className="mb-3">
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
-                                    <div style={{textAlign: "center"}}>
+                                    <div style={{ textAlign: "center" }}>
                                         <Button variant="success" onClick={this.storeBook} disabled={loading}>
                                             {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
                                         </Button>
@@ -240,7 +240,6 @@ class CreateModalBook extends Component {
             </div>
         );
     }
-
 }
 
 export default CreateModalBook;
