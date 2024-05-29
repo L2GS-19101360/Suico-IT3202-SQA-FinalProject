@@ -21,13 +21,13 @@ jest.setTimeout(30000);
 // });
 
 describe('User Account Activation and Deactivation Automation Testing', () => {
-    test('Activate User Account', async () => {
-        const result = await updateUserByActivateButton(53);
+    test('Deactivate User Account', async () => {
+        const result = await updateUserByDeactivateButton(53);
         expect(result).toBe(true);
     });
 
-    test('Deactivate User Account', async () => {
-        const result = await updateUserByDeactivateButton(53);
+    test('Activate User Account', async () => {
+        const result = await updateUserByActivateButton(53);
         expect(result).toBe(true);
     });
 });
