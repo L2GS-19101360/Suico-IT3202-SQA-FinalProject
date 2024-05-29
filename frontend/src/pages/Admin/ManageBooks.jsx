@@ -201,6 +201,7 @@ class ManageBooks extends Component {
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
+                                        <th>Book ID</th>
                                         <th>Book Image</th>
                                         <th>Book Title</th>
                                         <th>Book Author</th>
@@ -213,6 +214,7 @@ class ManageBooks extends Component {
                                 <tbody>
                                     {this.state.filteredBooks.map((book) => (
                                         <tr key={book.id}>
+                                            <td>{book.id}</td>
                                             <td><img src={book.image} height={75} width={75} alt="" /></td>
                                             <td style={{ wordWrap: "break-word", wordBreak: "break-word", maxWidth: "150px" }}>{book.name}</td>
                                             <td>{book.author}</td>

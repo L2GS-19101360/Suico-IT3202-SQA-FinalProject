@@ -201,7 +201,8 @@ class ManageUsers extends Component {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>User ID</th>
+                                    <th>User Image</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Email</th>
@@ -213,6 +214,7 @@ class ManageUsers extends Component {
                             <tbody>
                                 {filteredUsers.filter(user => user.role !== "admin").map(user => (
                                     <tr key={user.id}>
+                                        <td>{user.id}</td>
                                         <td>
                                             {user.image !== "#%&{}>" ? <img src={user.image} height={75} width={75} alt="" /> : <img src={`https://ui-avatars.com/api/?name=${user.firstname}+${user.lastname}&background=random&size=75`} alt="" />}
                                         </td>
