@@ -13,19 +13,61 @@ async function navigateToUserProfile(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/UserProfile');
 }
 
+const TIMEOUT = 1000000;
+
 async function updateUserProfile() {
     const driver = await new Builder().forBrowser('chrome').build();
+    // Set implicit wait timeout
+    await driver.manage().setTimeouts({ implicit: TIMEOUT });
+
     try {
         await loginUser(driver);
         await navigateToUserProfile(driver);
-        
+
+        // Introduce a wait for the "Update Profile" button
+        await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), "Update Profile")]')), TIMEOUT);
+        const updateButton = await driver.findElement(By.xpath('//button[contains(text(), "Update Profile")]'));
+        await updateButton.click();
+
+        // Wait for the inputs to be enabled
+        await driver.wait(async () => {
+            const inputs = await driver.findElements(By.css('input[type="text"], input[type="file"], input[type="password"]'));
+            for (let input of inputs) {
+                const isDisabled = await input.getAttribute('disabled');
+                if (isDisabled !== null) {
+                    return false;
+                }
+            }
+            return true;
+        }, TIMEOUT, 'Inputs did not become enabled in time');
+
+        // Perform the actual profile update
+        const firstNameInput = await driver.findElement(By.css('input[placeholder="Enter First Name"]'));
+        const lastNameInput = await driver.findElement(By.css('input[placeholder="Enter Last Name"]'));
+        const emailInput = await driver.findElement(By.css('input[placeholder="Enter Email"]'));
+        const passwordInput = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+        const confirmPasswordInput = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+
+        await firstNameInput.clear();
+        await firstNameInput.sendKeys('Homer Jay');
+        await lastNameInput.clear();
+        await lastNameInput.sendKeys('Simpson');
+        await emailInput.clear();
+        await emailInput.sendKeys('SimpsonHomer@gmail.com');
+        await passwordInput.clear();
+        await passwordInput.sendKeys('Homer');
+        await confirmPasswordInput.clear();
+        await confirmPasswordInput.sendKeys('Homer');
+
+        // Submit the form
+        const saveButton = await driver.findElement(By.css('button[type="submit"]'));
+        await saveButton.click();
+
+        // Add any necessary verifications here
+
     } finally {
         await driver.quit();
     }
-}
-
-async function updateUserAccount () {
-
 }
 
 async function loginAdmin(driver) {
