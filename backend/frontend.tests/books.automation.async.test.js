@@ -1,6 +1,19 @@
-const { viewAllBooksFrontend, viewBooksByTitleSearchBar, viewBooksByAuthorSearchBar, viewBooksByFilterOption, createNewBookFrontend } = require('../frontend.async/books.automation.async');
+const { viewAllBooksFrontend, viewBooksByTitleSearchBar, viewBooksByAuthorSearchBar, viewBooksByFilterOption, createNewBookFrontend, deleteBookFrontend } = require('../frontend.async/books.automation.async');
 
 jest.setTimeout(30000);
+
+describe('Update Books Automation Testing', () => {
+    test('', async () => {
+        // Implementation for updating a book
+    });
+});
+
+describe('Delete Books Automation Testing', () => {
+    test('Delete Book', async () => {
+        const result = await deleteBookFrontend(55); // replace with actual book ID and filenames for testing
+        expect(result).toBe(true);
+    });
+});
 
 describe('Create Books Automation Testing', () => {
     test('Create book with all required information', async () => {
@@ -57,17 +70,5 @@ describe('Read Books Automation Testing', () => {
     test('Filter Books by Fantasy', async () => {
         const result = await viewBooksByFilterOption('Fantasy'); // replace with actual genre for testing
         expect(result).toBe(true);
-    });
-});
-
-describe('Update Books Automation Testing', () => {
-    test('', async () => {
-        // Implementation for updating a book
-    });
-});
-
-describe('Delete Books Automation Testing', () => {
-    test('', async () => {
-        // Implementation for deleting a book
     });
 });

@@ -1,6 +1,63 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const path = require('path');
 
+async function loginAdmin(driver) {
+    await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
+    await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
+    await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+    await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
+    await driver.findElement(By.css('button[type="submit"]')).click();
+    await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 10000);
+}
+
+async function navigateToManageBooks(driver) {
+    await driver.get('https://lg2slibrarysystem.netlify.app/ManageBooks');
+    await driver.wait(until.elementLocated(By.css('table')), 10000); // Wait until the table is present
+}
+
+async function findBookRow(driver, bookId) {
+    const bookRowSelector = `//tbody/tr[td[normalize-space(text())='${bookId}']]`;
+    try {
+        await driver.wait(until.elementLocated(By.xpath(bookRowSelector)), 10000);
+        return await driver.findElement(By.xpath(bookRowSelector));
+    } catch (error) {
+        console.error(`Error finding book row with ID ${bookId}:`, error);
+        return null;
+    }
+}
+
+async function deleteBookFrontend(bookId) {
+    const driver = await new Builder().forBrowser('chrome').build();
+
+    try {
+        await loginAdmin(driver);
+        await navigateToManageBooks(driver);
+
+        const bookRow = await findBookRow(driver, bookId);
+
+        if (!bookRow) {
+            console.error(`Book with ID ${bookId} not found`);
+            return false; // Book not found, return false
+        }
+
+        const deleteButton = await bookRow.findElement(By.css(`button[id^="delete-book-${bookId}"]`));
+        await deleteButton.click();
+
+        await driver.wait(async () => {
+            const rows = await driver.findElements(By.xpath(`//tbody/tr[td[normalize-space(text())='${bookId}']]`));
+            return rows.length === 0;
+        }, 10000);
+
+        return true; // Deletion successful
+    } catch (err) {
+        console.error(`Error during book deletion:`, err);
+        return false;
+    } finally {
+        await driver.quit();
+    }
+}
+
+
 async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName, bookAuthor, bookGenre, bookContentFile, bookContentFileName) {
     const driver = await new Builder().forBrowser('chrome').build();
 
@@ -254,5 +311,6 @@ module.exports = {
     viewAllBooksFrontend,
     viewBooksByTitleSearchBar,
     viewBooksByAuthorSearchBar,
-    viewBooksByFilterOption
+    viewBooksByFilterOption,
+    deleteBookFrontend
 };

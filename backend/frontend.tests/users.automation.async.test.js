@@ -5,19 +5,19 @@ const { viewUsersBySearchInput,
 
 jest.setTimeout(30000);
 
-// describe('Update User Automation Testing', () => {
-//     test('Update User Profile with new profile picture', async () => {
-//         const data = {
-//             image: "../sampleProfilePictures/homer3.jpg",
-//             image_filename: "homer3.jpg",
-//             firstname: "Homer Jay",
-//             lastname: "Simpson",
-//             email: "SimpsonHomer@gmail.com",
-//             password: "Homer",
-//             confirmPassword: "Homer"
-//         }
-//     });
-// });
+describe('Update User Automation Testing', () => {
+    test('Update User Profile with new profile picture', async () => {
+        const data = {
+            image: "../sampleProfilePictures/homer3.jpg",
+            image_filename: "homer3.jpg",
+            firstname: "Homer Jay",
+            lastname: "Simpson",
+            email: "SimpsonHomer@gmail.com",
+            password: "Homer",
+            confirmPassword: "Homer"
+        }
+    });
+});
 
 describe('User Account Activation and Deactivation Automation Testing', () => {
     test('Deactivate User Account', async () => {
