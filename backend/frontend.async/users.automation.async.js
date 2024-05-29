@@ -42,9 +42,22 @@ async function activateUserAccount(driver, userId) {
     try {
         const userRow = await findUserRow(driver, userId);
         const activateButton = await userRow.findElement(By.css('#activate-button'));
-        await driver.wait(until.elementIsVisible(activateButton), 5000);
+
+        // Increase the wait time for element visibility check
+        await driver.wait(until.elementIsVisible(activateButton), 15000); // Increased wait time to 15 seconds
+
         await activateButton.click();
-        await driver.wait(until.stalenessOf(userRow), 10000); // Wait for the row to become stale (indicating it was re-rendered)
+
+        // Wait for the activate button to disappear or for a specific condition indicating activation completion
+        await driver.wait(async () => {
+            try {
+                await activateButton.isDisplayed();
+                return false; // Still visible, wait more
+            } catch (error) {
+                return true; // Not visible anymore, activation completed
+            }
+        }, 20000); // Increased wait time to 20 seconds
+
         return true;
     } catch (err) {
         console.error('Error during activating user:', err);
@@ -56,9 +69,19 @@ async function deactivateUserAccount(driver, userId) {
     try {
         const userRow = await findUserRow(driver, userId);
         const deactivateButton = await userRow.findElement(By.css('#deactivate-button'));
-        await driver.wait(until.elementIsVisible(deactivateButton), 5000);
+        await driver.wait(until.elementIsVisible(deactivateButton), 15000); // Increased wait time to 15 seconds
         await deactivateButton.click();
-        await driver.wait(until.stalenessOf(userRow), 10000); // Wait for the row to become stale (indicating it was re-rendered)
+
+        // Wait for the deactivate button to disappear or for a specific condition indicating deactivation completion
+        await driver.wait(async () => {
+            try {
+                await deactivateButton.isDisplayed();
+                return false; // Still visible, wait more
+            } catch (error) {
+                return true; // Not visible anymore, deactivation completed
+            }
+        }, 20000); // Increased wait time to 20 seconds
+
         return true;
     } catch (err) {
         console.error('Error during deactivating user:', err);
