@@ -21,8 +21,6 @@ class CreateModalBook extends Component {
             bookTitle: "",
             authorName: "",
             selectedGenre: "Select Genre",
-            bookImageURL: "",
-            bookContentURL: ""
         };
     }
 
@@ -125,11 +123,11 @@ class CreateModalBook extends Component {
 
         return (
             <div>
-                <Button variant="success" onClick={this.handleShow}>
+                <Button variant="success" onClick={this.handleShow} className="create-book-button">
                     <FaBook /> Create New Book
                 </Button>
 
-                <Modal show={show} onHide={this.handleClose} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal show={show} onHide={this.handleClose} size='lg' aria-labelledby="contained-modal-title-vcenter" centered className="create-book-modal">
                     <Modal.Header closeButton>
                         <Modal.Title><FaBook /> Create New Book</Modal.Title>
                     </Modal.Header>
@@ -150,17 +148,17 @@ class CreateModalBook extends Component {
                                 </div>
                                 <div id='rightDiv' style={{ flex: '1', marginLeft: '20px', width: '469px' }}>
                                     <Form.Label>Book Image</Form.Label>
-                                    <Form.Group controlId="formFile" className="mb-3">
-                                        <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} />
+                                    <Form.Group controlId="formFileImage" className="mb-3">
+                                        <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} className="book-image-input"/>
                                     </Form.Group>
-                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
-                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} className="book-title-input"/><br />
+                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} className="book-author-input"/><br />
 
                                     <Dropdown onSelect={(eventKey) => this.setState({ selectedGenre: eventKey })}>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {selectedGenre}
                                         </Dropdown.Toggle>
-                                        <Dropdown.Menu>
+                                        <Dropdown.Menu className="genre-dropdown">
                                             <Dropdown.Item eventKey="Historical Fiction">Historical Fiction</Dropdown.Item>
                                             <Dropdown.Item eventKey="Crime and Mystery">Crime and Mystery</Dropdown.Item>
                                             <Dropdown.Item eventKey="Horror">Horror</Dropdown.Item>
@@ -172,11 +170,11 @@ class CreateModalBook extends Component {
                                     </Dropdown><br />
 
                                     <Form.Label>Book Content</Form.Label>
-                                    <Form.Group controlId="formFile" className="mb-3">
-                                        <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
+                                    <Form.Group controlId="formFileContent" className="mb-3">
+                                        <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} className="book-content-input"/>
                                     </Form.Group>
                                     <div style={{ textAlign: "center" }}>
-                                        <Button variant="success" onClick={this.storeBook} disabled={loading}>
+                                        <Button variant="success" onClick={this.storeBook} disabled={loading} className="store-book">
                                             {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
                                         </Button>
                                     </div>
