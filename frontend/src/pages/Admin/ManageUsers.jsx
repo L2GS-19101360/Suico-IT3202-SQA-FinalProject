@@ -223,10 +223,10 @@ class ManageUsers extends Component {
                                         <td>{user.active_status ? <p style={{ color: "green", fontWeight: "bolder" }}>active</p> : <p style={{ color: "red", fontWeight: "bolder" }}>inactive</p>}</td>
                                         <td>
                                             {user.active_status ?
-                                                (<Button variant="danger" onClick={() => this.deactivateUser(user.id)}>
+                                                (<Button variant="danger" onClick={() => this.deactivateUser(user.id)} id='deactivate-button'>
                                                     {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaLock />}
                                                 </Button>) :
-                                                (<Button variant="success" onClick={() => this.activateUser(user.id)}>
+                                                (<Button variant="success" onClick={() => this.activateUser(user.id)} id='activate-button'>
                                                     {loading[user.id] ? <Spinner animation="border" size="sm" /> : <FaUnlockAlt />}
                                                 </Button>)}
                                         </td>
