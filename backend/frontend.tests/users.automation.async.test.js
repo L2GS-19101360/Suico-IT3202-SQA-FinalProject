@@ -1,54 +1,65 @@
 const { viewUsersBySearchInput,
-    filterUsersByRoleOption } = require('../frontend.async/users.automation.async');
+        filterUsersByRoleOption,
+        updateUserProfile,
+        updateUserByActivateButton,
+        updateUserByDeactivateButton } = require('../frontend.async/users.automation.async');
 
 jest.setTimeout(30000);
 
-describe('Create User Automation Testing', () => {
-    test('', async () => {
-        // Implementation for creating a book
-    });
-});
+// describe('Update User Automation Testing', () => {
+//     test('Update User Profile with new profile picture', async () => {
+//         const data = {
+//             image: "../sampleProfilePictures/homer3.jpg",
+//             image_filename: "homer3.jpg",
+//             firstname: "Homer Jay",
+//             lastname: "Simpson",
+//             email: "SimpsonHomer@gmail.com",
+//             password: "Homer",
+//             confirmPassword: "Homer"
+//         }
+//     });
+// });
 
-describe('Read User Automation Testing', () => {
-    test('View All Users', async () => {
-        const result = await viewUsersBySearchInput("");
+describe('User Account Activation and Deactivation Automation Testing', () => {
+    test('Activate User Account', async () => {
+        const result = await updateUserByActivateButton(53);
         expect(result).toBe(true);
     });
 
-    test('Search Users by First Name', async () => {
-        const result = await viewUsersBySearchInput("Homer");
-        expect(result).toBe(true);
-    });
-
-    test('Search Users by Last Name', async () => {
-        const result = await viewUsersBySearchInput("Simpson");
-        expect(result).toBe(true);
-    });
-
-    test('Search Users by Email', async () => {
-        const result = await viewUsersBySearchInput("HomerSimpson@gmail.com");
-        expect(result).toBe(true);
-    });
-
-    test('Filter Users by Role: User', async () => {
-        const result = await filterUsersByRoleOption("user");
-        expect(result).toBe(true);
-    });
-
-    test('Filter Users by Role: Librarian', async () => {
-        const result = await filterUsersByRoleOption("librarian");
+    test('Deactivate User Account', async () => {
+        const result = await updateUserByDeactivateButton(53);
         expect(result).toBe(true);
     });
 });
 
-describe('Update User Automation Testing', () => {
-    test('', async () => {
-        // Implementation for updating a book
-    });
-});
+// describe('Read User Automation Testing', () => {
+//     test('View All Users', async () => {
+//         const result = await viewUsersBySearchInput("");
+//         expect(result).toBe(true);
+//     });
 
-describe('Delete Books Automation Testing', () => {
-    test('', async () => {
-        // Implementation for deleting a book
-    });
-});
+//     test('Search Users by First Name', async () => {
+//         const result = await viewUsersBySearchInput("Homer");
+//         expect(result).toBe(true);
+//     });
+
+//     test('Search Users by Last Name', async () => {
+//         const result = await viewUsersBySearchInput("Simpson");
+//         expect(result).toBe(true);
+//     });
+
+//     test('Search Users by Email', async () => {
+//         const result = await viewUsersBySearchInput("HomerSimpson@gmail.com");
+//         expect(result).toBe(true);
+//     });
+
+//     test('Filter Users by Role: User', async () => {
+//         const result = await filterUsersByRoleOption("user");
+//         expect(result).toBe(true);
+//     });
+
+//     test('Filter Users by Role: Librarian', async () => {
+//         const result = await filterUsersByRoleOption("librarian");
+//         expect(result).toBe(true);
+//     });
+// });
