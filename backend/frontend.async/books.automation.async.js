@@ -101,13 +101,13 @@ async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName,
         await driver.wait(until.elementLocated(By.css('.dropdown-menu.show')), 10000);
         console.log('Dropdown menu located.');
 
-        await driver.sleep(1000); // Add a slight delay to ensure the menu is fully rendered
+        // Add a slight delay to ensure the menu is fully rendered
+        await driver.sleep(1000);
         console.log('Dropdown menu is visible.');
 
-        // Select the genre from the dropdown menu
+        // Select the genre from the dropdown menu using JavaScript
         const genreOption = await driver.wait(until.elementLocated(By.xpath(`//div[contains(@class, "dropdown-menu show")]/a[text()="${bookGenre}"]`)), 10000);
-        await driver.executeScript("arguments[0].scrollIntoView(true);", genreOption);
-        await genreOption.click();
+        await driver.executeScript("arguments[0].scrollIntoView(true); arguments[0].click();", genreOption);
         console.log(`${bookGenre} selected from dropdown menu.`);
 
         await driver.findElement(By.css('input[type="file"][accept=".pdf"]')).sendKeys(bookContentFilePath);
