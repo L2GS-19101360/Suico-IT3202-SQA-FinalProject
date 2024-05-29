@@ -230,7 +230,7 @@ class ManageBooks extends Component {
                                                 </Button>
                                             </td>
                                             <td>
-                                                <Button variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}>
+                                                <Button id={`delete-book-${book.id}`} variant="danger" onClick={() => this.deleteBooks(book.id, book.image_filename, book.content_filename)}>
                                                     {loadingBookId === book.id ? <Spinner as="span" animation="border" size="sm" /> : <FaTrash />}
                                                 </Button>
                                             </td>
