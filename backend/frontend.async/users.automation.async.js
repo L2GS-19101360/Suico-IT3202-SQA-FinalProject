@@ -15,7 +15,6 @@ async function navigateToUserProfile(driver) {
 
 
 
-
 async function loginAdmin(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
     await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
@@ -181,7 +180,6 @@ async function filterUsersByRoleOption(role) {
 module.exports = {
     viewUsersBySearchInput,
     filterUsersByRoleOption,
-    activateUserAccount,
     updateUserByActivateButton,
     updateUserByDeactivateButton
 };
