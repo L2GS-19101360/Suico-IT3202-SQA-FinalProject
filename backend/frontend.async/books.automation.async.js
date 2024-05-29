@@ -57,7 +57,6 @@ async function deleteBookFrontend(bookId) {
     }
 }
 
-
 async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName, bookAuthor, bookGenre, bookContentFile, bookContentFileName) {
     const driver = await new Builder().forBrowser('chrome').build();
 
@@ -86,22 +85,39 @@ async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName,
         await driver.findElement(By.css('input[placeholder="Enter Book Title"]')).sendKeys(bookName);
         await driver.findElement(By.css('input[placeholder="Enter Book Author"]')).sendKeys(bookAuthor);
 
-        const dropdownButton = await driver.wait(until.elementLocated(By.css('button[id="dropdown-basic"]')), 10000);
-        await driver.executeScript("arguments[0].scrollIntoView(true)", dropdownButton);
-        await dropdownButton.click();
+        // Ensure the "Select Genre" dropdown is located and visible
+        const dropdownButton = await driver.wait(until.elementLocated(By.css('button#dropdown-basic')), 10000);
+        console.log('Dropdown button located.');
 
-        const genreOption = await driver.findElement(By.xpath(`//div[contains(@class, "dropdown-menu")]/button[text()="${bookGenre}"]`));
-        await driver.executeScript("arguments[0].scrollIntoView(true)", genreOption);
+        await driver.executeScript("arguments[0].scrollIntoView(true);", dropdownButton);
+        await driver.wait(until.elementIsVisible(dropdownButton), 10000);
+        await driver.wait(until.elementIsEnabled(dropdownButton), 10000);
+
+        // Click the dropdown button using JavaScript to avoid interception
+        await driver.executeScript("arguments[0].click();", dropdownButton);
+        console.log('Dropdown button clicked.');
+
+        // Wait for the dropdown menu to become visible
+        await driver.wait(until.elementLocated(By.css('.dropdown-menu.show')), 10000);
+        console.log('Dropdown menu located.');
+
+        await driver.sleep(1000); // Add a slight delay to ensure the menu is fully rendered
+        console.log('Dropdown menu is visible.');
+
+        // Select the genre from the dropdown menu
+        const genreOption = await driver.wait(until.elementLocated(By.xpath(`//div[contains(@class, "dropdown-menu show")]/a[text()="${bookGenre}"]`)), 10000);
+        await driver.executeScript("arguments[0].scrollIntoView(true);", genreOption);
         await genreOption.click();
+        console.log(`${bookGenre} selected from dropdown menu.`);
 
         await driver.findElement(By.css('input[type="file"][accept=".pdf"]')).sendKeys(bookContentFilePath);
 
         const storeButtonSelector = 'button.store-book';
-        await driver.wait(until.elementLocated(By.css(storeButtonSelector)), 20000);
-        await driver.wait(until.elementIsVisible(driver.findElement(By.css(storeButtonSelector))), 20000);
+        const storeButton = await driver.wait(until.elementLocated(By.css(storeButtonSelector)), 20000);
+        await driver.wait(until.elementIsVisible(storeButton), 20000);
 
-        await driver.executeScript("arguments[0].scrollIntoView(true)", driver.findElement(By.css(storeButtonSelector)));
-        await driver.findElement(By.css(storeButtonSelector)).click();
+        await driver.executeScript("arguments[0].scrollIntoView(true);", storeButton);
+        await driver.executeScript("arguments[0].click();", storeButton);
 
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.css('.modal.show'))), 10000);
 
@@ -115,6 +131,7 @@ async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName,
         await driver.quit();
     }
 }
+
 
 async function viewBooksByFilterOption(filteredGenre) {
     const driver = await new Builder().forBrowser('chrome').build();
