@@ -13,7 +13,20 @@ async function navigateToUserProfile(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/UserProfile');
 }
 
+async function updateUserProfile() {
+    const driver = await new Builder().forBrowser('chrome').build();
+    try {
+        await loginUser(driver);
+        await navigateToUserProfile(driver);
+        
+    } finally {
+        await driver.quit();
+    }
+}
 
+async function updateUserAccount () {
+
+}
 
 async function loginAdmin(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
@@ -181,5 +194,6 @@ module.exports = {
     viewUsersBySearchInput,
     filterUsersByRoleOption,
     updateUserByActivateButton,
-    updateUserByDeactivateButton
+    updateUserByDeactivateButton,
+    updateUserProfile
 };
