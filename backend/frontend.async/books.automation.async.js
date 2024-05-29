@@ -5,35 +5,23 @@ async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName,
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
-        // Navigate to the login page
         await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
-        console.log('Navigated to login page');
 
-        // Wait until the email input field is present
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 20000);
         await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
         await driver.findElement(By.css('button[type="submit"]')).click();
-        console.log('Logged in');
 
-        // Wait for redirection to Admin Dashboard
         await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 20000);
-        console.log('Navigated to Admin Dashboard');
 
-        // Navigate to the Manage Books page
         await driver.get('https://lg2slibrarysystem.netlify.app/ManageBooks');
-        console.log('Navigated to Manage Books page');
 
-        // Wait until the "Create New Book" button is present and click it to open the modal
         await driver.wait(until.elementLocated(By.css('button.btn-success')), 10000);
         const createBookButton = await driver.findElement(By.css('button.btn-success'));
         await createBookButton.click();
-        console.log('Clicked "Create New Book" button');
 
-        // Wait until the modal is visible
         await driver.wait(until.elementLocated(By.css('.modal.show')), 10000);
 
-        // Fill in the book details
         const bookImageFilePath = path.resolve(__dirname, bookImageFile);
         const bookContentFilePath = path.resolve(__dirname, bookContentFile);
 
@@ -41,25 +29,25 @@ async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName,
         await driver.findElement(By.css('input[placeholder="Enter Book Title"]')).sendKeys(bookName);
         await driver.findElement(By.css('input[placeholder="Enter Book Author"]')).sendKeys(bookAuthor);
 
-        // Select genre from dropdown
-        await driver.findElement(By.css('.dropdown-toggle')).click();
-        await driver.findElement(By.xpath(`//a[contains(text(), "${bookGenre}")]`)).click();
+        const dropdownButton = await driver.wait(until.elementLocated(By.css('button[id="dropdown-basic"]')), 10000);
+        await driver.executeScript("arguments[0].scrollIntoView(true)", dropdownButton);
+        await dropdownButton.click();
+
+        const genreOption = await driver.findElement(By.xpath(`//div[contains(@class, "dropdown-menu")]/button[text()="${bookGenre}"]`));
+        await driver.executeScript("arguments[0].scrollIntoView(true)", genreOption);
+        await genreOption.click();
 
         await driver.findElement(By.css('input[type="file"][accept=".pdf"]')).sendKeys(bookContentFilePath);
 
-        // Wait for the "Store Book" button to be present and visible
         const storeButtonSelector = 'button.store-book';
         await driver.wait(until.elementLocated(By.css(storeButtonSelector)), 20000);
         await driver.wait(until.elementIsVisible(driver.findElement(By.css(storeButtonSelector))), 20000);
-        console.log('Found "Store Book" button');
 
-        // Click on the "Store Book" button
+        await driver.executeScript("arguments[0].scrollIntoView(true)", driver.findElement(By.css(storeButtonSelector)));
         await driver.findElement(By.css(storeButtonSelector)).click();
 
-        // Wait for the modal to close indicating the book was created successfully
         await driver.wait(until.elementIsNotVisible(driver.findElement(By.css('.modal.show'))), 10000);
 
-        console.log('Book creation process completed successfully');
         return true;
     } catch (err) {
         console.error('Error during book creation:', err);
