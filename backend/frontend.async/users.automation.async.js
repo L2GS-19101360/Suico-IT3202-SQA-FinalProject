@@ -1,6 +1,97 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const path = require('path');
 
+async function loginLibrarian(driver, email, password) {
+    await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
+    await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
+    await driver.findElement(By.css('input[type="email"]')).sendKeys(email);
+    await driver.findElement(By.css('input[type="password"]')).sendKeys(password);
+    await driver.findElement(By.css('button[type="submit"]')).click();
+    await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/LibrarianDashboard'), 10000);
+}
+
+async function navigateToLibrarianProfile(driver) {
+    await driver.get('https://lg2slibrarysystem.netlify.app/LibrarianProfile');
+}
+
+async function updateLibrarianProfile(data, email, password, isValid) {
+    const driver = await new Builder().forBrowser('chrome').build();
+    try {
+        await loginLibrarian(driver, email, password);
+        await navigateToLibrarianProfile(driver);
+
+        // Click the "Update Profile" button to enable editing
+        await driver.wait(until.elementLocated(By.id('toUpdateUserAccount')), 10000);
+        await driver.findElement(By.id('toUpdateUserAccount')).click();
+
+        // Wait for the fields to be enabled
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currFirstname'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currLastname'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currEmail'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currPassword'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('confirmPassword'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.css('input[type="file"]'))), 10000);
+
+        // Update profile picture
+        if (data.image) {
+            const fileInput = driver.findElement(By.css('input[type="file"]'));
+            const absolutePath = path.resolve(__dirname, data.image);
+            await fileInput.sendKeys(absolutePath);
+        }
+
+        // Update text fields
+        if (data.currFirstname) {
+            const firstnameInput = driver.findElement(By.name('currFirstname'));
+            await firstnameInput.clear();
+            await firstnameInput.sendKeys(data.currFirstname);
+        }
+
+        if (data.currLastname) {
+            const lastnameInput = driver.findElement(By.name('currLastname'));
+            await lastnameInput.clear();
+            await lastnameInput.sendKeys(data.currLastname);
+        }
+
+        if (data.currEmail) {
+            const emailInput = driver.findElement(By.name('currEmail'));
+            await emailInput.clear();
+            await emailInput.sendKeys(data.currEmail);
+        }
+
+        if (data.currPassword) {
+            const passwordInput = driver.findElement(By.name('currPassword'));
+            await passwordInput.clear();
+            await passwordInput.sendKeys(data.currPassword);
+        }
+
+        if (data.confirmPassword) {
+            const confirmPasswordInput = driver.findElement(By.name('confirmPassword'));
+            await confirmPasswordInput.clear();
+            await confirmPasswordInput.sendKeys(data.confirmPassword);
+        }
+
+        // Click the save button
+        const saveButton = driver.findElement(By.css('button[type="submit"]'));
+        await saveButton.click();
+
+        if (isValid) {
+            // Wait for the page to confirm the update
+            await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/'), 10000);
+        } else {
+            await driver.wait(until.elementLocated(By.css('.alert-danger')), 10000);
+        }
+
+        return true;
+    } catch (error) {
+        // Log any errors that occur
+        console.error("Error updating user profile:", error);
+        return false;
+    } finally {
+        // Quit the WebDriver session
+        await driver.quit();
+    }
+}
+
 async function loginUser(driver, email, password) {
     await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
     await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
@@ -14,7 +105,7 @@ async function navigateToUserProfile(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/UserProfile');
 }
 
-async function updateUserProfile(data, email, password) {
+async function updateUserProfile(data, email, password, isValid) {
     const driver = await new Builder().forBrowser('chrome').build();
     try {
         await loginUser(driver, email, password);
@@ -46,29 +137,40 @@ async function updateUserProfile(data, email, password) {
             await firstnameInput.sendKeys(data.currFirstname);
         }
 
-        const lastnameInput = driver.findElement(By.name('currLastname'));
-        await lastnameInput.clear();
-        await lastnameInput.sendKeys(data.currLastname);
+        if (data.currLastname) {
+            const lastnameInput = driver.findElement(By.name('currLastname'));
+            await lastnameInput.clear();
+            await lastnameInput.sendKeys(data.currLastname);
+        }
 
-        const emailInput = driver.findElement(By.name('currEmail'));
-        await emailInput.clear();
-        await emailInput.sendKeys(data.currEmail);
+        if (data.currEmail) {
+            const emailInput = driver.findElement(By.name('currEmail'));
+            await emailInput.clear();
+            await emailInput.sendKeys(data.currEmail);
+        }
 
-        // Update password fields
-        const passwordInput = driver.findElement(By.name('currPassword'));
-        await passwordInput.clear();
-        await passwordInput.sendKeys(data.currPassword);
+        if (data.currPassword) {
+            const passwordInput = driver.findElement(By.name('currPassword'));
+            await passwordInput.clear();
+            await passwordInput.sendKeys(data.currPassword);
+        }
 
-        const confirmPasswordInput = driver.findElement(By.name('confirmPassword'));
-        await confirmPasswordInput.clear();
-        await confirmPasswordInput.sendKeys(data.confirmPassword);
+        if (data.confirmPassword) {
+            const confirmPasswordInput = driver.findElement(By.name('confirmPassword'));
+            await confirmPasswordInput.clear();
+            await confirmPasswordInput.sendKeys(data.confirmPassword);
+        }
 
         // Click the save button
         const saveButton = driver.findElement(By.css('button[type="submit"]'));
         await saveButton.click();
 
-        // Wait for the page to confirm the update
-        await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/'), 10000);
+        if (isValid) {
+            // Wait for the page to confirm the update
+            await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/'), 10000);
+        } else {
+            await driver.wait(until.elementLocated(By.css('.alert-danger')), 10000);
+        }
 
         return true;
     } catch (error) {
@@ -81,13 +183,95 @@ async function updateUserProfile(data, email, password) {
     }
 }
 
-async function loginAdmin(driver) {
+async function loginAdmin(driver, email, password) {
     await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
     await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
-    await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
-    await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
+    await driver.findElement(By.css('input[type="email"]')).sendKeys(email);
+    await driver.findElement(By.css('input[type="password"]')).sendKeys(password);
     await driver.findElement(By.css('button[type="submit"]')).click();
     await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 10000);
+}
+
+async function navigateToAdminProfile(driver) {
+    await driver.get('https://lg2slibrarysystem.netlify.app/AdminProfile');
+}
+
+async function updateAdminProfile(data, email, password, isValid) {
+    const driver = await new Builder().forBrowser('chrome').build();
+    try {
+        await loginAdmin(driver, email, password);
+        await navigateToAdminProfile(driver);
+
+        // Click the "Update Profile" button to enable editing
+        await driver.wait(until.elementLocated(By.id('toUpdateUserAccount')), 10000);
+        await driver.findElement(By.id('toUpdateUserAccount')).click();
+
+        // Wait for the fields to be enabled
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currFirstname'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currLastname'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currEmail'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('currPassword'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.name('confirmPassword'))), 10000);
+        await driver.wait(until.elementIsEnabled(driver.findElement(By.css('input[type="file"]'))), 10000);
+
+        // Update profile picture
+        if (data.image) {
+            const fileInput = driver.findElement(By.css('input[type="file"]'));
+            const absolutePath = path.resolve(__dirname, data.image);
+            await fileInput.sendKeys(absolutePath);
+        }
+
+        // Update text fields
+        if (data.currFirstname) {
+            const firstnameInput = driver.findElement(By.name('currFirstname'));
+            await firstnameInput.clear();
+            await firstnameInput.sendKeys(data.currFirstname);
+        }
+
+        if (data.currLastname) {
+            const lastnameInput = driver.findElement(By.name('currLastname'));
+            await lastnameInput.clear();
+            await lastnameInput.sendKeys(data.currLastname);
+        }
+
+        if (data.currEmail) {
+            const emailInput = driver.findElement(By.name('currEmail'));
+            await emailInput.clear();
+            await emailInput.sendKeys(data.currEmail);
+        }
+
+        if (data.currPassword) {
+            const passwordInput = driver.findElement(By.name('currPassword'));
+            await passwordInput.clear();
+            await passwordInput.sendKeys(data.currPassword);
+        }
+
+        if (data.confirmPassword) {
+            const confirmPasswordInput = driver.findElement(By.name('confirmPassword'));
+            await confirmPasswordInput.clear();
+            await confirmPasswordInput.sendKeys(data.confirmPassword);
+        }
+
+        // Click the save button
+        const saveButton = driver.findElement(By.css('button[type="submit"]'));
+        await saveButton.click();
+
+        if (isValid) {
+            // Wait for the page to confirm the update
+            await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/'), 10000);
+        } else {
+            await driver.wait(until.elementLocated(By.css('.alert-danger')), 10000);
+        }
+
+        return true;
+    } catch (error) {
+        // Log any errors that occur
+        console.error("Error updating user profile:", error);
+        return false;
+    } finally {
+        // Quit the WebDriver session
+        await driver.quit();
+    }
 }
 
 async function navigateToManageUsers(driver) {
@@ -157,7 +341,7 @@ async function deactivateUserAccount(driver, userId) {
 async function updateUserByActivateButton(userId) {
     const driver = await new Builder().forBrowser('chrome').build();
     try {
-        await loginAdmin(driver);
+        await loginAdmin(driver, "Lawrence123@gmail.com", "Lawrence");
         await navigateToManageUsers(driver);
         return await activateUserAccount(driver, userId);
     } finally {
@@ -168,7 +352,7 @@ async function updateUserByActivateButton(userId) {
 async function updateUserByDeactivateButton(userId) {
     const driver = await new Builder().forBrowser('chrome').build();
     try {
-        await loginAdmin(driver);
+        await loginAdmin(driver, "Lawrence123@gmail.com", "Lawrence");
         await navigateToManageUsers(driver);
         return await deactivateUserAccount(driver, userId);
     } finally {
@@ -217,7 +401,7 @@ async function viewUsersBySearchInput(searchInput) {
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
-        await loginAdmin(driver);
+        await loginAdmin(driver, "Lawrence123@gmail.com", "Lawrence");
         await navigateToManageUsers(driver);
         return await searchUser(driver, searchInput);
     } catch (err) {
@@ -232,7 +416,7 @@ async function filterUsersByRoleOption(role) {
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
-        await loginAdmin(driver);
+        await loginAdmin(driver, "Lawrence123@gmail.com", "Lawrence");
         await navigateToManageUsers(driver);
         return await filterUsersByRole(driver, role);
     } catch (err) {
@@ -248,5 +432,7 @@ module.exports = {
     filterUsersByRoleOption,
     updateUserByActivateButton,
     updateUserByDeactivateButton,
-    updateUserProfile
+    updateUserProfile,
+    updateLibrarianProfile,
+    updateAdminProfile
 };
