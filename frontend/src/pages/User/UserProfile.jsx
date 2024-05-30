@@ -39,11 +39,12 @@ class UserProfile extends Component {
             isLoading: false, // Loading state for Spinner
             showError: false, // Error state for Alert
             errorMessage: '', // Error message for Alert
+            isSaveDisabled: true, // Save button disabled state
         };
     }
 
     componentDidMount() {
-        console.log(this.state.imageFileName_oldfilename)
+        console.log(this.state.imageFileName_oldfilename);
     }
 
     togglePasswordVisibility() {
@@ -85,7 +86,7 @@ class UserProfile extends Component {
             formData.append('file', selectedFile);
 
             try {
-                axios.delete(apiLinks[2])
+                axios.delete(apiLinks[2]);
 
                 const response = await axios.post(apiLinks[1], formData, {
                     headers: {
@@ -164,12 +165,13 @@ class UserProfile extends Component {
 
     handleEditProfile() {
         event.preventDefault();
-        this.setState({ isEditing: true });
+        this.setState({ isEditing: true }, this.checkIfSaveDisabled);
     }
 
     handleCancelChanges() {
         event.preventDefault();
-        this.setState({ isEditing: false });
+        window.location.reload();
+        this.setState({ isEditing: false });        
     }
 
     toLogoutUser() {
@@ -178,12 +180,12 @@ class UserProfile extends Component {
         const tokens = {
             accessToken: this.state.getAccessToken,
             refreshToken: this.state.getRefreshToken
-        }
+        };
 
         const apiLink = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
             'http://localhost:3306/api/users/logout-user'
-        ]
+        ];
 
         axios.post(apiLink[0], tokens)
             .then((response) => {
@@ -207,6 +209,17 @@ class UserProfile extends Component {
                 this.setState({ showError: true, errorMessage: 'Server connection lost', isLoading: false });
             });
     }
+
+    checkIfSaveDisabled() {
+        const { currFirstname, currLastname, currEmail, currPassword, confirmPassword } = this.state;
+        const isSaveDisabled = !(currFirstname && currLastname && currEmail && currPassword && confirmPassword);
+        this.setState({ isSaveDisabled });
+    }
+
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({ [name]: value }, this.checkIfSaveDisabled);
+    };
 
     render() {
         // Styles for the overlay and the content
@@ -267,24 +280,27 @@ class UserProfile extends Component {
                             <Form.Control
                                 type="text"
                                 placeholder="Enter First Name"
+                                name="currFirstname"
                                 disabled={!this.state.isEditing}
                                 value={this.state.currFirstname}
-                                onChange={(e) => { this.setState({ currFirstname: e.target.value }) }} /> &nbsp;&nbsp;
+                                onChange={this.handleInputChange} /> &nbsp;&nbsp;
                             <Form.Control
                                 type="text"
                                 placeholder="Enter Last Name"
+                                name="currLastname"
                                 disabled={!this.state.isEditing}
                                 value={this.state.currLastname}
-                                onChange={(e) => { this.setState({ currLastname: e.target.value }) }} />
+                                onChange={this.handleInputChange} />
                         </div>
 
                         <InputGroup className="mb-3">
                             <Form.Control
                                 placeholder="Enter Email"
                                 type='text'
+                                name="currEmail"
                                 value={this.state.currEmail}
                                 disabled={!this.state.isEditing}
-                                onChange={(e) => { this.setState({ currEmail: e.target.value }) }}
+                                onChange={this.handleInputChange}
                             />
                             <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
                         </InputGroup>
@@ -293,9 +309,10 @@ class UserProfile extends Component {
                             <Form.Control
                                 placeholder="Enter Password"
                                 type={this.state.showPassword ? "text" : "password"}
+                                name="currPassword"
                                 value={this.state.currPassword}
                                 disabled={!this.state.isEditing}
-                                onChange={(e) => { this.setState({ currPassword: e.target.value }) }}
+                                onChange={this.handleInputChange}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup>
@@ -303,9 +320,10 @@ class UserProfile extends Component {
                             <Form.Control
                                 placeholder="Enter Password"
                                 type={this.state.reshowPassword ? "text" : "password"}
+                                name="confirmPassword"
                                 value={this.state.confirmPassword}
                                 disabled={!this.state.isEditing}
-                                onChange={(e) => { this.setState({ confirmPassword: e.target.value }) }}
+                                onChange={this.handleInputChange}
                             />
                             <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
                         </InputGroup><br />
@@ -313,7 +331,7 @@ class UserProfile extends Component {
                         {this.state.isEditing ? (
                             <div style={{ display: "inline-flex", gap: "50px" }}>
                                 <Button variant="danger" onClick={this.handleCancelChanges}>Cancel Changes</Button>
-                                <Button variant="warning" type='submit'>
+                                <Button variant="warning" type='submit' disabled={this.state.isSaveDisabled}>
                                     {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Save Changes'}
                                 </Button>
                             </div>

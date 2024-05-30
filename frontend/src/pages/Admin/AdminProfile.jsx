@@ -39,12 +39,13 @@ class LibrarianProfile extends Component {
             isLoading: false, // Loading state for Spinner
             showError: false, // Error state for Alert
             errorMessage: '', // Error message for Alert
+            isSaveDisabled: true, // Save button disabled state
         };
     }
 
     componentDidMount() {
-        console.log(this.state.imageFileName_oldfilename)
-     }
+        console.log(this.state.imageFileName_oldfilename);
+    }
 
     togglePasswordVisibility() {
         this.setState(prevState => ({
@@ -85,7 +86,7 @@ class LibrarianProfile extends Component {
             formData.append('file', selectedFile);
 
             try {
-                axios.delete(apiLinks[2])
+                axios.delete(apiLinks[2]);
 
                 const response = await axios.post(apiLinks[1], formData, {
                     headers: {
@@ -164,12 +165,13 @@ class LibrarianProfile extends Component {
 
     handleEditProfile() {
         event.preventDefault();
-        this.setState({ isEditing: true });
+        this.setState({ isEditing: true }, this.checkIfSaveDisabled);
     }
 
     handleCancelChanges() {
         event.preventDefault();
         this.setState({ isEditing: false });
+        window.location.reload();
     }
 
     toLogoutUser() {
@@ -178,12 +180,12 @@ class LibrarianProfile extends Component {
         const tokens = {
             accessToken: this.state.getAccessToken,
             refreshToken: this.state.getRefreshToken
-        }
+        };
 
         const apiLink = [
             'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/users/logout-user',
             'http://localhost:3306/api/users/logout-user'
-        ]
+        ];
 
         axios.post(apiLink[0], tokens)
             .then((response) => {
@@ -208,7 +210,19 @@ class LibrarianProfile extends Component {
             });
     }
 
+    checkIfSaveDisabled() {
+        const { currFirstname, currLastname, currEmail, currPassword, confirmPassword } = this.state;
+        const isSaveDisabled = !(currFirstname && currLastname && currEmail && currPassword && confirmPassword);
+        this.setState({ isSaveDisabled });
+    }
+
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({ [name]: value }, this.checkIfSaveDisabled);
+    };
+
     render() {
+        // Styles for the overlay and the content
         const styles = {
             container: {
                 position: 'relative',
@@ -229,110 +243,111 @@ class LibrarianProfile extends Component {
                 zIndex: -1, // Ensure the overlay is behind other content
             },
             content: {
-                position: 'relative',
-                zIndex: 1, // Ensure content is above the overlay
-                padding: '20px',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '40%',
+                padding: '3%',
+                textAlign: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '10px',
             },
-        };        
+        };
 
         return (
             <div style={styles.container}>
                 <AdminNavbar />
+                <h1>Admin Profile</h1>
                 <div style={styles.overlay}></div>
                 <div style={styles.content}>
-                    <h1>Admin Profile</h1>
-                    <div style={{
-                        backgroundColor: "white",
-                        height: "60%",
-                        width: "40%",
-                        padding: "3%",
-                        textAlign: "center",
-                        margin: "auto"
-                    }}>
-                        {this.state.showError && (
-                            <Alert variant="danger">
-                                {this.state.errorMessage}
-                            </Alert>
-                        )}
-                        <Form onSubmit={this.toUpdateUser}>
-                            {this.state.profileImageUrl ?
-                                (<img src={this.state.profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />) :
-                                (this.state.imageFileName !== "#%&{}>" ?
-                                    (<img src={this.state.imageFileName} height={128} width={128} alt="" />) :
-                                    (<img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />))}
-    
-                            <br /><br />
-                            <Form.Control type="file" onChange={this.handleImageChange} disabled={!this.state.isEditing} />
-                            <br />
-                            <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter First Name"
-                                    disabled={!this.state.isEditing}
-                                    value={this.state.currFirstname}
-                                    onChange={(e) => { this.setState({ currFirstname: e.target.value }) }} /> &nbsp;&nbsp;
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter Last Name"
-                                    disabled={!this.state.isEditing}
-                                    value={this.state.currLastname}
-                                    onChange={(e) => { this.setState({ currLastname: e.target.value }) }} />
+                    {this.state.showError && (
+                        <Alert variant="danger">
+                            {this.state.errorMessage}
+                        </Alert>
+                    )}
+                    <Form onSubmit={this.toUpdateUser}>
+                        {this.state.profileImageUrl ?
+                            (<img src={this.state.profileImageUrl} alt="Profile" style={{ width: '128px', height: '128px' }} />) :
+                            (this.state.imageFileName !== "#%&{}>" ?
+                                (<img src={this.state.imageFileName} height={128} width={128} alt="" />) :
+                                (<img src={`https://ui-avatars.com/api/?name=${this.state.LAfirstname}+${this.state.LAlastname}&background=random&size=128`} alt="Profile" />))}
+
+                        <br /><br />
+                        <Form.Control type="file" onChange={this.handleImageChange} disabled={!this.state.isEditing} />
+                        <br />
+                        <div style={{ alignItems: "center", display: "inline-flex", width: "100%", marginBottom: "20px" }}>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter First Name"
+                                name="currFirstname"
+                                disabled={!this.state.isEditing}
+                                value={this.state.currFirstname}
+                                onChange={this.handleInputChange} /> &nbsp;&nbsp;
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter Last Name"
+                                name="currLastname"
+                                disabled={!this.state.isEditing}
+                                value={this.state.currLastname}
+                                onChange={this.handleInputChange} />
+                        </div>
+
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                placeholder="Enter Email"
+                                type='text'
+                                name="currEmail"
+                                value={this.state.currEmail}
+                                disabled={!this.state.isEditing}
+                                onChange={this.handleInputChange}
+                            />
+                            <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
+                        </InputGroup>
+
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                placeholder="Enter Password"
+                                type={this.state.showPassword ? "text" : "password"}
+                                name="currPassword"
+                                value={this.state.currPassword}
+                                disabled={!this.state.isEditing}
+                                onChange={this.handleInputChange}
+                            />
+                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
+                        </InputGroup>
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                placeholder="Enter Password"
+                                type={this.state.reshowPassword ? "text" : "password"}
+                                name="confirmPassword"
+                                value={this.state.confirmPassword}
+                                disabled={!this.state.isEditing}
+                                onChange={this.handleInputChange}
+                            />
+                            <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
+                        </InputGroup><br />
+
+                        {this.state.isEditing ? (
+                            <div style={{ display: "inline-flex", gap: "50px" }}>
+                                <Button variant="danger" onClick={this.handleCancelChanges}>Cancel Changes</Button>
+                                <Button variant="warning" type='submit' disabled={this.state.isSaveDisabled}>
+                                    {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Save Changes'}
+                                </Button>
                             </div>
-    
-                            <InputGroup className="mb-3">
-                                <Form.Control
-                                    placeholder="Enter Email"
-                                    type='text'
-                                    value={this.state.currEmail}
-                                    disabled={!this.state.isEditing}
-                                    onChange={(e) => { this.setState({ currEmail: e.target.value }) }}
-                                />
-                                <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
-                            </InputGroup>
-    
-                            <InputGroup className="mb-3">
-                                <Form.Control
-                                    placeholder="Enter Password"
-                                    type={this.state.showPassword ? "text" : "password"}
-                                    value={this.state.currPassword}
-                                    disabled={!this.state.isEditing}
-                                    onChange={(e) => { this.setState({ currPassword: e.target.value }) }}
-                                />
-                                <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.togglePasswordVisibility}>{this.state.showPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
-                            </InputGroup>
-                            <InputGroup className="mb-3">
-                                <Form.Control
-                                    placeholder="Enter Password"
-                                    type={this.state.reshowPassword ? "text" : "password"}
-                                    value={this.state.confirmPassword}
-                                    disabled={!this.state.isEditing}
-                                    onChange={(e) => { this.setState({ confirmPassword: e.target.value }) }}
-                                />
-                                <InputGroup.Text style={{ backgroundColor: "lightgray" }} onClick={this.toggleRePasswordVisibility}>{this.state.reshowPassword ? <FaEyeSlash style={{ cursor: "pointer" }} /> : <FaEye style={{ cursor: "pointer" }} />}</InputGroup.Text>
-                            </InputGroup><br />
-    
-                            {this.state.isEditing ? (
-                                <div style={{ display: "inline-flex", gap: "50px" }}>
-                                    <Button variant="danger" onClick={this.handleCancelChanges}>Cancel Changes</Button>
-                                    <Button variant="warning" type='submit'>
-                                        {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Save Changes'}
-                                    </Button>
-                                </div>
-                            ) : (
-                                <div style={{ display: "inline-flex", gap: "50px" }}>
-                                    <Button variant="danger" onClick={this.toLogoutUser}>
-                                        {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Logout Account'}
-                                    </Button>
-                                    <Button variant="warning" onClick={this.handleEditProfile}>Update Profile</Button>
-                                </div>
-                            )}
-                        </Form>
-                    </div>
+                        ) : (
+                            <div style={{ display: "inline-flex", gap: "50px" }}>
+                                <Button variant="danger" onClick={this.toLogoutUser}>
+                                    {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Logout Account'}
+                                </Button>
+                                <Button variant="warning" onClick={this.handleEditProfile}>Update Profile</Button>
+                            </div>
+                        )}
+                    </Form>
                 </div>
             </div>
         );
     }
-    
 }
 
 export default withRouter(LibrarianProfile);
