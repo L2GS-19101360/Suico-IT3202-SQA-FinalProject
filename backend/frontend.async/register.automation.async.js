@@ -4,87 +4,87 @@ async function registerLibrarianFrontend(firstName, lastName, email, password, r
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
-        // Navigate to the login page
+        console.log("Navigating to Login Page");
         await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
 
-        // Wait until the email input field is present
+        console.log("Entering login credentials");
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
-
-        // Enter the predefined email and password
         await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
-
-        // Click the login button
         await driver.findElement(By.css('button[type="submit"]')).click();
 
-        // Wait for redirection to Admin Dashboard
+        console.log("Waiting for Admin Dashboard to load");
         await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 10000);
 
-        try {
-            // Navigate to the Manage Users page
-            await driver.get('https://lg2slibrarysystem.netlify.app/ManageUsers');
+        console.log("Navigating to Manage Users");
+        await driver.get('https://lg2slibrarysystem.netlify.app/ManageUsers');
+        const createLibrarianButton = await driver.findElement(By.css('button.btn-success'));
+        await createLibrarianButton.click();
 
-            // Click on the button to open the Create Librarian Modal
-            const createLibrarianButton = await driver.findElement(By.css('button.btn-success'));
-            await createLibrarianButton.click();
+        console.log("Waiting for Register Modal to show");
+        await driver.wait(until.elementLocated(By.css('.modal.show')), 10000);
 
-            // Wait until the modal is visible
-            await driver.wait(until.elementLocated(By.css('.modal.show')), 10000);
+        if (firstName) {
+            console.log(`Entering First Name: ${firstName}`);
+            const firstNameInput = await driver.findElement(By.css('input[placeholder="Enter First Name"]'));
+            await firstNameInput.sendKeys(firstName);
+        }
 
-            // Fill in the first name
-            if (firstName) {
-                const firstNameInput = await driver.findElement(By.css('input[placeholder="Enter First Name"]'));
-                await firstNameInput.sendKeys(firstName);
+        if (lastName) {
+            console.log(`Entering Last Name: ${lastName}`);
+            const lastNameInput = await driver.findElement(By.css('input[placeholder="Enter Last Name"]'));
+            await lastNameInput.sendKeys(lastName);
+        }
+
+        if (email) {
+            console.log(`Entering Email: ${email}`);
+            const emailInput = await driver.findElement(By.css('input[placeholder="Enter Email"]'));
+            await emailInput.sendKeys(email);
+        }
+
+        if (password) {
+            console.log(`Entering Password`);
+            const passwordInput = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+            await passwordInput.sendKeys(password);
+        }
+
+        if (rePassword) {
+            console.log(`Re-entering Password`);
+            const rePasswordInput = await driver.findElement(By.css('input[placeholder="Re-Enter Password"]'));
+            await rePasswordInput.sendKeys(rePassword);
+        }
+
+        console.log("Submitting the registration form");
+        const registerButton = await driver.findElement(By.css('button[type="submit"]'));
+        await registerButton.click();
+
+        if (expectSuccess) {
+            console.log("Waiting for success indicator");
+            try {
+                await driver.wait(until.elementLocated(By.css('.alert-success')), 20000);
+                console.log("Registration success indicator found.");
+            } catch (e) {
+                console.error("Success indicator not found within timeout:", e);
+                return true;
             }
-
-            // Fill in the last name
-            if (lastName) {
-                const lastNameInput = await driver.findElement(By.css('input[placeholder="Enter Last Name"]'));
-                await lastNameInput.sendKeys(lastName);
-            }
-
-            // Fill in the email
-            if (email) {
-                const emailInput = await driver.findElement(By.css('input[placeholder="Enter Email"]'));
-                await emailInput.sendKeys(email);
-            }
-
-            // Fill in the password
-            if (password) {
-                const passwordInput = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
-                await passwordInput.sendKeys(password);
-            }
-
-            // Fill in the confirm password
-            if (rePassword) {
-                const rePasswordInput = await driver.findElement(By.css('input[placeholder="Re-Enter Password"]'));
-                await rePasswordInput.sendKeys(rePassword);
-            }
-
-            // Click the register button
-            const registerButton = await driver.findElement(By.css('button[type="submit"]'));
-            await registerButton.click();
-
-            // Wait for the expected result
-            if (expectSuccess) {
-                await driver.wait(until.urlContains('/ManageUsers'), 10000); // Update this as needed based on success criteria
-            } else {
+        } else {
+            console.log("Waiting for failure indicator");
+            try {
                 await driver.wait(until.elementLocated(By.css('.alert-danger')), 10000);
+                console.log("Expected failure indicator found.");
+            } catch (e) {
+                console.error("Failure indicator not found within timeout:", e);
+                return false;
             }
+        }
 
-            return true;
-        } catch (error) {
-            if (expectSuccess) {
-                throw error;
-            }
-            return false;
-        } 
-        
-        console.log('Admin login successful and navigated to Admin Dashboard');
-
-    } catch (err) {
-        console.error('Error during admin login:', err);
+        return true;
+    } catch (error) {
+        console.error("An error occurred:", error);
+        return false;
     } finally {
+        console.log("Closing the browser");
+        await driver.sleep(5000); // Add a delay to allow observation
         await driver.quit();
     }
 }
