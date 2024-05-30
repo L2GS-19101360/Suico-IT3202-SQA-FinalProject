@@ -340,7 +340,7 @@ class UserProfile extends Component {
                                 <Button variant="danger" onClick={this.toLogoutUser}>
                                     {this.state.isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Logout Account'}
                                 </Button>
-                                <Button variant="warning" onClick={this.handleEditProfile}>Update Profile</Button>
+                                <Button variant="warning" onClick={this.handleEditProfile} id='toUpdateUserAccount'>Update Profile</Button>
                             </div>
                         )}
                     </Form>
