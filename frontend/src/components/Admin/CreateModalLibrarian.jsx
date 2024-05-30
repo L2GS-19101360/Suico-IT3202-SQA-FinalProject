@@ -173,7 +173,7 @@ class CreateModalLibrarian extends Component {
                             </InputGroup>
                             <InputGroup className="mb-3">
                                 <Form.Control
-                                    placeholder="Enter Password"
+                                    placeholder="Re-Enter Password"
                                     type={reshowPassword ? "text" : "password"}
                                     value={this.state.rePassword}
                                     onChange={(e) => { this.setState({ rePassword: e.target.value }) }}

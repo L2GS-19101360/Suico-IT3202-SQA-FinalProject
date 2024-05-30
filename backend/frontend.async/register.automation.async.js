@@ -11,7 +11,7 @@ async function registerLibrarianFrontend(firstName, lastName, email, password, r
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
 
         // Enter the predefined email and password
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
 
         // Click the login button
@@ -57,7 +57,7 @@ async function registerLibrarianFrontend(firstName, lastName, email, password, r
 
             // Fill in the confirm password
             if (rePassword) {
-                const rePasswordInput = await driver.findElement(By.css('input[placeholder="Enter Password"]'));
+                const rePasswordInput = await driver.findElement(By.css('input[placeholder="Re-Enter Password"]'));
                 await rePasswordInput.sendKeys(rePassword);
             }
 
