@@ -138,47 +138,41 @@ class CreateModalBook extends Component {
                             </Alert>
                         )}
                         <Form>
-                            <div style={{ display: 'inline-flex' }}>
-                                <div id='leftDiv'>
-                                    {bookImageUrl ? (
-                                        <img src={bookImageUrl} alt="Book Cover" height={300} width={200} />
-                                    ) : (
-                                        <img src="" alt="" height={300} width={200} />
-                                    )}
-                                </div>
-                                <div id='rightDiv' style={{ flex: '1', marginLeft: '20px', width: '469px' }}>
-                                    <Form.Label>Book Image</Form.Label>
-                                    <Form.Group controlId="formFileImage" className="mb-3">
-                                        <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} className="book-image-input"/>
-                                    </Form.Group>
-                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} className="book-title-input"/><br />
-                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} className="book-author-input"/><br />
+                            {bookImageUrl ? (
+                                <img src={bookImageUrl} alt="Book Cover" height={300} width={200} />
+                            ) : (
+                                <img src="" alt="" height={300} width={200} />
+                            )}<br/>
+                            <Form.Label>Book Image</Form.Label>
+                            <Form.Group controlId="formFileImage" className="mb-3">
+                                <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} className="book-image-input" />
+                            </Form.Group>
+                            <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} className="book-title-input" /><br />
+                            <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} className="book-author-input" /><br />
 
-                                    <Dropdown onSelect={(eventKey) => this.setState({ selectedGenre: eventKey })}>
-                                        <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                            {selectedGenre}
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu className="genre-dropdown">
-                                            <Dropdown.Item eventKey="Historical Fiction">Historical Fiction</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Crime and Mystery">Crime and Mystery</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Horror">Horror</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Science Fiction">Science Fiction</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Fantasy">Fantasy</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Education">Education</Dropdown.Item>
-                                            <Dropdown.Item eventKey="Romance">Romance</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown><br />
+                            <Dropdown onSelect={(eventKey) => this.setState({ selectedGenre: eventKey })}>
+                                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                    {selectedGenre}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className="genre-dropdown">
+                                    <Dropdown.Item eventKey="Historical Fiction">Historical Fiction</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Crime and Mystery">Crime and Mystery</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Horror">Horror</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Science Fiction">Science Fiction</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Fantasy">Fantasy</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Education">Education</Dropdown.Item>
+                                    <Dropdown.Item eventKey="Romance">Romance</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown><br />
 
-                                    <Form.Label>Book Content</Form.Label>
-                                    <Form.Group controlId="formFileContent" className="mb-3">
-                                        <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} className="book-content-input"/>
-                                    </Form.Group>
-                                    <div style={{ textAlign: "center" }}>
-                                        <Button variant="success" onClick={this.storeBook} disabled={loading} id="store-book">
-                                            {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
-                                        </Button>
-                                    </div>
-                                </div>
+                            <Form.Label>Book Content</Form.Label>
+                            <Form.Group controlId="formFileContent" className="mb-3">
+                                <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} className="book-content-input" />
+                            </Form.Group>
+                            <div style={{ textAlign: "center" }}>
+                                <Button variant="success" onClick={this.storeBook} disabled={loading} id="store-book">
+                                    {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
+                                </Button>
                             </div>
                         </Form>
                     </Modal.Body>
