@@ -4,7 +4,7 @@ const path = require('path');
 async function loginAdmin(driver) {
     await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
     await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
-    await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+    await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
     await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
     await driver.findElement(By.css('button[type="submit"]')).click();
     await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 10000);
@@ -56,6 +56,100 @@ async function deleteBookFrontend(bookId) {
         await driver.quit();
     }
 }
+
+async function updateSelectedBookFrontend(selectedBookId, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, isValid) {
+    const driver = await new Builder().forBrowser('chrome').build();
+
+    try {
+        await loginAdmin(driver);
+        await navigateToManageBooks(driver);
+
+        const bookRow = await findBookRow(driver, selectedBookId);
+
+        if (!bookRow) {
+            console.error(`Book with ID ${selectedBookId} not found`);
+            return false; // Book not found, return false
+        }
+
+        // Find and click the update button within the book row
+        const updateButton = await bookRow.findElement(By.css(`button[variant="warning"], button.btn-warning`));
+        await updateButton.click();
+
+        // Wait for the modal to appear
+        await driver.wait(until.elementLocated(By.css('.modal.show')), 20000);
+
+        // Clear previous values and enter new ones
+        if (bookImageFile) {
+            const absoluteImagePath = path.resolve(__dirname, '..', 'sampleBookData', bookImageFile);
+            const imageInput = await driver.findElement(By.css('.book-image-input'));
+            await driver.wait(until.elementIsVisible(imageInput), 5000); // Wait for visibility
+            await imageInput.clear();
+            await imageInput.sendKeys(absoluteImagePath);
+        }
+
+        if (bookName) {
+            const titleInput = await driver.findElement(By.css('.book-title-input'));
+            await driver.wait(until.elementIsVisible(titleInput), 5000); // Wait for visibility
+            await titleInput.clear();
+            await titleInput.sendKeys(bookName);
+        }
+
+        if (bookAuthor) {
+            const authorInput = await driver.findElement(By.css('.book-author-input'));
+            await driver.wait(until.elementIsVisible(authorInput), 5000); // Wait for visibility
+            await authorInput.clear();
+            await authorInput.sendKeys(bookAuthor);
+        }
+
+        if (bookGenre) {
+            const genreInput = await driver.findElement(By.css('.book-genre-input'));
+            await driver.wait(until.elementIsVisible(genreInput), 5000); // Wait for visibility
+            await genreInput.clear();
+            await genreInput.sendKeys(bookGenre);
+        }
+
+        if (bookContentFile) {
+            const absoluteContentPath = path.resolve(__dirname, '..', 'sampleBookData', bookContentFile);
+            const contentInput = await driver.findElement(By.css('.book-content-input'));
+            await driver.wait(until.elementIsVisible(contentInput), 5000); // Wait for visibility
+            await contentInput.clear();
+            await contentInput.sendKeys(absoluteContentPath);
+        }
+
+        // Re-locate the submit button before clicking it
+        const submitButton = await driver.findElement(By.css('.modal.show button[variant="warning"], .modal.show button.btn-warning'));
+        await driver.wait(until.elementIsVisible(submitButton), 5000); // Wait for visibility
+        await submitButton.click();
+
+        // // Add any additional wait conditions if necessary, e.g., wait for a success message
+        // await driver.wait(until.elementIsNotVisible(submitButton), 10000);
+
+        if (isValid) {
+            // Wait for the book to appear in the table
+            await driver.wait(until.elementLocated(By.xpath(`//td[contains(text(), '${bookName}')]`)), 10000);
+        } else {
+            // Wait for the alert to appear
+            await driver.wait(until.elementLocated(By.css('.alert-danger')), 20000);
+        }
+
+        return true;
+    } catch (err) {
+        console.error('Error during book update:', err);
+        const pageSource = await driver.getPageSource();
+        console.log('Page source at time of error:', pageSource);
+
+        if (isValid) {
+            throw err; // Throw error if it's a valid test case
+        } else {
+            return false; // Return false if it's an invalid test case
+        }
+    } finally {
+        await driver.sleep(5000);
+        await driver.quit();
+    }
+}
+
+
 
 async function createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, isValid) {
     const driver = await new Builder().forBrowser('chrome').build();
@@ -329,5 +423,6 @@ module.exports = {
     viewBooksByTitleSearchBar,
     viewBooksByAuthorSearchBar,
     viewBooksByFilterOption,
-    deleteBookFrontend
+    deleteBookFrontend,
+    updateSelectedBookFrontend
 };
