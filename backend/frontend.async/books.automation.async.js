@@ -57,81 +57,81 @@ async function deleteBookFrontend(bookId) {
     }
 }
 
-async function createNewBookFrontend(bookImageFile, bookImageFileName, bookName, bookAuthor, bookGenre, bookContentFile, bookContentFileName) {
+async function createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile) {
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
         await driver.get('https://lg2slibrarysystem.netlify.app/LoginPage');
 
+        // Login
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 20000);
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
         await driver.findElement(By.css('button[type="submit"]')).click();
 
+        // Wait for login success and navigate to Admin Dashboard
         await driver.wait(until.urlIs('https://lg2slibrarysystem.netlify.app/AdminDashboard'), 20000);
 
+        // Navigate to Manage Books
         await driver.get('https://lg2slibrarysystem.netlify.app/ManageBooks');
 
+        // Click on Create New Book button
         await driver.wait(until.elementLocated(By.css('button.btn-success')), 10000);
         const createBookButton = await driver.findElement(By.css('button.btn-success'));
         await createBookButton.click();
 
+        // Wait for the modal to appear
         await driver.wait(until.elementLocated(By.css('.modal.show')), 10000);
 
-        const bookImageFilePath = path.resolve(__dirname, bookImageFile);
-        const bookContentFilePath = path.resolve(__dirname, bookContentFile);
+        // Validate file types
+        const imageExtension = path.extname(bookImageFile).toLowerCase();
+        const contentExtension = path.extname(bookContentFile).toLowerCase();
 
-        await driver.findElement(By.css('input[type="file"][accept="image/jpeg, image/png"]')).sendKeys(bookImageFilePath);
-        await driver.findElement(By.css('input[placeholder="Enter Book Title"]')).sendKeys(bookName);
-        await driver.findElement(By.css('input[placeholder="Enter Book Author"]')).sendKeys(bookAuthor);
+        if (imageExtension !== '.jpg' && imageExtension !== '.jpeg' && imageExtension !== '.png') {
+            throw new Error('Invalid image file format. Please provide a JPG or PNG file.');
+        }
 
-        // Ensure the "Select Genre" dropdown is located and visible
-        const dropdownButton = await driver.wait(until.elementLocated(By.css('button#dropdown-basic')), 10000);
-        console.log('Dropdown button located.');
+        if (contentExtension !== '.pdf') {
+            throw new Error('Invalid content file format. Please provide a PDF file.');
+        }
 
-        await driver.executeScript("arguments[0].scrollIntoView(true);", dropdownButton);
-        await driver.wait(until.elementIsVisible(dropdownButton), 10000);
-        await driver.wait(until.elementIsEnabled(dropdownButton), 10000);
+        // Adjusting the path assuming the sampleBookData directory is at the same level as the script
+        const absoluteImagePath = path.resolve(__dirname, '..', 'sampleBookData', bookImageFile);
+        const absoluteContentPath = path.resolve(__dirname, '..', 'sampleBookData', bookContentFile);
 
-        // Click the dropdown button using JavaScript to avoid interception
-        await driver.executeScript("arguments[0].click();", dropdownButton);
-        console.log('Dropdown button clicked.');
+        // Fill in book information
+        await driver.findElement(By.css('.book-image-input')).sendKeys(absoluteImagePath);
+        await driver.findElement(By.css('.book-title-input')).sendKeys(bookName);
+        await driver.findElement(By.css('.book-author-input')).sendKeys(bookAuthor);
+        await driver.findElement(By.css('.book-genre-input')).sendKeys(bookGenre);
+        await driver.findElement(By.css('.book-content-input')).sendKeys(absoluteContentPath);
 
-        // Wait for the dropdown menu to become visible
-        await driver.wait(until.elementLocated(By.css('.dropdown-menu.show')), 10000);
-        console.log('Dropdown menu located.');
+        // Click on Store Book button
+        await driver.findElement(By.id('store-book')).click();
 
-        // Add a slight delay to ensure the menu is fully rendered
-        await driver.sleep(1000);
-        console.log('Dropdown menu is visible.');
+        // Wait for the book to appear in the table
+        await driver.wait(until.elementLocated(By.xpath(`//td[contains(text(), '${bookName}')]`)), 10000);
 
-        // Select the genre from the dropdown menu using JavaScript
-        const genreOption = await driver.wait(until.elementLocated(By.xpath(`//div[contains(@class, "dropdown-menu show")]/a[text()="${bookGenre}"]`)), 10000);
-        await driver.executeScript("arguments[0].scrollIntoView(true); arguments[0].click();", genreOption);
-        console.log(`${bookGenre} selected from dropdown menu.`);
-
-        await driver.findElement(By.css('input[type="file"][accept=".pdf"]')).sendKeys(bookContentFilePath);
-
-        const storeButtonSelector = 'button.store-book';
-        const storeButton = await driver.wait(until.elementLocated(By.css(storeButtonSelector)), 20000);
-        await driver.wait(until.elementIsVisible(storeButton), 20000);
-
-        await driver.executeScript("arguments[0].scrollIntoView(true);", storeButton);
-        await driver.executeScript("arguments[0].click();", storeButton);
-
-        await driver.wait(until.elementIsNotVisible(driver.findElement(By.css('.modal.show'))), 10000);
-
+        // Return true indicating successful creation
         return true;
     } catch (err) {
         console.error('Error during book creation:', err);
         const pageSource = await driver.getPageSource();
         console.log('Page source at time of error:', pageSource);
+
+        // Extract alert message from the page source
+        const alertMessage = pageSource.match(/<div class="alert">([\s\S]*?)<\/div>/);
+        if (alertMessage) {
+            console.log('Alert message:', alertMessage[1]);
+        }
+
         return false;
     } finally {
+        // Wait for a few seconds before quitting the WebDriver session
+        await driver.sleep(5000);
         await driver.quit();
     }
 }
-
 
 async function viewBooksByFilterOption(filteredGenre) {
     const driver = await new Builder().forBrowser('chrome').build();
