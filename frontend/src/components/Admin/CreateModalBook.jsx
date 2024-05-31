@@ -174,7 +174,7 @@ class CreateModalBook extends Component {
                                         <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} className="book-content-input"/>
                                     </Form.Group>
                                     <div style={{ textAlign: "center" }}>
-                                        <Button variant="success" onClick={this.storeBook} disabled={loading} className="store-book">
+                                        <Button variant="success" onClick={this.storeBook} disabled={loading} id="store-book">
                                             {loading ? <Spinner animation="border" size="sm" /> : 'Store Book'}
                                         </Button>
                                     </div>
