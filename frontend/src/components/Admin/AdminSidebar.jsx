@@ -1,5 +1,5 @@
-import { Component, useState } from 'react'
-import { Navbar, Container, Nav, Button, NavDropdown, Form, Offcanvas, OffcanvasBody } from 'react-bootstrap'
+import { Component } from 'react'
+import { Navbar, Container, Nav, Button, NavDropdown, Form, Offcanvas, OffcanvasBody, Spinner } from 'react-bootstrap'
 import webName from '../../assets/website name.jpg'
 import ClockComponent from '../../components/ClockComponent'
 import axios from 'axios'
@@ -18,6 +18,7 @@ class AdminSidebar extends Component {
             imageFileName: localStorage.getItem('userImage'),
 
             show: false,
+            loading: false, // New state variable for loading
         }
     }
 
@@ -36,6 +37,7 @@ class AdminSidebar extends Component {
     }
 
     toLogoutUser() {
+        this.setState({ loading: true }); // Set loading to true when logout starts
         console.log(this.state.getAccessToken + this.state.getRefreshToken);
 
         const tokens = {
@@ -71,7 +73,9 @@ class AdminSidebar extends Component {
             (error) => {
                 console.log(error);
             }
-        )
+        ).finally(() => {
+            this.setState({ loading: false }); // Set loading to false when logout completes
+        });
     }
 
     render() {
@@ -110,7 +114,21 @@ class AdminSidebar extends Component {
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/ViewReturnedBooks'>View Returned Books History</Link></li>
                                 <li><Link style={{ textDecoration: "none", color: "black" }} to='/AdminProfile'>Admin Profile</Link></li>
                             </ul><br /><br />
-                            <Button variant="danger" onClick={this.toLogoutUser}>Logout Account</Button>
+                            <Button variant="danger" onClick={this.toLogoutUser} disabled={this.state.loading}>
+                                {this.state.loading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="border"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        />{' '}
+                                    </>
+                                ) : (
+                                    "Logout Account"
+                                )}
+                            </Button>
                         </div>
                     </Offcanvas.Body>
                 </Offcanvas>
