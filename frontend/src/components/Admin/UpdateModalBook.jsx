@@ -172,17 +172,17 @@ class UpdateModalBook extends Component {
                                 <div id='rightDiv' style={{ flex: '1', marginLeft: '20px', width: '469px' }}>
                                     <Form.Label>Book Image</Form.Label>
                                     <Form.Group controlId="formFile" className="mb-3">
-                                        <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} />
+                                        <Form.Control className="book-image-input" type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} />
                                     </Form.Group>
 
-                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
-                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
+                                    <Form.Control className="book-title-input" type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
+                                    <Form.Control className="book-author-input" type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
 
-                                    <Form.Control type="text" placeholder="Enter Book Genre" value={selectedGenre} onChange={(e) => this.setState({ selectedGenre: e.target.value })} /><br />
+                                    <Form.Control className="book-genre-input" type="text" placeholder="Enter Book Genre" value={selectedGenre} onChange={(e) => this.setState({ selectedGenre: e.target.value })} /><br />
 
                                     <Form.Label>Book Content</Form.Label>
                                     <Form.Group controlId="formFile" className="mb-3">
-                                        <Form.Control type="file" accept=".pdf" onChange={this.handleContentChange} />
+                                        <Form.Control className="book-content-input" type="file" accept=".pdf" onChange={this.handleContentChange} />
                                     </Form.Group>
                                     <div style={{ textAlign: "center" }}>
                                         <Button variant="warning" onClick={this.updateBook} disabled={loading}>
