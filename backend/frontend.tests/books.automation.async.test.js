@@ -143,7 +143,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'Romance';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -154,7 +154,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'HorroR';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -165,7 +165,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'Romance';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -176,7 +176,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'Fantasy';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, false);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, false);
         expect(result).toBe(true);
     });
 
@@ -187,7 +187,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = null;
         const bookGenre = 'Education';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -198,7 +198,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = null;
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -209,7 +209,7 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'Romance';
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
         expect(result).toBe(true);
     });
 
@@ -220,14 +220,14 @@ describe('Update Books Automation Testing', () => {
         const bookAuthor = null;
         const bookGenre = null;
 
-        const result = await updateSelectedBookFrontend(82, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, false);
+        const result = await updateSelectedBookFrontend(86, bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, false);
         expect(result).toBe(true);
     });
 });
 
 describe('Delete Books Automation Testing', () => {
     test('Delete Book', async () => {
-        const result = await deleteBookFrontend(84); // replace with actual book ID and filenames for testing
+        const result = await deleteBookFrontend(87); // replace with actual book ID and filenames for testing
         expect(result).toBe(true);
     });
 });
