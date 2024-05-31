@@ -180,7 +180,7 @@ class ManageBooks extends Component {
                         <div style={{ display: "inline-flex", gap: "20px" }}>
                             <CreateModalBook />
                             <Dropdown>
-                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                <Dropdown.Toggle variant="primary" id="bookGenreOptions">
                                     {selectBookGenreOption}
                                 </Dropdown.Toggle>
 
