@@ -27,6 +27,17 @@ describe('Create Books Automation Testing', () => {
         expect(result).toBe(true);
     });
 
+    test('Create book but book genre mistake', async () => {
+        const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
+        const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
+        const bookName = 'The Best of Me';
+        const bookAuthor = 'Nicholas Sparks';
+        const bookGenre = 'HorroR';
+
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        expect(result).toBe(true);
+    });
+
     test('Create book without book image', async () => {
         const bookImageFile = null;
         const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
