@@ -238,7 +238,7 @@ async function viewBooksByFilterOption(filteredGenre) {
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
 
         // Enter the predefined email and password
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
 
         // Click the login button
@@ -291,7 +291,7 @@ async function viewBooksByAuthorSearchBar(searchInput) {
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
 
         // Enter the predefined email and password
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
 
         // Click the login button
@@ -341,7 +341,7 @@ async function viewBooksByTitleSearchBar(searchInput) {
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
 
         // Enter the predefined email and password
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
 
         // Click the login button
@@ -391,7 +391,7 @@ async function viewAllBooksFrontend() {
         await driver.wait(until.elementLocated(By.css('input[type="email"]')), 10000);
 
         // Enter the predefined email and password
-        await driver.findElement(By.css('input[type="email"]')).sendKeys('GilbertLawrence@gmail.com');
+        await driver.findElement(By.css('input[type="email"]')).sendKeys('Lawrence123@gmail.com');
         await driver.findElement(By.css('input[type="password"]')).sendKeys('Lawrence');
 
         // Click the login button
