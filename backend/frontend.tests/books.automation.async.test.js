@@ -23,75 +23,75 @@ describe('Create Books Automation Testing', () => {
         const bookAuthor = 'Nicholas Sparks';
         const bookGenre = 'Horror';
 
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, true);
+        expect(result).toBe(true);
+    });
+
+    test('Create book without book image', async () => {
+        const bookImageFile = null;
+        const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
+        const bookName = 'The Best of Me';
+        const bookAuthor = 'Nicholas Sparks';
+        const bookGenre = 'Horror';
+
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, false);
+        expect(result).toBe(true);
+    });
+
+    test('Create book without book title', async () => {
+        const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
+        const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
+        const bookName = null;
+        const bookAuthor = 'Nicholas Sparks';
+        const bookGenre = 'Horror';
+
         const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
         expect(result).toBe(true);
     });
 
-    // test('Create book without book image', async () => {
-    //     const bookImageFile = null;
-    //     const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
-    //     const bookName = 'The Best of Me';
-    //     const bookAuthor = 'Nicholas Sparks';
-    //     const bookGenre = 'Horror';
+    test('Create book without book author', async () => {
+        const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
+        const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
+        const bookName = 'The Best of Me';
+        const bookAuthor = null;
+        const bookGenre = 'Horror';
 
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
+        expect(result).toBe(true);
+    });
 
-    // test('Create book without book title', async () => {
-    //     const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
-    //     const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
-    //     const bookName = null;
-    //     const bookAuthor = 'Nicholas Sparks';
-    //     const bookGenre = 'Horror';
+    test('Create book without book genre', async () => {
+        const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
+        const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
+        const bookName = 'The Best of Me';
+        const bookAuthor = 'Nicholas Sparks';
+        const bookGenre = null;
 
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
+        expect(result).toBe(true);
+    });
 
-    // test('Create book without book author', async () => {
-    //     const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
-    //     const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
-    //     const bookName = 'The Best of Me';
-    //     const bookAuthor = null;
-    //     const bookGenre = 'Horror';
+    test('Create book without book content', async () => {
+        const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
+        const bookContentFile = null;
+        const bookName = 'The Best of Me';
+        const bookAuthor = 'Nicholas Sparks';
+        const bookGenre = 'Horror';
 
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
+        expect(result).toBe(true);
+    });
 
-    // test('Create book without book genre', async () => {
-    //     const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
-    //     const bookContentFile = '../sampleBookData/TheBestOfMe_Content.pdf';
-    //     const bookName = 'The Best of Me';
-    //     const bookAuthor = 'Nicholas Sparks';
-    //     const bookGenre = null;
+    test('Create book without all required information', async () => {
+        const bookImageFile = null;
+        const bookContentFile = null;
+        const bookName = null;
+        const bookAuthor = null;
+        const bookGenre = null;
 
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
-
-    // test('Create book without book content', async () => {
-    //     const bookImageFile = '../sampleBookData/TheBestOfMe1.jpg';
-    //     const bookContentFile = null;
-    //     const bookName = 'The Best of Me';
-    //     const bookAuthor = 'Nicholas Sparks';
-    //     const bookGenre = 'Horror';
-
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
-
-    // test('Create book without all required information', async () => {
-    //     const bookImageFile = null;
-    //     const bookContentFile = null;
-    //     const bookName = null;
-    //     const bookAuthor = null;
-    //     const bookGenre = null;
-
-    //     const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
-    //     expect(result).toBe(true);
-    // });
+        const result = await createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile);
+        expect(result).toBe(true);
+    });
 });
 
 // describe('Read Books Automation Testing', () => {

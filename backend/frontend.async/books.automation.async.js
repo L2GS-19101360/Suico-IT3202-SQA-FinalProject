@@ -57,7 +57,7 @@ async function deleteBookFrontend(bookId) {
     }
 }
 
-async function createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile) {
+async function createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGenre, bookContentFile, isValid) {
     const driver = await new Builder().forBrowser('chrome').build();
 
     try {
@@ -83,56 +83,56 @@ async function createNewBookFrontend(bookImageFile, bookName, bookAuthor, bookGe
         // Wait for the modal to appear
         await driver.wait(until.elementLocated(By.css('.modal.show')), 10000);
 
-        // Validate file types
-        const imageExtension = path.extname(bookImageFile).toLowerCase();
-        const contentExtension = path.extname(bookContentFile).toLowerCase();
-
-        if (imageExtension !== '.jpg' && imageExtension !== '.jpeg' && imageExtension !== '.png') {
-            throw new Error('Invalid image file format. Please provide a JPG or PNG file.');
+        if (bookImageFile) {
+            const absoluteImagePath = path.resolve(__dirname, '..', 'sampleBookData', bookImageFile);
+            await driver.findElement(By.css('.book-image-input')).sendKeys(absoluteImagePath);
         }
 
-        if (contentExtension !== '.pdf') {
-            throw new Error('Invalid content file format. Please provide a PDF file.');
+        if (bookName) {
+            await driver.findElement(By.css('.book-title-input')).sendKeys(bookName);
         }
 
-        // Adjusting the path assuming the sampleBookData directory is at the same level as the script
-        const absoluteImagePath = path.resolve(__dirname, '..', 'sampleBookData', bookImageFile);
-        const absoluteContentPath = path.resolve(__dirname, '..', 'sampleBookData', bookContentFile);
+        if (bookAuthor) {
+            await driver.findElement(By.css('.book-author-input')).sendKeys(bookAuthor);
+        }
 
-        // Fill in book information
-        await driver.findElement(By.css('.book-image-input')).sendKeys(absoluteImagePath);
-        await driver.findElement(By.css('.book-title-input')).sendKeys(bookName);
-        await driver.findElement(By.css('.book-author-input')).sendKeys(bookAuthor);
-        await driver.findElement(By.css('.book-genre-input')).sendKeys(bookGenre);
-        await driver.findElement(By.css('.book-content-input')).sendKeys(absoluteContentPath);
+        if (bookGenre) {
+            await driver.findElement(By.css('.book-genre-input')).sendKeys(bookGenre);
+        }
+
+        if (bookContentFile) {
+            const absoluteContentPath = path.resolve(__dirname, '..', 'sampleBookData', bookContentFile);
+            await driver.findElement(By.css('.book-content-input')).sendKeys(absoluteContentPath);
+        }
 
         // Click on Store Book button
         await driver.findElement(By.id('store-book')).click();
 
-        // Wait for the book to appear in the table
-        await driver.wait(until.elementLocated(By.xpath(`//td[contains(text(), '${bookName}')]`)), 10000);
+        if (isValid) {
+            // Wait for the book to appear in the table
+            await driver.wait(until.elementLocated(By.xpath(`//td[contains(text(), '${bookName}')]`)), 10000);
+        } else {
+            // Wait for the alert to appear
+            await driver.wait(until.elementLocated(By.css('.alert-danger')), 10000);
+        }
 
-        // Return true indicating successful creation
         return true;
     } catch (err) {
         console.error('Error during book creation:', err);
         const pageSource = await driver.getPageSource();
         console.log('Page source at time of error:', pageSource);
 
-        // Extract alert message from the page source
-        const alertMessage = pageSource.match(/<div class="alert">([\s\S]*?)<\/div>/);
-        if (alertMessage) {
-            console.log('Alert message:', alertMessage[1]);
+        if (isValid) {
+            throw err; // Throw error if it's a valid test case
+        } else {
+            return false; // Return false if it's an invalid test case
         }
-
-        return false;
     } finally {
         // Wait for a few seconds before quitting the WebDriver session
         await driver.sleep(5000);
         await driver.quit();
     }
 }
-
 async function viewBooksByFilterOption(filteredGenre) {
     const driver = await new Builder().forBrowser('chrome').build();
 
