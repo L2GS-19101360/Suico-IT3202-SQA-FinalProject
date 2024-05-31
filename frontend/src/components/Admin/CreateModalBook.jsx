@@ -171,7 +171,7 @@ class CreateModalBook extends Component {
                                     <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} className="book-title-input" /><br />
                                     <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} className="book-author-input" /><br />
 
-                                    <Form.Control type="text" placeholder="Enter Book Genre" value={selectedGenre} onChange={(e) => this.setState({ selectedGenre: e.target.value })} className="book-author-input" /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Genre" value={selectedGenre} onChange={(e) => this.setState({ selectedGenre: e.target.value })} className="book-genre-input" /><br />
 
                                     <Form.Label>Book Content</Form.Label>
                                     <Form.Group controlId="formFileContent" className="mb-3">
