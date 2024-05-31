@@ -1,91 +1,105 @@
 import React, { Component } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button, Form, InputGroup, Dropdown, Table, Modal, Spinner, Alert } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner, Alert } from 'react-bootstrap';
 import { FaBook } from 'react-icons/fa';
 import axios from 'axios';
 
 class UpdateModalBook extends Component {
     constructor(props) {
         super(props);
-        this.handleImageChange = this.handleImageChange.bind(this);
-        this.handleContentChange = this.handleContentChange.bind(this);
-        this.updateBook = this.updateBook.bind(this);
         this.state = {
             loading: false,
             showAlert: false,
             alertMessage: "",
-
+            alertVariant: "danger",
             bookImageUrl: props.book.image,
             bookImageFile: null,
             bookImageFileName: "",
-
             bookContentUrl: props.book.content,
             bookContentFile: null,
             bookContentFileName: "",
-
             selectedBookId: props.book.id,
-
             selectedGenre: props.book.genre,
             bookTitle: props.book.name,
             authorName: props.book.author,
-
             oldImageFileName: props.book.image_filename,
-            oldContentFileName: props.book.content_filename
+            oldContentFileName: props.book.content_filename,
+            allowedGenres: [
+                "Historical Fiction",
+                "Crime and Mystery",
+                "Horror",
+                "Science Fiction",
+                "Education",
+                "Romance",
+                "Fantasy"
+            ]
         };
     }
 
-    handleImageChange(e) {
+    handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const fileName = file.name;
             this.setState({
-                bookImageUrl: URL.createObjectURL(file) || null, // Reset to null when new image selected
+                bookImageUrl: URL.createObjectURL(file),
                 bookImageFile: file,
-                bookImageFileName: fileName
+                bookImageFileName: file.name
             });
         }
     }
 
-    handleContentChange(e) {
+    handleContentChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const fileName = file.name;
-            // Ensure the file type is PDF before setting the state
-            if (file.type === 'application/pdf') {
-                this.setState({
-                    bookContentUrl: URL.createObjectURL(file),
-                    bookContentFile: file,
-                    bookContentFileName: fileName
-                });
-            } else {
-                alert('Please select a PDF file.');
-            }
+        if (file && file.type === 'application/pdf') {
+            this.setState({
+                bookContentUrl: URL.createObjectURL(file),
+                bookContentFile: file,
+                bookContentFileName: file.name
+            });
+        } else {
+            alert('Please select a PDF file.');
         }
+    }
+
+    validateInputs = () => {
+        const { bookTitle, authorName, selectedGenre, allowedGenres } = this.state;
+        if (!bookTitle || !authorName || !selectedGenre) {
+            this.setState({
+                showAlert: true,
+                alertMessage: "All fields are required.",
+                alertVariant: "danger"
+            });
+            return false;
+        }
+        if (!allowedGenres.includes(selectedGenre)) {
+            this.setState({
+                showAlert: true,
+                alertMessage: "Please enter a valid genre: Historical Fiction, Crime and Mystery, Horror, Science Fiction, Education, Romance, Fantasy",
+                alertVariant: "danger"
+            });
+            return false;
+        }
+        return true;
     }
 
     updateBook = async (event) => {
         event.preventDefault();
+        if (!this.validateInputs()) return;
+
         this.setState({ loading: true, showAlert: false });
-    
-        const { bookImageFile, bookContentFile, selectedBookId, oldImageFileName, oldContentFileName, bookTitle, authorName, selectedGenre } = this.state;
-        const apiLinks = [
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
-            'http://localhost:3306/api/book-image',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content',
-            'http://localhost:3306/api/book-content',
-            'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/',
-            'http://localhost:3306/api/books/',
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${oldImageFileName}`,
-            `http://localhost:3306/api/book-image/${oldImageFileName}`,
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${oldContentFileName}`,
-            `http://localhost:3306/api/book-content/${oldContentFileName}`,
-            `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${selectedBookId}`,
-            `http://localhost:3306/api/books/${selectedBookId}`
-        ];
-    
-        let bookImageURL = this.state.bookImageUrl;
-        let bookContentURL = this.state.bookContentUrl;
-    
+
         try {
+            const { bookImageFile, bookContentFile, selectedBookId, oldImageFileName, oldContentFileName, bookTitle, authorName, selectedGenre } = this.state;
+
+            const apiLinks = [
+                'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image',
+                'https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content',
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-image/${oldImageFileName}`,
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/book-content/${oldContentFileName}`,
+                `https://suico-it3202-sqa-finalproject-backend.onrender.com/api/books/${selectedBookId}`
+            ];
+
+            let bookImageURL = this.state.bookImageUrl;
+            let bookContentURL = this.state.bookContentUrl;
+
             if (bookImageFile) {
                 const formImageData = new FormData();
                 formImageData.append('file', bookImageFile);
@@ -93,23 +107,19 @@ class UpdateModalBook extends Component {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
                 bookImageURL = imageResponse.data.imageUrl;
-    
-                // Delete old image file
-                await axios.delete(apiLinks[6]);
+                await axios.delete(apiLinks[2]);
             }
-    
+
             if (bookContentFile) {
                 const formContentData = new FormData();
                 formContentData.append('file', bookContentFile);
-                const contentResponse = await axios.post(apiLinks[2], formContentData, {
+                const contentResponse = await axios.post(apiLinks[1], formContentData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
                 bookContentURL = contentResponse.data.pdfUrl;
-    
-                // Delete old content file
-                await axios.delete(apiLinks[8]);
+                await axios.delete(apiLinks[3]);
             }
-    
+
             const data = {
                 image_filename: this.state.bookImageFileName || oldImageFileName,
                 image: bookImageURL,
@@ -119,8 +129,8 @@ class UpdateModalBook extends Component {
                 content_filename: this.state.bookContentFileName || oldContentFileName,
                 content: bookContentURL,
             };
-    
-            await axios.put(apiLinks[10], data);
+
+            await axios.put(apiLinks[4], data);
             this.setState({ loading: false });
             window.location.reload();
         } catch (error) {
@@ -128,14 +138,15 @@ class UpdateModalBook extends Component {
             this.setState({
                 loading: false,
                 showAlert: true,
-                alertMessage: "Failed to connect to the server."
+                alertMessage: "Failed to connect to the server.",
+                alertVariant: "danger"
             });
         }
     }
 
     render() {
-        const { show, handleClose, book } = this.props;
-        const { showAlert, alertMessage, loading } = this.state;
+        const { show, handleClose } = this.props;
+        const { showAlert, alertMessage, alertVariant, loading, allowedGenres, selectedGenre, bookImageUrl, bookTitle, authorName } = this.state;
 
         return (
             <div>
@@ -145,20 +156,15 @@ class UpdateModalBook extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         {showAlert && (
-                            <Alert variant="danger" onClose={() => this.setState({ showAlert: false })} dismissible>
+                            <Alert variant={alertVariant} onClose={() => this.setState({ showAlert: false })} dismissible>
                                 {alertMessage}
                             </Alert>
                         )}
                         <Form>
                             <div style={{ display: 'inline-flex' }}>
                                 <div id='leftDiv'>
-                                    {this.state.bookImageUrl ? (
-                                        <img
-                                            src={this.state.bookImageUrl}
-                                            alt="Book Cover"
-                                            height={300}
-                                            width={200}
-                                        />
+                                    {bookImageUrl ? (
+                                        <img src={bookImageUrl} alt="Book Cover" height={300} width={200} />
                                     ) : (
                                         <img src="" alt="" height={300} width={200} />
                                     )}
@@ -169,24 +175,10 @@ class UpdateModalBook extends Component {
                                         <Form.Control type="file" accept="image/jpeg, image/png" onChange={this.handleImageChange} />
                                     </Form.Group>
 
-                                    <Form.Control type="text" placeholder="Enter Book Title" value={this.state.bookTitle} onChange={(e) => (this.setState({ bookTitle: e.target.value }))} /><br />
-                                    <Form.Control type="text" placeholder="Enter Book Author" value={this.state.authorName} onChange={(e) => (this.setState({ authorName: e.target.value }))} /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Title" value={bookTitle} onChange={(e) => this.setState({ bookTitle: e.target.value })} /><br />
+                                    <Form.Control type="text" placeholder="Enter Book Author" value={authorName} onChange={(e) => this.setState({ authorName: e.target.value })} /><br />
 
-                                    <Dropdown>
-                                        <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                            {this.state.selectedGenre}
-                                        </Dropdown.Toggle>
-
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Historical Fiction" })}>Historical Fiction</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Crime and Mystery" })}>Crime and Mystery</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Horror" })}>Horror</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Science Fiction" })}>Science Fiction</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Fantasy" })}>Fantasy</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Education" })}>Education</Dropdown.Item>
-                                            <Dropdown.Item onClick={() => this.setState({ selectedGenre: "Romance" })}>Romance</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown><br />
+                                    <Form.Control type="text" placeholder="Enter Book Genre" value={selectedGenre} onChange={(e) => this.setState({ selectedGenre: e.target.value })} /><br />
 
                                     <Form.Label>Book Content</Form.Label>
                                     <Form.Group controlId="formFile" className="mb-3">
